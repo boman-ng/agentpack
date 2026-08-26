@@ -1,6 +1,7 @@
 import { sep } from "node:path";
 import { adapterById } from "./adapters/index.js";
 import type { ChangePlan, HomeLayout, LoadedPack, PlanAction } from "./types.js";
+import { portablePath } from "./util/values.js";
 
 export function formatPlan(plan: ChangePlan, pack: LoadedPack): string {
   const lines = [
@@ -186,7 +187,8 @@ function guidedActionTitle(action: PlanAction): string {
 
 export function displayHomePath(path: string, home: string): string {
   if (path === home) return "~";
-  return path.startsWith(home + sep) ? "~/" + path.slice(home.length + 1) : path;
+  const displayed = path.startsWith(home + sep) ? "~/" + path.slice(home.length + 1) : path;
+  return portablePath(displayed);
 }
 
 function plural(count: number, word: string): string {

@@ -16,7 +16,7 @@ import { runDoctor } from "../dist/doctor.js";
 import { applyInstallPlan } from "../dist/installer.js";
 import { createHomeLayout } from "../dist/layout.js";
 import { loadPack } from "../dist/manifest.js";
-import { formatGuidedReview, formatPlan, planAsJson } from "../dist/plan-output.js";
+import { displayHomePath, formatGuidedReview, formatPlan, planAsJson } from "../dist/plan-output.js";
 import { buildInstallPlan } from "../dist/planner.js";
 import { disposeInstallPlan } from "../dist/sources.js";
 import { findPackRoot } from "../dist/runtime.js";
@@ -140,6 +140,11 @@ test("lock paths use portable separators on every operating system", async () =>
     ...lock.artifacts.profiles.map((profile) => profile.path),
   ];
   assert.equal(serializedPaths.some((path) => path.includes("\\")), false);
+});
+
+test("home-relative paths use portable separators in user-facing output", async (t) => {
+  const { home } = await temporaryHome(t);
+  assert.equal(displayHomePath(join(home, ".codex", "AGENTS.md"), home), "~/.codex/AGENTS.md");
 });
 
 test("online install locks the previewed Git revision and update resolves latest", async (t) => {
