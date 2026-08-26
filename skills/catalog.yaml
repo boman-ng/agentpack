@@ -1,0 +1,92 @@
+schemaVersion: 1
+skills:
+  - id: cleanup
+    name: cleanup
+    category: maintenance
+    domain: code-quality
+    path: maintenance/code-quality/cleanup
+    sourceId: boman-cleanup
+  - id: academic-research-suite
+    name: academic-research-suite
+    category: research
+    domain: academic
+    path: skills/academic-research-suite
+    sourceId: academic-research-skills-codex
+  - id: impeccable
+    name: impeccable
+    category: frontend
+    domain: design
+    path: .agents/skills/impeccable
+    sourceId: impeccable
+  - id: animate
+    name: animate
+    category: frontend
+    domain: motion
+    path: skills/animate
+    sourceId: emilkowalski-skills
+  - id: animate-expo
+    name: animate-expo
+    category: mobile
+    domain: react-native
+    path: skills/animate-expo
+    sourceId: emilkowalski-skills
+  - id: animation-vocabulary
+    name: animation-vocabulary
+    category: frontend
+    domain: motion
+    path: skills/animation-vocabulary
+    sourceId: emilkowalski-skills
+  - id: apple-design
+    name: apple-design
+    category: frontend
+    domain: design
+    path: skills/apple-design
+    sourceId: emilkowalski-skills
+  - id: ask-sonner
+    name: ask-sonner
+    category: frontend
+    domain: components
+    path: skills/ask-sonner
+    sourceId: emilkowalski-skills
+  - id: emil-design-eng
+    name: emil-design-eng
+    category: frontend
+    domain: design
+    path: skills/emil-design-eng
+    sourceId: emilkowalski-skills
+  - id: find-animation-opportunities
+    name: find-animation-opportunities
+    category: frontend
+    domain: motion
+    path: skills/find-animation-opportunities
+    sourceId: emilkowalski-skills
+  - id: improve-animations
+    name: improve-animations
+    category: frontend
+    domain: motion
+    path: skills/improve-animations
+    sourceId: emilkowalski-skills
+  - id: pick-ui-library
+    name: pick-ui-library
+    category: frontend
+    domain: dependencies
+    path: skills/pick-ui-library
+    sourceId: emilkowalski-skills
+  - id: prototype
+    name: prototype
+    category: frontend
+    domain: prototyping
+    path: skills/prototype
+    sourceId: emilkowalski-skills
+  - id: review-animations
+    name: review-animations
+    category: frontend
+    domain: motion
+    path: skills/review-animations
+    sourceId: emilkowalski-skills
+  - id: write-swift
+    name: write-swift
+    category: mobile
+    domain: apple
+    path: skills/write-swift
+    sourceId: emilkowalski-skills

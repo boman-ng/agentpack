@@ -1,0 +1,20 @@
+schemaVersion: 1
+name: boman-ng/agentpack
+version: 0.1.0
+description: Online source catalog and installer for cross-agent instructions, skills, MCP servers, and profiles.
+instructions:
+  global: ./instructions/global/AGENTS.md
+skills:
+  catalog: ./skills/catalog.yaml
+  sources: ./skills/sources.yaml
+mcp:
+  catalog: ./mcp/catalog.yaml
+profiles:
+  directory: ./profiles
+targets:
+  - codex
+  - kimi
+  - opencode
+native:
+  codex: ./native/codex/agentpack
+  kimi: ./native/kimi/agentpack

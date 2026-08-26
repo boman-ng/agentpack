@@ -1,0 +1,6 @@
+schemaVersion: 1
+id: minimal
+description: Maintenance instructions with the local cleanup skill and no MCP server.
+skills:
+  - cleanup
+mcp: []

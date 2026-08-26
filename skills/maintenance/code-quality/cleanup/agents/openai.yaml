@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cleanup"
+  short_description: "Audit and prune accidental codebase complexity"
+  default_prompt: "Use $cleanup to identify evidence-backed maintenance slop, remove the smallest justified slice, verify behavior, and report the net complexity change."

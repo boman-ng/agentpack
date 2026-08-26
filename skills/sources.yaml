@@ -1,0 +1,22 @@
+schemaVersion: 1
+sources:
+  - id: boman-cleanup
+    kind: local
+    repository: https://github.com/boman-ng/agentpack
+    root: .
+    license: MIT
+  - id: academic-research-skills-codex
+    kind: git
+    repository: https://github.com/Imbad0202/academic-research-skills-codex.git
+    ref: refs/heads/main
+    license: CC-BY-NC-4.0
+  - id: impeccable
+    kind: git
+    repository: https://github.com/pbakaus/impeccable.git
+    ref: refs/heads/main
+    license: Apache-2.0
+  - id: emilkowalski-skills
+    kind: git
+    repository: https://github.com/emilkowalski/skills.git
+    ref: refs/heads/main
+    license: MIT

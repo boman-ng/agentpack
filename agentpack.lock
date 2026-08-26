@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "pack": {
+    "name": "boman-ng/agentpack",
+    "version": "0.1.0"
+  },
+  "sources": [
+    {
+      "id": "academic-research-skills-codex",
+      "kind": "git",
+      "repository": "https://github.com/Imbad0202/academic-research-skills-codex.git",
+      "license": "CC-BY-NC-4.0",
+      "ref": "refs/heads/main"
+    },
+    {
+      "id": "anysearch-mcp-server",
+      "kind": "mcp-configuration",
+      "repository": "https://github.com/anysearch-ai/anysearch-mcp-server.git",
+      "license": "Apache-2.0",
+      "commit": "f4ca4d4941e4c122be6522c1afc76012f1669654"
+    },
+    {
+      "id": "boman-cleanup",
+      "kind": "local",
+      "repository": "https://github.com/boman-ng/agentpack",
+      "license": "MIT",
+      "root": "skills"
+    },
+    {
+      "id": "emilkowalski-skills",
+      "kind": "git",
+      "repository": "https://github.com/emilkowalski/skills.git",
+      "license": "MIT",
+      "ref": "refs/heads/main"
+    },
+    {
+      "id": "impeccable",
+      "kind": "git",
+      "repository": "https://github.com/pbakaus/impeccable.git",
+      "license": "Apache-2.0",
+      "ref": "refs/heads/main"
+    }
+  ],
+  "artifacts": {
+    "instructions": {
+      "path": "instructions/global/AGENTS.md",
+      "sha256": "6666a7a0d829d2629dfeda38e77a979acce0b861fd8ac70942f1d4df83174d3e"
+    },
+    "skills": [
+      {
+        "id": "academic-research-suite",
+        "name": "academic-research-suite",
+        "category": "research",
+        "domain": "academic",
+        "path": "skills/academic-research-suite",
+        "sourceId": "academic-research-skills-codex"
+      },
+      {
+        "id": "animate",
+        "name": "animate",
+        "category": "frontend",
+        "domain": "motion",
+        "path": "skills/animate",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "animate-expo",
+        "name": "animate-expo",
+        "category": "mobile",
+        "domain": "react-native",
+        "path": "skills/animate-expo",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "animation-vocabulary",
+        "name": "animation-vocabulary",
+        "category": "frontend",
+        "domain": "motion",
+        "path": "skills/animation-vocabulary",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "apple-design",
+        "name": "apple-design",
+        "category": "frontend",
+        "domain": "design",
+        "path": "skills/apple-design",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "ask-sonner",
+        "name": "ask-sonner",
+        "category": "frontend",
+        "domain": "components",
+        "path": "skills/ask-sonner",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "cleanup",
+        "name": "cleanup",
+        "category": "maintenance",
+        "domain": "code-quality",
+        "path": "maintenance/code-quality/cleanup",
+        "sourceId": "boman-cleanup",
+        "sha256": "333f377eb438934a35ea9c37820e790856069d11001e510c893cb0ddf0fba366"
+      },
+      {
+        "id": "emil-design-eng",
+        "name": "emil-design-eng",
+        "category": "frontend",
+        "domain": "design",
+        "path": "skills/emil-design-eng",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "find-animation-opportunities",
+        "name": "find-animation-opportunities",
+        "category": "frontend",
+        "domain": "motion",
+        "path": "skills/find-animation-opportunities",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "impeccable",
+        "name": "impeccable",
+        "category": "frontend",
+        "domain": "design",
+        "path": ".agents/skills/impeccable",
+        "sourceId": "impeccable"
+      },
+      {
+        "id": "improve-animations",
+        "name": "improve-animations",
+        "category": "frontend",
+        "domain": "motion",
+        "path": "skills/improve-animations",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "pick-ui-library",
+        "name": "pick-ui-library",
+        "category": "frontend",
+        "domain": "dependencies",
+        "path": "skills/pick-ui-library",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "prototype",
+        "name": "prototype",
+        "category": "frontend",
+        "domain": "prototyping",
+        "path": "skills/prototype",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "review-animations",
+        "name": "review-animations",
+        "category": "frontend",
+        "domain": "motion",
+        "path": "skills/review-animations",
+        "sourceId": "emilkowalski-skills"
+      },
+      {
+        "id": "write-swift",
+        "name": "write-swift",
+        "category": "mobile",
+        "domain": "apple",
+        "path": "skills/write-swift",
+        "sourceId": "emilkowalski-skills"
+      }
+    ],
+    "mcp": [
+      {
+        "id": "anysearch",
+        "path": "mcp/search/web/anysearch.yaml",
+        "sourceId": "anysearch-mcp-server",
+        "sha256": "1d07679467100f5670f8b1dd02a2b4d648acbb6d8900bc402696170b64ade446"
+      }
+    ],
+    "profiles": [
+      {
+        "id": "coding",
+        "path": "profiles/coding.yaml",
+        "sha256": "2427df81f5aab078f541ec168cccfd24db68f8fdacc49eeef53dbd51dfc3a564"
+      },
+      {
+        "id": "frontend",
+        "path": "profiles/frontend.yaml",
+        "sha256": "b770f0a8d46b2038bfe34bd661227e20f8f19240d2ff3432742d1da159b62baf"
+      },
+      {
+        "id": "full",
+        "path": "profiles/full.yaml",
+        "sha256": "50f80ed69263ea224389ec4d94babec2f8eacfcb611016dfbee93cff27c4d61e"
+      },
+      {
+        "id": "minimal",
+        "path": "profiles/minimal.yaml",
+        "sha256": "6847a469d7c79ea68ce13bb966ccbd03dc433abafe74212c76a5ce4dd5777552"
+      },
+      {
+        "id": "research",
+        "path": "profiles/research.yaml",
+        "sha256": "e5b10f93c14ef781648e7b981ec371b664f3931c0e86f07e1edf81b3b0145561"
+      }
+    ]
+  }
+}

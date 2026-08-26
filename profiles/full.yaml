@@ -1,0 +1,21 @@
+schemaVersion: 1
+id: full
+description: Every catalog skill and MCP server. This profile is opt-in and never the installer default.
+skills:
+  - cleanup
+  - academic-research-suite
+  - impeccable
+  - animate
+  - animate-expo
+  - animation-vocabulary
+  - apple-design
+  - ask-sonner
+  - emil-design-eng
+  - find-animation-opportunities
+  - improve-animations
+  - pick-ui-library
+  - prototype
+  - review-animations
+  - write-swift
+mcp:
+  - anysearch

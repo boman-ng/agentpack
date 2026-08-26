@@ -1,0 +1,9 @@
+schemaVersion: 1
+id: coding
+description: General coding, maintenance, UI review, and current web search.
+skills:
+  - cleanup
+  - impeccable
+  - pick-ui-library
+mcp:
+  - anysearch

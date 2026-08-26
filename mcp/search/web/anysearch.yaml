@@ -1,0 +1,14 @@
+schemaVersion: 1
+id: anysearch
+name: AnySearch
+description: Remote real-time web, vertical, batch, and extraction search over Streamable HTTP.
+transport: streamable-http
+url: https://api.anysearch.com/mcp
+staticHeaders:
+  X-Anysearch-Client: mcp/1.0.0
+authenticationOptional: true
+source:
+  id: anysearch-mcp-server
+  repository: https://github.com/anysearch-ai/anysearch-mcp-server.git
+  commit: f4ca4d4941e4c122be6522c1afc76012f1669654
+  license: Apache-2.0
