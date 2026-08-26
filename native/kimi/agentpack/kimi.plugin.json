@@ -1,0 +1,32 @@
+{
+  "name": "agentpack",
+  "version": "0.1.0",
+  "description": "Agent Skills resolved from online sources plus AnySearch MCP configuration.",
+  "keywords": [
+    "agent-skills",
+    "kimi-code",
+    "mcp"
+  ],
+  "author": {
+    "name": "boman-ng",
+    "url": "https://github.com/boman-ng"
+  },
+  "homepage": "https://github.com/boman-ng/agentpack",
+  "license": "SEE LICENSE IN LICENSE",
+  "skills": "./skills/",
+  "mcpServers": {
+    "anysearch": {
+      "url": "https://api.anysearch.com/mcp",
+      "headers": {
+        "X-Anysearch-Client": "mcp/1.0.0"
+      }
+    }
+  },
+  "interface": {
+    "displayName": "AgentPack",
+    "shortDescription": "Curated skills and AnySearch for Kimi Code.",
+    "longDescription": "A generated Kimi Code distribution built from the online AgentPack source catalog and MCP definitions.",
+    "developerName": "boman-ng",
+    "websiteURL": "https://github.com/boman-ng/agentpack"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "@boman-ng/agentpack",
+  "version": "0.1.0",
+  "description": "Online installer for agent instructions, upstream skills, MCP servers, and profiles.",
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boman-ng/agentpack.git"
+  },
+  "homepage": "https://github.com/boman-ng/agentpack#readme",
+  "bugs": "https://github.com/boman-ng/agentpack/issues",
+  "bin": {
+    "agentpack": "dist/cli.js"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/adapters/*.js",
+    "dist/adapters/*.d.ts",
+    "dist/util/*.js",
+    "dist/util/*.d.ts",
+    "agentpack.yaml",
+    "agentpack.lock",
+    "instructions/",
+    "skills/",
+    "mcp/",
+    "profiles/",
+    "schemas/",
+    "native/",
+    "third_party/",
+    "LICENSE",
+    "SECURITY.md",
+    "THIRD_PARTY_LICENSES.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "npm run build && npm run lock:check && npm test",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "lock": "npm run build && node dist/lock-cli.js --write",
+    "lock:check": "node dist/lock-cli.js --check",
+    "native:build": "node dist/native-build.js",
+    "prepack": "npm run build && npm run lock:check"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@clack/prompts": "1.7.0",
+    "@decimalturn/toml-patch": "3.0.4",
+    "jsonc-parser": "3.3.1",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "typescript": "7.0.2"
+  }
+}

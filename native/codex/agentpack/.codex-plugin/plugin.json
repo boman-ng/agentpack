@@ -1,0 +1,36 @@
+{
+  "name": "agentpack",
+  "version": "0.1.0",
+  "description": "Agent Skills resolved from online sources plus AnySearch MCP configuration.",
+  "author": {
+    "name": "boman-ng",
+    "url": "https://github.com/boman-ng"
+  },
+  "homepage": "https://github.com/boman-ng/agentpack",
+  "repository": "https://github.com/boman-ng/agentpack",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "agent-skills",
+    "codex",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AgentPack",
+    "shortDescription": "Curated skills and AnySearch for Codex.",
+    "longDescription": "A generated Codex distribution built from the online AgentPack source catalog and MCP definitions.",
+    "developerName": "boman-ng",
+    "category": "Productivity",
+    "capabilities": [
+      "Research",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/boman-ng/agentpack",
+    "defaultPrompt": [
+      "Show me the AgentPack skills relevant to this task.",
+      "Use the cleanup skill to audit this repository.",
+      "Use AnySearch to research the latest primary sources."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}
