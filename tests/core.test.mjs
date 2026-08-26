@@ -22,6 +22,7 @@ import { disposeInstallPlan } from "../dist/sources.js";
 import { findPackRoot } from "../dist/runtime.js";
 import { loadState } from "../dist/state.js";
 import { applyUninstallPlan, buildUninstallPlan } from "../dist/uninstall.js";
+import { portablePath } from "../dist/util/values.js";
 
 const execFileAsync = promisify(execFile);
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -127,6 +128,18 @@ test("canonical manifest loads categorized skills, profiles, and online sources"
   assert.equal(anysearch.source.id, "anysearch-mcp-server");
   assert.equal(anysearch.authenticationOptional, true);
   assert.equal(anysearch.bearerTokenEnvVar, undefined);
+});
+
+test("lock paths use portable separators on every operating system", async () => {
+  assert.equal(portablePath("profiles\\coding.yaml"), "profiles/coding.yaml");
+  const lock = JSON.parse(await readFile(join(repositoryRoot, "agentpack.lock"), "utf8"));
+  const serializedPaths = [
+    lock.artifacts.instructions.path,
+    ...lock.artifacts.skills.map((skill) => skill.path),
+    ...lock.artifacts.mcp.map((server) => server.path),
+    ...lock.artifacts.profiles.map((profile) => profile.path),
+  ];
+  assert.equal(serializedPaths.some((path) => path.includes("\\")), false);
 });
 
 test("online install locks the previewed Git revision and update resolves latest", async (t) => {

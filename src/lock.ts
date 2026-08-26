@@ -1,6 +1,7 @@
 import { join, relative } from "node:path";
 import type { LoadedPack } from "./types.js";
 import { hashPath, readTextIfExists } from "./util/fs.js";
+import { portablePath } from "./util/values.js";
 
 export interface AgentPackLock {
   schemaVersion: 1;
@@ -57,7 +58,7 @@ export async function buildLock(pack: LoadedPack): Promise<AgentPackLock> {
       if (source.kind === "git") {
         entry.ref = source.ref;
       } else {
-        entry.root = relative(pack.root, source.root);
+        entry.root = portablePath(relative(pack.root, source.root));
       }
       return entry;
     });
@@ -82,7 +83,7 @@ export async function buildLock(pack: LoadedPack): Promise<AgentPackLock> {
     sources,
     artifacts: {
       instructions: {
-        path: relative(pack.root, pack.instructionPath),
+        path: portablePath(relative(pack.root, pack.instructionPath)),
         sha256: await hashPath(pack.instructionPath),
       },
       skills: await Promise.all(
@@ -114,7 +115,7 @@ export async function buildLock(pack: LoadedPack): Promise<AgentPackLock> {
           .sort((a, b) => a.id.localeCompare(b.id))
           .map(async (server) => ({
             id: server.id,
-            path: relative(pack.root, server.sourcePath),
+            path: portablePath(relative(pack.root, server.sourcePath)),
             sourceId: server.source.id,
             sha256: await hashPath(server.sourcePath),
           })),
@@ -124,7 +125,7 @@ export async function buildLock(pack: LoadedPack): Promise<AgentPackLock> {
           .sort((a, b) => a.id.localeCompare(b.id))
           .map(async (profile) => ({
             id: profile.id,
-            path: relative(pack.root, profile.sourcePath),
+            path: portablePath(relative(pack.root, profile.sourcePath)),
             sha256: await hashPath(profile.sourcePath),
           })),
       ),

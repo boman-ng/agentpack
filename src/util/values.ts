@@ -52,6 +52,10 @@ export function stableJson(value: unknown): string {
   return JSON.stringify(sortValue(value));
 }
 
+export function portablePath(value: string): string {
+  return value.replaceAll("\\", "/");
+}
+
 function sortValue(value: unknown): unknown {
   if (Array.isArray(value)) {
     return value.map(sortValue);
