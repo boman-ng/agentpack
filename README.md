@@ -182,4 +182,18 @@ npm pack --dry-run
 
 Online source metadata lives in `skills/sources.yaml`; `agentpack.lock` protects AgentPack-owned instructions, local skills, catalogs, and source declarations, but deliberately does not pin moving upstream branches. Changing a repository, tracked ref, skill path, or expected license is a reviewed source-catalog change and requires `npm run lock`, the full check, an isolated online installation, and applicable upstream quality gates. Runtime plans and installation state—not the package lock—own resolved upstream commit SHAs.
 
+## Release automation
+
+CI runs the canonical lock check, behavior suite, and native distribution build on Node.js 22 across Ubuntu, macOS, and Windows for every branch push and pull request. The same workflow is reusable and gates every release.
+
+Stable releases are tag-driven. After the package version and canonical manifest version are updated together and CI passes, push the matching `vMAJOR.MINOR.PATCH` tag. The release workflow:
+
+1. repeats the complete three-platform CI matrix at the tagged commit;
+2. rejects a tag that does not exactly match `package.json`;
+3. builds and smoke-tests the installable npm tarball;
+4. writes a SHA-256 checksum and a GitHub build-provenance attestation;
+5. creates the GitHub Release from the existing tag with generated notes.
+
+The workflow does not publish to npm. Native packages remain online-resolved build outputs rather than release assets; the universal CLI tarball remains the installable artifact and resolves configured skill branches at each plan, install, or update invocation.
+
 See [SECURITY.md](SECURITY.md) for the security model and [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for provenance and license boundaries.
