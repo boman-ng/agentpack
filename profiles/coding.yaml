@@ -1,9 +1,10 @@
 schemaVersion: 1
 id: coding
-description: General coding, maintenance, UI review, and current web search.
+description: General coding, maintenance, browser automation, UI review, and current web search.
 skills:
   - cleanup
   - impeccable
+  - agent-browser
   - pick-ui-library
 mcp:
   - anysearch

@@ -1,9 +1,10 @@
 schemaVersion: 1
 id: frontend
-description: Frontend design, animation, prototyping, mobile UI, and component workflows.
+description: Frontend design, browser automation, animation, prototyping, mobile UI, and component workflows.
 skills:
   - cleanup
   - impeccable
+  - agent-browser
   - animate
   - animate-expo
   - animation-vocabulary

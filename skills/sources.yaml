@@ -15,6 +15,11 @@ sources:
     repository: https://github.com/pbakaus/impeccable.git
     ref: refs/heads/main
     license: Apache-2.0
+  - id: agent-browser
+    kind: git
+    repository: https://github.com/vercel-labs/agent-browser.git
+    ref: refs/heads/main
+    license: Apache-2.0
   - id: emilkowalski-skills
     kind: git
     repository: https://github.com/emilkowalski/skills.git

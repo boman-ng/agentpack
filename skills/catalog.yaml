@@ -18,6 +18,12 @@ skills:
     domain: design
     path: .agents/skills/impeccable
     sourceId: impeccable
+  - id: agent-browser
+    name: agent-browser
+    category: automation
+    domain: browser
+    path: skills/agent-browser
+    sourceId: agent-browser
   - id: animate
     name: animate
     category: frontend

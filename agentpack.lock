@@ -13,6 +13,13 @@
       "ref": "refs/heads/main"
     },
     {
+      "id": "agent-browser",
+      "kind": "git",
+      "repository": "https://github.com/vercel-labs/agent-browser.git",
+      "license": "Apache-2.0",
+      "ref": "refs/heads/main"
+    },
+    {
       "id": "anysearch-mcp-server",
       "kind": "mcp-configuration",
       "repository": "https://github.com/anysearch-ai/anysearch-mcp-server.git",
@@ -54,6 +61,14 @@
         "domain": "academic",
         "path": "skills/academic-research-suite",
         "sourceId": "academic-research-skills-codex"
+      },
+      {
+        "id": "agent-browser",
+        "name": "agent-browser",
+        "category": "automation",
+        "domain": "browser",
+        "path": "skills/agent-browser",
+        "sourceId": "agent-browser"
       },
       {
         "id": "animate",
@@ -181,17 +196,17 @@
       {
         "id": "coding",
         "path": "profiles/coding.yaml",
-        "sha256": "2427df81f5aab078f541ec168cccfd24db68f8fdacc49eeef53dbd51dfc3a564"
+        "sha256": "9cc2ddcc118bff0442aa87c8427730a2618cda78415da355c5804e843e4bedff"
       },
       {
         "id": "frontend",
         "path": "profiles/frontend.yaml",
-        "sha256": "b770f0a8d46b2038bfe34bd661227e20f8f19240d2ff3432742d1da159b62baf"
+        "sha256": "ad74356a0d7dca2db60803ba6f6633401a56a5d6570956672530acc71aa103cb"
       },
       {
         "id": "full",
         "path": "profiles/full.yaml",
-        "sha256": "50f80ed69263ea224389ec4d94babec2f8eacfcb611016dfbee93cff27c4d61e"
+        "sha256": "520bbdd9b2881461d77747b2510359835ca4abc16d694c508b944704a5bfb8ae"
       },
       {
         "id": "minimal",

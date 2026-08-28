@@ -107,7 +107,7 @@ test("canonical manifest loads categorized skills, profiles, and online sources"
     JSON.parse(await readFile(join(repositoryRoot, "agentpack.lock"), "utf8")).schemaVersion,
     1,
   );
-  assert.equal(pack.skills.length, 15);
+  assert.equal(pack.skills.length, 16);
   assert.deepEqual(pack.targets, ["codex", "kimi", "opencode"]);
   assert.ok(pack.profiles.some((profile) => profile.id === "full"));
   assert.equal(
@@ -125,6 +125,17 @@ test("canonical manifest loads categorized skills, profiles, and online sources"
   assert.equal(academic?.kind, "git");
   assert.equal(academic?.ref, "refs/heads/main");
   assert.equal(academic?.commit, undefined);
+  const agentBrowser = pack.skillSources.find((source) => source.id === "agent-browser");
+  assert.equal(agentBrowser?.kind, "git");
+  assert.equal(agentBrowser?.repository, "https://github.com/vercel-labs/agent-browser.git");
+  assert.equal(agentBrowser?.ref, "refs/heads/main");
+  assert.equal(agentBrowser?.commit, undefined);
+  assert.ok(
+    pack.profiles.find((profile) => profile.id === "coding")?.skills.includes("agent-browser"),
+  );
+  assert.ok(
+    pack.profiles.find((profile) => profile.id === "frontend")?.skills.includes("agent-browser"),
+  );
   assert.equal(anysearch.source.id, "anysearch-mcp-server");
   assert.equal(anysearch.authenticationOptional, true);
   assert.equal(anysearch.bearerTokenEnvVar, undefined);
