@@ -68,7 +68,7 @@ jobs:
 
       - name: Smoke test packaged CLI
         run: |
-          npm install --global --prefix "$RUNNER_TEMP/agentpack-smoke" release/*.tgz
+          npm install --global --prefix "$RUNNER_TEMP/agentpack-smoke" ./release/*.tgz
           actual_version="$("$RUNNER_TEMP/agentpack-smoke/bin/agentpack" --version)"
           expected_version="${GITHUB_REF_NAME#v}"
           if [[ "$actual_version" != "$expected_version" ]]; then
