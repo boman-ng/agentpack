@@ -158,6 +158,33 @@ test("home-relative paths use portable separators in user-facing output", async 
   assert.equal(displayHomePath(join(home, ".codex", "AGENTS.md"), home), "~/.codex/AGENTS.md");
 });
 
+test("append adopts an exact canonical instruction file without duplicating it", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const canonical = await readFile(pack.instructionPath, "utf8");
+  await put(join(layout.codexHome, "AGENTS.md"), canonical);
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: { skillIds: [], mcpIds: [] },
+  });
+  const action = plan.actions.find(
+    (candidate) => candidate.kind === "file" && candidate.component === "instructions",
+  );
+  assert.equal(action?.kind, "file");
+  assert.equal(action?.after?.match(/^# Global Codex Instructions$/gm)?.length, 1);
+  assert.match(action?.after ?? "", /agentpack:boman-ng\/agentpack:start/);
+
+  const result = await applyInstallPlan(pack, layout, plan);
+  assert.equal(result.state.managed.instructions[0]?.strategy, "managed-block");
+  assert.equal(
+    (await readFile(join(layout.codexHome, "AGENTS.md"), "utf8")).match(
+      /^# Global Codex Instructions$/gm,
+    )?.length,
+    1,
+  );
+});
+
 test("online install locks the previewed Git revision and update resolves latest", async (t) => {
   const { home, layout } = await temporaryHome(t);
   const fixture = await createOnlineFixture(home);

@@ -16,6 +16,9 @@ export function appendInstructions(existing: string | undefined, payload: string
   if (range !== undefined) {
     return existing.slice(0, range.start) + block + existing.slice(range.end);
   }
+  if (existing.trimEnd() === payload.trimEnd()) {
+    return block;
+  }
   return existing.trimEnd() + "\n\n" + block;
 }
 

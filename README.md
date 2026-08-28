@@ -100,7 +100,7 @@ Or choose an opt-in profile:
 
 | Behavior | `overwrite` (default) | `append` |
 |---|---|---|
-| Global instructions | Replace the target instruction file | Add or refresh one marked AgentPack block |
+| Global instructions | Replace the target instruction file | Adopt an exact canonical copy, or add/refresh one marked AgentPack block |
 | Skills | Replace the shared skills directory with the exact selection | Add or refresh selected managed skills beside unrelated skills |
 | MCP | Replace the adapter's MCP configuration with the exact selection | Semantically merge selected servers and preserve unrelated configuration |
 | Collision handling | The supported surface is intentionally replaced | Unmanaged skill directories and MCP names block apply |
