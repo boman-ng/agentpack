@@ -12,7 +12,7 @@ AgentPack treats install plans and MCP launch/connect metadata as security-sensi
 - Every apply backs up exact targets and rolls them back on failure.
 - Apply rejects stale previews, and state ownership checks prevent managed paths from escaping adapter targets.
 - Canonical MCP files may name environment variables but must not contain credential values.
-- Append mode refuses collisions with unmanaged skills and MCP server names.
+- Append mode refuses collisions with unmanaged skills and MCP server names. `reconcile` may claim only catalog-equivalent content or explicitly replace named conflicting targets after preview and backup.
 - Tests must use an isolated `--home`.
 
 Online source repositories are a supply-chain boundary. AgentPack validates source paths, skill frontmatter, and filesystem hashes, but a current branch head is not equivalent to a maintainer signature or security review. Inspect the displayed repository and commit before approval when installing privileged or unfamiliar skills. Source failures stop explicitly; there is no bundled or cached fallback.

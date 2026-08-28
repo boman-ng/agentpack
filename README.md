@@ -109,6 +109,33 @@ Overwrite owns only the supported global instruction file, shared skills directo
 
 Append mode is additive across successive installs. Use overwrite when the selected components should become the exact managed set. Uninstall removes only content whose recorded hash still matches; edited managed content is reported as a conflict and preserved.
 
+## Reconcile ownership conflicts
+
+Append mode blocks when a selected skill directory or MCP name already exists without AgentPack ownership. Use `reconcile` to migrate that boundary explicitly:
+
+```bash
+agentpack reconcile --agents codex,kimi --profile coding
+```
+
+Catalog-equivalent content is proposed as `ADOPT`: AgentPack leaves the target bytes unchanged, backs up the target, and records its source revision or semantic MCP hash. Divergent content requires one decision per component:
+
+- `Keep unmanaged` preserves the existing content and excludes that component from AgentPack on every selected target.
+- `Replace from catalog` backs up and replaces only conflicting targets while preserving unrelated skills and configuration.
+- `Abort` leaves every target and the state unchanged.
+
+Interactive reconciliation defaults to `Keep unmanaged`. For automation, repeat `--resolve` with explicit component decisions:
+
+```bash
+agentpack reconcile \
+  --agents codex,kimi \
+  --profile coding \
+  --resolve skill:impeccable=replace \
+  --resolve mcp:anysearch=replace \
+  --yes
+```
+
+Reconciliation is append-only; it never turns a component collision into permission to overwrite an entire skills directory or MCP file. A `keep` decision is component-wide because schema v1 records one shared selection. If AgentPack already manages that MCP on another target, split ownership is rejected instead of creating state that cannot be updated reliably.
+
 ## Adapter paths
 
 | Agent | Global instructions | Shared skills | MCP configuration |
@@ -150,6 +177,7 @@ Every changed target is copied under `~/.agentpack/backups/<timestamp-id>/` befo
 | `list` | List profiles, categorized skills, and MCP servers |
 | `plan` / `diff` | Render the proposed changes without writing |
 | `install` | Preview and apply a new selection |
+| `reconcile` | Adopt equivalent unmanaged components or explicitly keep/replace divergent collisions |
 | `update` | Resolve the recorded skill selection online again, then install newer source heads and re-render adapters |
 | `doctor` | Validate the canonical lock, state, and managed hashes |
 | `uninstall` | Preview and remove hash-matching managed content |
