@@ -89,9 +89,9 @@ Or choose an opt-in profile:
 | Profile | Selection |
 |---|---|
 | `minimal` | `cleanup`; no MCP |
-| `coding` | maintenance and frontend design skills; AnySearch |
+| `coding` | maintenance, browser automation, and frontend design skills; AnySearch |
 | `research` | `cleanup`, Academic Research Suite; AnySearch |
-| `frontend` | frontend, animation, prototyping, and mobile UI skills; no MCP |
+| `frontend` | frontend, browser automation, animation, prototyping, and mobile UI skills; no MCP |
 | `full` | every catalog skill and MCP server |
 
 `--all-skills` and `--all-mcp` are explicit shortcuts. `--skills none` or `--mcp none` selects an empty set.
@@ -126,6 +126,10 @@ The shared Agent Skills path is written once even when multiple adapters are sel
 AgentPack configures AnySearch in anonymous mode, which the upstream server supports with lower rate limits. The package writes the endpoint and the non-secret `X-Anysearch-Client` header only; it does not request an email address, create an account, or persist an API key.
 
 Enabling AnySearch permits an agent to send search queries and requested URLs to a third-party remote service. Review the [AnySearch project](https://github.com/anysearch-ai/anysearch-mcp-server) and its service terms before selecting it.
+
+## agent-browser
+
+The `agent-browser` catalog entry tracks `vercel-labs/agent-browser`'s `main` branch and installs its official `skills/agent-browser` discovery skill. The skill loads version-matched browser workflows from the separately installed CLI with `agent-browser skills get core`; AgentPack does not install or upgrade that executable or Chrome. Follow the [upstream installation guide](https://github.com/vercel-labs/agent-browser#installation) before using the skill.
 
 ## Plans, backups, and recovery
 
