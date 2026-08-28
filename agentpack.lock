@@ -51,7 +51,7 @@
   "artifacts": {
     "instructions": {
       "path": "instructions/global/AGENTS.md",
-      "sha256": "6666a7a0d829d2629dfeda38e77a979acce0b861fd8ac70942f1d4df83174d3e"
+      "sha256": "49ff413b64377b086e7a3ae2847560136816166a095808b9fa86382ec55e81ed"
     },
     "skills": [
       {
