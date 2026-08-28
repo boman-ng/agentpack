@@ -57,6 +57,7 @@ export class CodexAdapter implements AgentAdapter {
           target,
           component: "mcp:" + server.id,
           message: "Codex MCP server name already exists and is not managed by AgentPack.",
+          reconcilable: true,
         });
         continue;
       }

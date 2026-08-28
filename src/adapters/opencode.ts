@@ -77,6 +77,7 @@ export class OpenCodeAdapter implements AgentAdapter {
           target,
           component: "mcp:" + server.id,
           message: "OpenCode MCP server name already exists and is not managed by AgentPack.",
+          reconcilable: true,
         });
         continue;
       }

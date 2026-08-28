@@ -15,6 +15,7 @@ import {
 import { assertStateOwnership } from "./state.js";
 import type {
   AdapterId,
+  AgentAdapter,
   ChangePlan,
   ComponentSelection,
   ConfigConflict,
@@ -23,6 +24,9 @@ import type {
   InstallMode,
   InstallState,
   LoadedPack,
+  McpDefinition,
+  ReconciliationOptions,
+  ReconciliationSummary,
   SkillInstallEntry,
   SkillsPlanAction,
 } from "./types.js";
@@ -34,6 +38,7 @@ export interface InstallPlanOptions {
   adapters: AdapterId[];
   selection: ComponentSelection;
   previousState?: InstallState;
+  reconciliation?: ReconciliationOptions;
 }
 
 export async function buildInstallPlan(
@@ -44,6 +49,17 @@ export async function buildInstallPlan(
   if (options.previousState !== undefined) {
     assertStateOwnership(pack, layout, options.previousState);
   }
+  if (options.reconciliation !== undefined && options.mode !== "append") {
+    throw new Error("Ownership reconciliation requires append mode");
+  }
+  assertKeepDoesNotSplitOwnership(options.reconciliation, options.previousState);
+  const selection = effectiveSelection(options.selection, options.reconciliation);
+  const effectiveOptions: InstallPlanOptions = { ...options, selection };
+  const reconciliation: ReconciliationSummary = {
+    adopted: [],
+    replaced: [],
+    kept: keptComponents(options.reconciliation),
+  };
   const actions: ChangePlan["actions"] = [];
   const conflicts: ConfigConflict[] = [];
   const instructionPayload = await readFile(pack.instructionPath, "utf8");
@@ -104,7 +120,7 @@ export async function buildInstallPlan(
 
     const mcpTarget = adapter.mcpPath(layout);
     const existingMcp = await readTextIfExists(mcpTarget);
-    const servers = options.selection.mcpIds.map((id) => mcpById(pack, id));
+    const servers = selection.mcpIds.map((id) => mcpById(pack, id));
     if (options.mode === "overwrite" || servers.length > 0) {
       const ownedIds = new Set(
         options.previousState?.managed.mcp.find((entry) => entry.adapter === adapterId)
@@ -117,6 +133,7 @@ export async function buildInstallPlan(
           : [],
       );
       let mcpSafe = true;
+      const adoptedMcpIds = new Set<string>();
       if (options.mode === "append") {
         const previousEntries =
           options.previousState?.managed.mcp.find((entry) => entry.adapter === adapterId)
@@ -135,14 +152,41 @@ export async function buildInstallPlan(
             mcpSafe = false;
           }
         }
+        if (mcpSafe && options.reconciliation !== undefined) {
+          for (const server of servers) {
+            if (previousEntries[server.id] !== undefined || existingMcp === undefined) {
+              continue;
+            }
+            const actualHash = adapter.entryHash(existingMcp, server.id);
+            if (actualHash === undefined) {
+              continue;
+            }
+            const expectedHash = expectedMcpEntryHash(adapter, server, mcpTarget);
+            if (actualHash === expectedHash) {
+              ownedIds.add(server.id);
+              adoptedMcpIds.add(server.id);
+              reconciliation.adopted.push(`mcp:${server.id}@${adapterId}`);
+            } else if (
+              options.reconciliation.resolutions[`mcp:${server.id}`] === "replace"
+            ) {
+              ownedIds.add(server.id);
+              reconciliation.replaced.push(`mcp:${server.id}@${adapterId}`);
+            }
+          }
+        }
       }
       const rendered = mcpSafe
         ? adapter.renderMcp(existingMcp, servers, options.mode, ownedIds, mcpTarget)
         : { content: existingMcp ?? "", entryHashes: {}, conflicts: [] };
       conflicts.push(...rendered.conflicts);
-      if (rendered.content !== existingMcp && rendered.conflicts.length === 0) {
+      if (
+        rendered.conflicts.length === 0 &&
+        (rendered.content !== existingMcp || adoptedMcpIds.size > 0)
+      ) {
         const operation =
-          existingMcp === undefined
+          rendered.content === existingMcp
+            ? "adopt"
+            : existingMcp === undefined
             ? "create"
             : options.mode === "overwrite"
               ? servers.length === 0
@@ -158,7 +202,9 @@ export async function buildInstallPlan(
           before: existingMcp,
           after: rendered.content,
           summary:
-            options.mode === "overwrite"
+            operation === "adopt"
+              ? "Adopt catalog-equivalent MCP entries without changing configuration."
+              : options.mode === "overwrite"
               ? "Replace this adapter's MCP configuration with the selected catalog entries."
               : "Semantically merge selected MCP entries while preserving other configuration.",
           entryHashes: rendered.entryHashes,
@@ -167,9 +213,15 @@ export async function buildInstallPlan(
     }
   }
 
-  const prepared = await prepareSelectedSkills(pack, options.selection.skillIds);
+  const prepared = await prepareSelectedSkills(pack, selection.skillIds);
   try {
-    const skillsAction = await buildSkillsAction(layout, options, conflicts, prepared.skills);
+    const skillsAction = await buildSkillsAction(
+      layout,
+      effectiveOptions,
+      conflicts,
+      prepared.skills,
+      reconciliation,
+    );
     if (skillsAction !== undefined) {
       actions.push(skillsAction);
     }
@@ -181,8 +233,8 @@ export async function buildInstallPlan(
       mode: options.mode,
       adapters: unique(options.adapters),
       selection: {
-        skillIds: [...options.selection.skillIds],
-        mcpIds: [...options.selection.mcpIds],
+        skillIds: [...selection.skillIds],
+        mcpIds: [...selection.mcpIds],
       },
       actions,
       conflicts,
@@ -193,6 +245,10 @@ export async function buildInstallPlan(
       resolvedSources: prepared.resolvedSources,
       temporaryPaths: prepared.temporaryPaths,
       uninstall: false,
+      reconcile: options.reconciliation !== undefined,
+      ...(options.reconciliation === undefined
+        ? {}
+        : { reconciliation: sortedReconciliation(reconciliation) }),
     };
   } catch (error) {
     await disposePreparedSkills(prepared);
@@ -205,6 +261,7 @@ async function buildSkillsAction(
   options: InstallPlanOptions,
   conflicts: ConfigConflict[],
   selected: PreparedSkill[],
+  reconciliation: ReconciliationSummary,
 ): Promise<SkillsPlanAction | undefined> {
   if (options.mode === "overwrite") {
     const skillsExist = await pathExists(layout.sharedSkills);
@@ -251,10 +308,42 @@ async function buildSkillsAction(
     }
     const managed = previousByPath.get(target);
     if (managed === undefined) {
+      const currentHash = await hashPath(target);
+      if (options.reconciliation !== undefined) {
+        if (currentHash === prepared.sourceHash) {
+          entries.push({
+            id: skill.id,
+            name: skill.name,
+            source: prepared.sourcePath,
+            sourceHash: prepared.sourceHash,
+            sourceRevision: prepared.sourceRevision,
+            target,
+            operation: "adopt",
+            beforeHash: currentHash,
+          });
+          reconciliation.adopted.push("skill:" + skill.id);
+          continue;
+        }
+        if (options.reconciliation.resolutions[`skill:${skill.id}`] === "replace") {
+          entries.push({
+            id: skill.id,
+            name: skill.name,
+            source: prepared.sourcePath,
+            sourceHash: prepared.sourceHash,
+            sourceRevision: prepared.sourceRevision,
+            target,
+            operation: "replace",
+            beforeHash: currentHash,
+          });
+          reconciliation.replaced.push("skill:" + skill.id);
+          continue;
+        }
+      }
       conflicts.push({
         target,
         component: "skill:" + skill.id,
         message: "Skill directory already exists and is not managed by AgentPack.",
+        reconcilable: true,
       });
       continue;
     }
@@ -292,7 +381,92 @@ async function buildSkillsAction(
     target: layout.sharedSkills,
     operation: "merge",
     entries,
-    summary: "Install resolved source revisions alongside existing skill directories.",
+    summary: "Install, adopt, or replace resolved skills alongside unrelated directories.",
+  };
+}
+
+function effectiveSelection(
+  selection: ComponentSelection,
+  reconciliation: ReconciliationOptions | undefined,
+): ComponentSelection {
+  if (reconciliation === undefined) {
+    return {
+      skillIds: [...selection.skillIds],
+      mcpIds: [...selection.mcpIds],
+    };
+  }
+  return {
+    skillIds: selection.skillIds.filter(
+      (id) => reconciliation.resolutions[`skill:${id}`] !== "keep",
+    ),
+    mcpIds: selection.mcpIds.filter(
+      (id) => reconciliation.resolutions[`mcp:${id}`] !== "keep",
+    ),
+  };
+}
+
+function keptComponents(
+  reconciliation: ReconciliationOptions | undefined,
+): string[] {
+  return reconciliation === undefined
+    ? []
+    : Object.entries(reconciliation.resolutions)
+        .filter(([, resolution]) => resolution === "keep")
+        .map(([component]) => component)
+        .sort();
+}
+
+function assertKeepDoesNotSplitOwnership(
+  reconciliation: ReconciliationOptions | undefined,
+  state: InstallState | undefined,
+): void {
+  if (reconciliation === undefined || state === undefined) {
+    return;
+  }
+  for (const [component, resolution] of Object.entries(reconciliation.resolutions)) {
+    if (resolution !== "keep") {
+      continue;
+    }
+    if (component.startsWith("skill:")) {
+      const id = component.slice("skill:".length);
+      if (state.managed.skills.some((entry) => entry.id === id)) {
+        throw new Error(
+          `Cannot keep ${component} unmanaged because AgentPack already manages it`,
+        );
+      }
+      continue;
+    }
+    if (component.startsWith("mcp:")) {
+      const id = component.slice("mcp:".length);
+      if (state.managed.mcp.some((entry) => entry.entries[id] !== undefined)) {
+        throw new Error(
+          `Cannot keep ${component} unmanaged because AgentPack already manages it on another target`,
+        );
+      }
+    }
+  }
+}
+
+function expectedMcpEntryHash(
+  adapter: AgentAdapter,
+  server: McpDefinition,
+  target: string,
+): string {
+  const rendered = adapter.renderMcp(undefined, [server], "append", new Set(), target);
+  const hash = rendered.entryHashes[server.id];
+  if (hash === undefined || rendered.conflicts.length > 0) {
+    throw new Error("Unable to render expected MCP entry: " + adapter.id + "/" + server.id);
+  }
+  return hash;
+}
+
+function sortedReconciliation(
+  reconciliation: ReconciliationSummary,
+): ReconciliationSummary {
+  return {
+    adopted: unique(reconciliation.adopted).sort(),
+    replaced: unique(reconciliation.replaced).sort(),
+    kept: unique(reconciliation.kept).sort(),
   };
 }
 

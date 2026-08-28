@@ -171,6 +171,7 @@ export async function buildUninstallPlan(
     resolvedSources: [],
     temporaryPaths: [],
     uninstall: true,
+    reconcile: false,
   };
 }
 

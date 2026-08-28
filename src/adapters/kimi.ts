@@ -56,6 +56,7 @@ export class KimiAdapter implements AgentAdapter {
           target,
           component: "mcp:" + server.id,
           message: "Kimi MCP server name already exists and is not managed by AgentPack.",
+          reconcilable: true,
         });
         continue;
       }

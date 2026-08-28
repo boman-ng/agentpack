@@ -97,6 +97,9 @@ async function applyPreparedInstallPlan(
 
 async function applyAction(action: PlanAction): Promise<void> {
   if (action.kind === "file") {
+    if (action.operation === "adopt") {
+      return;
+    }
     if (action.after === null) {
       await removePath(action.target);
     } else {
@@ -118,6 +121,9 @@ async function applyAction(action: PlanAction): Promise<void> {
     return;
   }
   for (const entry of action.entries) {
+    if (entry.operation === "adopt") {
+      continue;
+    }
     await replacePath(entry.source, entry.target);
   }
 }

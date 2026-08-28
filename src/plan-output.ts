@@ -4,8 +4,9 @@ import type { ChangePlan, HomeLayout, LoadedPack, PlanAction } from "./types.js"
 import { portablePath } from "./util/values.js";
 
 export function formatPlan(plan: ChangePlan, pack: LoadedPack): string {
+  const operation = planOperation(plan);
   const lines = [
-    `AgentPack ${plan.uninstall ? "uninstall" : "install"} plan`,
+    `AgentPack ${operation} plan`,
     "",
     `Pack      ${plan.packName}@${plan.packVersion}`,
     `Agents    ${plan.adapters.join(", ") || "none"}`,
@@ -42,6 +43,10 @@ export function formatPlan(plan: ChangePlan, pack: LoadedPack): string {
       }
     }
   }
+  if (plan.reconciliation !== undefined) {
+    lines.push("", "Ownership reconciliation");
+    lines.push(...formatReconciliation(plan.reconciliation));
+  }
   lines.push("", "Safety");
   lines.push(
     plan.backupTargets.length > 0
@@ -60,7 +65,7 @@ export function formatPlan(plan: ChangePlan, pack: LoadedPack): string {
       lines.push("    " + conflict.message);
     }
   } else {
-    lines.push("", `Status    Ready to ${plan.uninstall ? "uninstall" : "install"}`);
+    lines.push("", `Status    Ready to ${operation}`);
   }
   return lines.join("\n") + "\n";
 }
@@ -70,12 +75,14 @@ export function planAsJson(plan: ChangePlan): string {
     JSON.stringify(
       {
         pack: { name: plan.packName, version: plan.packVersion },
+        operation: planOperation(plan),
         mode: plan.mode,
         adapters: plan.adapters,
         selection: plan.selection,
         resolvedSources: plan.resolvedSources,
         actions: plan.actions.map((action) => publicAction(action)),
         conflicts: plan.conflicts,
+        reconciliation: plan.reconciliation,
         backupRequired: plan.backupTargets.length > 0,
         writesCredentialValues: false,
       },
@@ -112,6 +119,11 @@ export function formatGuidedReview(
     for (const source of plan.resolvedSources) {
       lines.push(`  ${source.commit.slice(0, 8)}  ${source.id} (${source.ref.replace("refs/heads/", "")})`);
     }
+  }
+
+  if (plan.reconciliation !== undefined) {
+    lines.push("", "Ownership reconciliation");
+    lines.push(...formatReconciliation(plan.reconciliation));
   }
 
   lines.push(
@@ -193,6 +205,29 @@ export function displayHomePath(path: string, home: string): string {
 
 function plural(count: number, word: string): string {
   return count === 1 ? word : word + "s";
+}
+
+function planOperation(plan: ChangePlan): "install" | "reconcile" | "uninstall" {
+  return plan.uninstall ? "uninstall" : plan.reconcile ? "reconcile" : "install";
+}
+
+function formatReconciliation(
+  reconciliation: NonNullable<ChangePlan["reconciliation"]>,
+): string[] {
+  const lines: string[] = [];
+  for (const component of reconciliation.adopted) {
+    lines.push("  ADOPT    " + component + " (catalog-equivalent; content unchanged)");
+  }
+  for (const component of reconciliation.replaced) {
+    lines.push("  REPLACE  " + component + " (targeted replacement with backup)");
+  }
+  for (const component of reconciliation.kept) {
+    lines.push("  KEEP     " + component + " (unmanaged and excluded on every target)");
+  }
+  if (lines.length === 0) {
+    lines.push("  No ownership changes selected");
+  }
+  return lines;
 }
 
 function publicAction(action: PlanAction): Record<string, unknown> {

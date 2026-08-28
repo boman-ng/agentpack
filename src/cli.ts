@@ -4,7 +4,11 @@ import { parseArgs } from "node:util";
 import { detectAdapters } from "./adapters/index.js";
 import { runDoctor, formatDoctor } from "./doctor.js";
 import { applyInstallPlan } from "./installer.js";
-import { promptApplyPlan, runGuidedInstall } from "./interactive.js";
+import {
+  promptApplyPlan,
+  promptOwnershipResolutions,
+  runGuidedInstall,
+} from "./interactive.js";
 import { createHomeLayout } from "./layout.js";
 import { loadPack } from "./manifest.js";
 import { buildNativeDistributions } from "./native-build.js";
@@ -17,8 +21,10 @@ import { loadState } from "./state.js";
 import type {
   AdapterId,
   ComponentSelection,
+  ConfigConflict,
   InstallMode,
   LoadedPack,
+  OwnershipResolution,
   SelectionOptions,
 } from "./types.js";
 import { applyUninstallPlan, buildUninstallPlan } from "./uninstall.js";
@@ -31,6 +37,7 @@ interface CliOptions {
   mcp?: string;
   mode?: string;
   home?: string;
+  resolve?: string[];
   yes: boolean;
   dryRun: boolean;
   allSkills: boolean;
@@ -108,13 +115,26 @@ async function main(): Promise<void> {
     return;
   }
 
-  if (command !== "install" && command !== "plan" && command !== "diff" && command !== "update") {
+  if (
+    command !== "install" &&
+    command !== "plan" &&
+    command !== "diff" &&
+    command !== "update" &&
+    command !== "reconcile"
+  ) {
     throw new Error("Unknown command: " + command);
   }
 
   const update = command === "update";
+  const reconcile = command === "reconcile";
   if (update && state === undefined) {
     throw new Error("Cannot update because no AgentPack state exists for the selected home");
+  }
+  if (!reconcile && parsed.options.resolve !== undefined) {
+    throw new Error("--resolve is available only with `agentpack reconcile`");
+  }
+  if (reconcile && parsed.options.mode !== undefined && parsed.options.mode !== "append") {
+    throw new Error("`agentpack reconcile` supports append mode only");
   }
 
   if (
@@ -130,10 +150,16 @@ async function main(): Promise<void> {
     pack,
     layout,
     parsed.options.agents,
-    update ? state?.adapters : undefined,
+    update || reconcile ? state?.adapters : undefined,
   );
-  const selection = resolveCliSelection(pack, parsed.options, update ? state?.selection : undefined);
-  const mode = resolveMode(parsed.options.mode, update ? state?.mode : undefined);
+  const selection = resolveCliSelection(
+    pack,
+    parsed.options,
+    update || reconcile ? state?.selection : undefined,
+  );
+  const mode = reconcile
+    ? "append"
+    : resolveMode(parsed.options.mode, update ? state?.mode : undefined);
   const planOptions: Parameters<typeof buildInstallPlan>[2] = {
     mode,
     adapters,
@@ -142,7 +168,12 @@ async function main(): Promise<void> {
   if (state !== undefined) {
     planOptions.previousState = state;
   }
-  const plan = await buildInstallPlan(pack, layout, planOptions);
+  const plan = reconcile
+    ? await buildReconciliationPlan(pack, layout, planOptions, parsed.options)
+    : await buildInstallPlan(pack, layout, planOptions);
+  if (plan === undefined) {
+    return;
+  }
   try {
     writePlan(plan, pack, parsed.options.json);
 
@@ -150,20 +181,102 @@ async function main(): Promise<void> {
       return;
     }
     if (!(await shouldApply(parsed.options, {
-      message: "Apply this install plan?",
-      applyLabel: "Install now",
+      message: reconcile ? "Apply this reconciliation plan?" : "Apply this install plan?",
+      applyLabel: reconcile ? "Reconcile now" : "Install now",
       applyHint: "backup, apply, validate, and record state",
     }))) {
       return;
     }
     const result = await applyInstallPlan(pack, layout, plan, state);
     process.stdout.write(
-      "Install complete." +
+      (reconcile ? "Reconciliation complete." : "Install complete.") +
         (result.backupPath === undefined ? "" : " Backup: " + result.backupPath) +
         "\n",
     );
   } finally {
     await disposeInstallPlan(plan);
+  }
+}
+
+async function buildReconciliationPlan(
+  pack: LoadedPack,
+  layout: ReturnType<typeof createHomeLayout>,
+  options: Parameters<typeof buildInstallPlan>[2],
+  cliOptions: CliOptions,
+): Promise<Awaited<ReturnType<typeof buildInstallPlan>> | undefined> {
+  let resolutions = parseOwnershipResolutions(cliOptions.resolve ?? []);
+  if (Object.keys(resolutions).length > 0) {
+    const discovery = await buildInstallPlan(pack, layout, options);
+    try {
+      validateResolutionTargets(discovery.conflicts, resolutions);
+    } finally {
+      await disposeInstallPlan(discovery);
+    }
+  }
+
+  let plan = await buildInstallPlan(pack, layout, {
+    ...options,
+    reconciliation: { resolutions },
+  });
+  if (isInteractiveTerminal(cliOptions) && plan.conflicts.some((entry) => entry.reconcilable)) {
+    const prompted = await promptOwnershipResolutions(plan.conflicts, layout);
+    if (prompted === undefined) {
+      await disposeInstallPlan(plan);
+      return undefined;
+    }
+    resolutions = { ...resolutions, ...prompted };
+    await disposeInstallPlan(plan);
+    plan = await buildInstallPlan(pack, layout, {
+      ...options,
+      reconciliation: { resolutions },
+    });
+  }
+  return plan;
+}
+
+function parseOwnershipResolutions(
+  values: string[],
+): Record<string, OwnershipResolution> {
+  const resolutions: Record<string, OwnershipResolution> = {};
+  for (const value of values) {
+    const separator = value.lastIndexOf("=");
+    if (separator <= 0 || separator === value.length - 1) {
+      throw new Error("--resolve must use COMPONENT=keep|replace");
+    }
+    const component = value.slice(0, separator);
+    const resolution = value.slice(separator + 1);
+    if (
+      (!component.startsWith("skill:") && !component.startsWith("mcp:")) ||
+      component.endsWith(":")
+    ) {
+      throw new Error("Invalid reconciliation component: " + component);
+    }
+    if (resolution !== "keep" && resolution !== "replace") {
+      throw new Error("Invalid reconciliation action for " + component + ": " + resolution);
+    }
+    if (resolutions[component] !== undefined) {
+      throw new Error("Duplicate reconciliation decision: " + component);
+    }
+    resolutions[component] = resolution;
+  }
+  return resolutions;
+}
+
+function validateResolutionTargets(
+  conflicts: ConfigConflict[],
+  resolutions: Record<string, OwnershipResolution>,
+): void {
+  const available = new Set(
+    conflicts
+      .filter((conflict) => conflict.reconcilable === true)
+      .map((conflict) => conflict.component),
+  );
+  for (const component of Object.keys(resolutions)) {
+    if (!available.has(component)) {
+      throw new Error(
+        "Reconciliation decision does not match an unmanaged collision: " + component,
+      );
+    }
   }
 }
 
@@ -179,6 +292,7 @@ function parseCli(argv: string[]): { command: string; options: CliOptions } {
       mcp: { type: "string" },
       mode: { type: "string" },
       home: { type: "string" },
+      resolve: { type: "string", multiple: true },
       yes: { type: "boolean", short: "y", default: false },
       "dry-run": { type: "boolean", default: false },
       "all-skills": { type: "boolean", default: false },
@@ -206,6 +320,7 @@ function parseCli(argv: string[]): { command: string; options: CliOptions } {
   assignOption(options, "mcp", parsed.values.mcp);
   assignOption(options, "mode", parsed.values.mode);
   assignOption(options, "home", parsed.values.home);
+  assignOption(options, "resolve", parsed.values.resolve);
   return {
     command: parsed.positionals[0] ?? "help",
     options,
@@ -320,6 +435,7 @@ function hasConfigurationFlags(options: CliOptions): boolean {
   return (
     options.agents !== undefined ||
     options.mode !== undefined ||
+    options.resolve !== undefined ||
     hasExplicitSelection(options)
   );
 }
@@ -356,6 +472,7 @@ function helpText(): string {
     "  agentpack list",
     "  agentpack plan [options]",
     "  agentpack install [options]       Guided setup when run in a terminal",
+    "  agentpack reconcile [options]     Adopt, keep, or replace unmanaged collisions",
     "  agentpack update [options]",
     "  agentpack diff [options]",
     "  agentpack doctor [--home PATH] [--json]",
@@ -370,6 +487,7 @@ function helpText(): string {
     "  --all-skills                   Select every catalog skill",
     "  --all-mcp                      Select every MCP server",
     "  --home PATH                    Isolated user home / advanced override",
+    "  --resolve COMPONENT=ACTION     Reconcile collision with keep or replace; repeatable",
     "  --dry-run                      Preview only",
     "  --yes, -y                      Skip prompts and apply the previewed plan",
     "  --json                         Machine-readable plan or doctor output",
@@ -377,6 +495,7 @@ function helpText(): string {
     "  --version, -v                  Show version",
     "",
     "Run `agentpack install` for guided setup. Ctrl+C cancels without changing files.",
+    "Run `agentpack reconcile --profile NAME` to resolve append-mode ownership conflicts.",
     "Selected open-source skills are resolved online before review; apply installs the shown commits.",
     "Package installation itself never changes user configuration.",
   ].join("\n") + "\n";

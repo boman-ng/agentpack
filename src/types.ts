@@ -120,6 +120,19 @@ export interface ConfigConflict {
   target: string;
   component: string;
   message: string;
+  reconcilable?: boolean;
+}
+
+export type OwnershipResolution = "keep" | "replace";
+
+export interface ReconciliationOptions {
+  resolutions: Record<string, OwnershipResolution>;
+}
+
+export interface ReconciliationSummary {
+  adopted: string[];
+  replaced: string[];
+  kept: string[];
 }
 
 export interface RenderedMcpConfig {
@@ -152,6 +165,7 @@ export interface AgentAdapter {
 }
 
 export type FileOperation =
+  | "adopt"
   | "create"
   | "replace"
   | "append"
@@ -179,7 +193,7 @@ export interface SkillInstallEntry {
   sourceHash: string;
   sourceRevision: SkillSourceRevision;
   target: string;
-  operation: "install" | "replace";
+  operation: "adopt" | "install" | "replace";
   beforeHash?: string | null;
 }
 
@@ -221,6 +235,8 @@ export interface ChangePlan {
   resolvedSources: ResolvedGitSource[];
   temporaryPaths: string[];
   uninstall: boolean;
+  reconcile: boolean;
+  reconciliation?: ReconciliationSummary;
 }
 
 export interface ManagedInstruction {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
@@ -569,7 +569,77 @@ test("plain plan and help describe the new guided interaction", async (t) => {
     { cwd: repositoryRoot },
   );
   assert.match(stdout, /Guided setup when run in a terminal/);
+  assert.match(stdout, /agentpack reconcile \[options\]/);
+  assert.match(stdout, /--resolve COMPONENT=ACTION/);
   assert.doesNotMatch(stdout, /comma-separated/);
+});
+
+test("CLI reconcile previews and applies explicit targeted replacements", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const skillFile = join(layout.sharedSkills, "cleanup", "SKILL.md");
+  const mcpPath = join(layout.codexHome, "config.toml");
+  await put(
+    skillFile,
+    "---\nname: cleanup\ndescription: unmanaged CLI fixture\n---\n",
+  );
+  await put(
+    mcpPath,
+    '[mcp_servers.anysearch]\nurl = "https://unmanaged.invalid/mcp"\n',
+  );
+  const cli = join(repositoryRoot, "dist", "cli.js");
+  const baseArgs = [
+    cli,
+    "reconcile",
+    "--home",
+    home,
+    "--agents",
+    "codex",
+    "--skills",
+    "cleanup",
+    "--mcp",
+    "anysearch",
+  ];
+
+  const preview = await execFileAsync(process.execPath, [...baseArgs, "--json"], {
+    cwd: repositoryRoot,
+  });
+  const parsed = JSON.parse(preview.stdout);
+  assert.equal(parsed.operation, "reconcile");
+  assert.equal(parsed.conflicts.length, 2);
+  assert.equal(parsed.conflicts.every((conflict) => conflict.reconcilable), true);
+  assert.equal(await loadState(layout.stateFile), undefined);
+
+  const applied = await execFileAsync(
+    process.execPath,
+    [
+      ...baseArgs,
+      "--resolve",
+      "skill:cleanup=replace",
+      "--resolve",
+      "mcp:anysearch=replace",
+      "--yes",
+    ],
+    { cwd: repositoryRoot },
+  );
+  assert.match(applied.stdout, /^AgentPack reconcile plan/m);
+  assert.match(applied.stdout, /REPLACE\s+skill:cleanup/);
+  assert.match(applied.stdout, /Reconciliation complete\. Backup:/);
+  const state = await loadState(layout.stateFile);
+  assert.ok(state);
+  assert.deepEqual(state.selection, {
+    skillIds: ["cleanup"],
+    mcpIds: ["anysearch"],
+  });
+  assert.equal((await runDoctor(pack, layout, state)).every((check) => check.ok), true);
+
+  await assert.rejects(
+    execFileAsync(
+      process.execPath,
+      [...baseArgs, "--resolve", "skill:not-selected=replace", "--yes"],
+      { cwd: repositoryRoot },
+    ),
+    /does not match an unmanaged collision/,
+  );
 });
 
 test("CLI version flags report the pack version", async () => {
@@ -643,6 +713,244 @@ test("append mode refuses unmanaged skill and MCP collisions", async (t) => {
   );
   assert.equal(await readFile(join(layout.codexHome, "config.toml"), "utf8"), unmanagedMcp);
   assert.equal(await loadState(layout.stateFile), undefined);
+});
+
+test("reconcile adopts exact unmanaged skills and MCP entries", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const cleanupSource = join(
+    repositoryRoot,
+    "skills",
+    "maintenance",
+    "code-quality",
+    "cleanup",
+  );
+  await mkdir(layout.sharedSkills, { recursive: true });
+  await cp(cleanupSource, join(layout.sharedSkills, "cleanup"), { recursive: true });
+
+  for (const adapter of [new CodexAdapter(), new KimiAdapter(), new OpenCodeAdapter()]) {
+    const target = adapter.mcpPath(layout);
+    const rendered = adapter.renderMcp(undefined, [anysearch], "append", new Set(), target);
+    await put(target, rendered.content);
+  }
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex", "kimi", "opencode"],
+    selection: { skillIds: ["cleanup"], mcpIds: ["anysearch"] },
+    reconciliation: { resolutions: {} },
+  });
+  assert.equal(plan.conflicts.length, 0);
+  assert.deepEqual(plan.reconciliation?.kept, []);
+  assert.ok(plan.reconciliation?.adopted.includes("skill:cleanup"));
+  assert.ok(plan.reconciliation?.adopted.includes("mcp:anysearch@codex"));
+  assert.ok(plan.reconciliation?.adopted.includes("mcp:anysearch@kimi"));
+  assert.ok(plan.reconciliation?.adopted.includes("mcp:anysearch@opencode"));
+  assert.equal(
+    plan.actions
+      .find((action) => action.kind === "skills")
+      ?.entries.find((entry) => entry.id === "cleanup")?.operation,
+    "adopt",
+  );
+  assert.equal(
+    plan.actions.filter(
+      (action) => action.kind === "file" && action.component === "mcp" && action.operation === "adopt",
+    ).length,
+    3,
+  );
+
+  const result = await applyInstallPlan(pack, layout, plan);
+  assert.ok(result.backupPath);
+  assert.equal((await runDoctor(pack, layout, result.state)).every((check) => check.ok), true);
+  const update = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex", "kimi", "opencode"],
+    selection: result.state.selection,
+    previousState: result.state,
+  });
+  assert.equal(update.conflicts.length, 0);
+  assert.equal(update.actions.length, 0);
+
+  const uninstall = await buildUninstallPlan(pack, layout, result.state);
+  assert.equal(uninstall.conflicts.length, 0);
+  await applyUninstallPlan(layout, uninstall);
+  await assert.rejects(readFile(join(layout.sharedSkills, "cleanup", "SKILL.md"), "utf8"));
+  for (const adapter of [new CodexAdapter(), new KimiAdapter(), new OpenCodeAdapter()]) {
+    const content = await readFile(adapter.mcpPath(layout), "utf8");
+    assert.equal(adapter.entryHash(content, "anysearch"), undefined);
+  }
+});
+
+test("reconcile adoption rejects a target changed after preview", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const target = join(layout.sharedSkills, "cleanup");
+  await mkdir(layout.sharedSkills, { recursive: true });
+  await cp(
+    join(repositoryRoot, "skills", "maintenance", "code-quality", "cleanup"),
+    target,
+    { recursive: true },
+  );
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: [] },
+    reconciliation: { resolutions: {} },
+  });
+  assert.equal(
+    plan.actions
+      .find((action) => action.kind === "skills")
+      ?.entries.find((entry) => entry.id === "cleanup")?.operation,
+    "adopt",
+  );
+  await writeFile(join(target, "SKILL.md"), "changed after preview\n", "utf8");
+
+  await assert.rejects(applyInstallPlan(pack, layout, plan), /Plan is stale/);
+  assert.equal(await readFile(join(target, "SKILL.md"), "utf8"), "changed after preview\n");
+  assert.equal(await loadState(layout.stateFile), undefined);
+});
+
+test("reconcile replaces divergent unmanaged components transactionally", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const unmanagedSkill = "---\nname: cleanup\ndescription: old unmanaged copy\n---\n";
+  const unmanagedMcp =
+    'model = "preserved"\n\n[mcp_servers.anysearch]\nurl = "https://old.invalid/mcp"\n';
+  const skillPath = join(layout.sharedSkills, "cleanup");
+  const mcpPath = join(layout.codexHome, "config.toml");
+  await put(join(skillPath, "SKILL.md"), unmanagedSkill);
+  await put(mcpPath, unmanagedMcp);
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: ["anysearch"] },
+    reconciliation: {
+      resolutions: {
+        "skill:cleanup": "replace",
+        "mcp:anysearch": "replace",
+      },
+    },
+  });
+  assert.equal(plan.conflicts.length, 0);
+  assert.ok(plan.reconciliation?.replaced.includes("skill:cleanup"));
+  assert.ok(plan.reconciliation?.replaced.includes("mcp:anysearch@codex"));
+  assert.equal(
+    plan.actions
+      .find((action) => action.kind === "skills")
+      ?.entries.find((entry) => entry.id === "cleanup")?.operation,
+    "replace",
+  );
+
+  const mcpAction = plan.actions.find(
+    (action) => action.kind === "file" && action.component === "mcp",
+  );
+  assert.ok(mcpAction && mcpAction.kind === "file");
+  mcpAction.after = "[invalid\n";
+  await assert.rejects(applyInstallPlan(pack, layout, plan));
+  assert.equal(await readFile(join(skillPath, "SKILL.md"), "utf8"), unmanagedSkill);
+  assert.equal(await readFile(mcpPath, "utf8"), unmanagedMcp);
+  assert.equal(await loadState(layout.stateFile), undefined);
+
+  const retry = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: ["anysearch"] },
+    reconciliation: {
+      resolutions: {
+        "skill:cleanup": "replace",
+        "mcp:anysearch": "replace",
+      },
+    },
+  });
+  const result = await applyInstallPlan(pack, layout, retry);
+  assert.ok(result.backupPath);
+  const manifest = JSON.parse(
+    await readFile(join(result.backupPath, "manifest.json"), "utf8"),
+  );
+  const skillBackup = manifest.items.find((item) => item.target === skillPath)?.snapshot;
+  const mcpBackup = manifest.items.find((item) => item.target === mcpPath)?.snapshot;
+  assert.ok(skillBackup);
+  assert.ok(mcpBackup);
+  assert.equal(
+    await readFile(join(result.backupPath, skillBackup, "SKILL.md"), "utf8"),
+    unmanagedSkill,
+  );
+  assert.equal(await readFile(join(result.backupPath, mcpBackup), "utf8"), unmanagedMcp);
+  assert.match(await readFile(join(skillPath, "SKILL.md"), "utf8"), /name: cleanup/);
+  const codex = parseToml(await readFile(mcpPath, "utf8"), { integersAsBigInt: false });
+  assert.equal(codex.model, "preserved");
+  assert.equal(codex.mcp_servers.anysearch.url, anysearch.url);
+  assert.equal((await runDoctor(pack, layout, result.state)).every((check) => check.ok), true);
+
+  const update = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: result.state.selection,
+    previousState: result.state,
+  });
+  assert.equal(update.conflicts.length, 0);
+  assert.equal(update.actions.length, 0);
+});
+
+test("reconcile keeps divergent components unmanaged by removing them from selection", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const unmanagedSkill = "---\nname: cleanup\ndescription: keep this copy\n---\n";
+  const unmanagedMcp =
+    '[mcp_servers.anysearch]\nurl = "https://keep.invalid/mcp"\n';
+  const skillFile = join(layout.sharedSkills, "cleanup", "SKILL.md");
+  const mcpPath = join(layout.codexHome, "config.toml");
+  await put(skillFile, unmanagedSkill);
+  await put(mcpPath, unmanagedMcp);
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: ["anysearch"] },
+    reconciliation: {
+      resolutions: {
+        "skill:cleanup": "keep",
+        "mcp:anysearch": "keep",
+      },
+    },
+  });
+  assert.equal(plan.conflicts.length, 0);
+  assert.deepEqual(plan.selection, { skillIds: [], mcpIds: [] });
+  assert.deepEqual(plan.reconciliation?.kept, ["mcp:anysearch", "skill:cleanup"]);
+
+  const result = await applyInstallPlan(pack, layout, plan);
+  assert.equal(await readFile(skillFile, "utf8"), unmanagedSkill);
+  assert.equal(await readFile(mcpPath, "utf8"), unmanagedMcp);
+  assert.deepEqual(result.state.selection, { skillIds: [], mcpIds: [] });
+  const update = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: result.state.selection,
+    previousState: result.state,
+  });
+  assert.equal(update.conflicts.length, 0);
+});
+
+test("reconcile refuses a global keep that would split schema v1 MCP ownership", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const initial = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["kimi"],
+    selection: { skillIds: [], mcpIds: ["anysearch"] },
+  });
+  const { state } = await applyInstallPlan(pack, layout, initial);
+  await put(
+    join(layout.codexHome, "config.toml"),
+    '[mcp_servers.anysearch]\nurl = "https://codex-unmanaged.invalid/mcp"\n',
+  );
+
+  await assert.rejects(
+    buildInstallPlan(pack, layout, {
+      mode: "append",
+      adapters: ["codex", "kimi"],
+      selection: { skillIds: [], mcpIds: ["anysearch"] },
+      previousState: state,
+      reconciliation: { resolutions: { "mcp:anysearch": "keep" } },
+    }),
+    /already manages it on another target/,
+  );
 });
 
 test("append update refuses drifted managed instructions and MCP entries", async (t) => {

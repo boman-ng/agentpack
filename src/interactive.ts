@@ -24,6 +24,8 @@ import type {
   InstallMode,
   InstallState,
   LoadedPack,
+  ConfigConflict,
+  OwnershipResolution,
 } from "./types.js";
 
 interface GuidedConfiguration {
@@ -152,6 +154,69 @@ export async function promptApplyPlan(options: {
       cancel("Canceled. No files were changed.");
       process.exitCode = 130;
       return false;
+    }
+    throw error;
+  }
+}
+
+export async function promptOwnershipResolutions(
+  conflicts: ConfigConflict[],
+  layout: HomeLayout,
+): Promise<Record<string, OwnershipResolution> | undefined> {
+  const grouped = new Map<string, ConfigConflict[]>();
+  for (const conflict of conflicts.filter((entry) => entry.reconcilable === true)) {
+    const entries = grouped.get(conflict.component) ?? [];
+    entries.push(conflict);
+    grouped.set(conflict.component, entries);
+  }
+  if (grouped.size === 0) {
+    return {};
+  }
+
+  log.warn(
+    `${grouped.size} divergent unmanaged ${plural(grouped.size, "component")} need an ownership decision.`,
+  );
+  const resolutions: Record<string, OwnershipResolution> = {};
+  try {
+    for (const [component, entries] of grouped) {
+      const targets = entries
+        .map((entry) => displayHomePath(entry.target, layout.home))
+        .join(", ");
+      const resolution = unwrap(
+        await select<OwnershipResolution | "abort">({
+          message: `Resolve ${component}`,
+          initialValue: "keep",
+          options: [
+            {
+              value: "keep",
+              label: "Keep unmanaged",
+              hint: `exclude from AgentPack on every target; existing content stays at ${targets}`,
+            },
+            {
+              value: "replace",
+              label: "Replace from catalog",
+              hint: `back up and replace only the conflicting ${plural(entries.length, "target")}`,
+            },
+            {
+              value: "abort",
+              label: "Abort",
+              hint: "leave every target unchanged",
+            },
+          ],
+        }),
+      );
+      if (resolution === "abort") {
+        cancel("Reconciliation canceled. No files were changed.");
+        return undefined;
+      }
+      resolutions[component] = resolution;
+    }
+    return resolutions;
+  } catch (error) {
+    if (error instanceof PromptCancelled) {
+      cancel("Reconciliation canceled. No files were changed.");
+      process.exitCode = 130;
+      return undefined;
     }
     throw error;
   }
