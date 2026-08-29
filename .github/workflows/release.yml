@@ -17,8 +17,8 @@ jobs:
       contents: read
     uses: ./.github/workflows/ci.yml
 
-  publish:
-    name: Package and publish
+  release:
+    name: Package and release
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -39,7 +39,6 @@ jobs:
         with:
           node-version: 24
           package-manager-cache: false
-          registry-url: https://registry.npmjs.org
 
       - name: Install without lifecycle scripts
         run: npm ci --ignore-scripts
@@ -75,8 +74,7 @@ jobs:
       - name: Verify canonical assets and behavior
         run: npm run check
 
-      - name: Build npm package
-        id: package
+      - name: Build release archive
         run: |
           mkdir release
           npm pack --pack-destination release
@@ -85,7 +83,6 @@ jobs:
             echo "npm pack did not create a tarball" >&2
             exit 1
           fi
-          echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
 
       - name: Smoke test packaged CLI
         run: |
@@ -107,55 +104,6 @@ jobs:
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
           subject-path: release/*.tgz
-
-      - name: Check npm publication state
-        id: npm
-        env:
-          PACKAGE_TARBALL: ${{ steps.package.outputs.tarball }}
-        run: |
-          node --input-type=module <<'NODE'
-          import { createHash } from "node:crypto";
-          import { appendFileSync, readFileSync } from "node:fs";
-
-          const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
-          const endpoint = new URL(
-            `${encodeURIComponent(packageJson.name)}/${encodeURIComponent(packageJson.version)}`,
-            "https://registry.npmjs.org/",
-          );
-          const response = await fetch(endpoint);
-          if (response.status === 404) {
-            appendFileSync(process.env.GITHUB_OUTPUT, "publish=true\n");
-            process.exit(0);
-          }
-          if (!response.ok) {
-            throw new Error(`npm registry returned ${response.status} for ${endpoint}`);
-          }
-
-          const metadata = await response.json();
-          const expected =
-            "sha512-" +
-            createHash("sha512")
-              .update(readFileSync(process.env.PACKAGE_TARBALL))
-              .digest("base64");
-          if (metadata.dist?.integrity !== expected) {
-            throw new Error(
-              `${packageJson.name}@${packageJson.version} already exists with different content`,
-            );
-          }
-          appendFileSync(process.env.GITHUB_OUTPUT, "publish=false\n");
-          NODE
-
-      - name: Publish package to npm
-        if: steps.npm.outputs.publish == 'true'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          release_tag_ref="refs/agentpack/release-tag"
-          git fetch --force --no-tags origin "refs/tags/$GITHUB_REF_NAME:$release_tag_ref"
-          test "$(git rev-parse "${release_tag_ref}^{commit}")" = "$GITHUB_SHA"
-          git fetch --no-tags origin main:refs/remotes/origin/main
-          git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main
-          npm publish "${{ steps.package.outputs.tarball }}" --access public --provenance
 
       - name: Create GitHub release
         env:
