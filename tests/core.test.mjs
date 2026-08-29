@@ -1911,6 +1911,57 @@ test("legacy v0.2 append update migrates every adapter and preserves unrelated d
   assert.equal(update.actions.length, 0);
 });
 
+test("legacy v0.2 update adopts vendor instructions when old ownership is absent", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const { state, legacyInstructions } = await createLegacyState(home, layout);
+  const canonical = await readFile(pack.instructionPath, "utf8");
+  state.managed.instructions = [];
+  await writeFile(layout.stateFile, JSON.stringify(state, null, 2) + "\n", "utf8");
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: state.mode,
+    adapters: state.adapters,
+    selection: state.selection,
+    previousState: state,
+  });
+  assert.equal(plan.conflicts.length, 0);
+  const result = await applyInstallPlan(pack, layout, plan, state);
+
+  assert.equal(await readFile(legacyInstructions, "utf8"), canonical);
+  assert.equal(result.state.managed.instructions.length, state.adapters.length);
+  for (const adapterId of state.adapters) {
+    assert.equal(
+      await readFile(adapters[adapterId].instructionPath(layout), "utf8"),
+      canonical,
+    );
+  }
+  assert.equal((await runDoctor(pack, layout, result.state)).every((check) => check.ok), true);
+});
+
+test("legacy v0.2 uninstall preserves instructions it never recorded as owned", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const { state, legacyInstructions, legacySkill } = await createLegacyState(home, layout);
+  const canonical = await readFile(pack.instructionPath, "utf8");
+  const codexInstructions = adapters.codex.instructionPath(layout);
+  state.managed.instructions = [];
+  await writeFile(layout.stateFile, JSON.stringify(state, null, 2) + "\n", "utf8");
+
+  const plan = await buildUninstallPlan(pack, layout, state);
+  assert.equal(plan.conflicts.length, 0);
+  assert.equal(
+    plan.actions.some(
+      (action) => action.kind === "file" && action.component === "instructions",
+    ),
+    false,
+  );
+  await applyUninstallPlan(layout, plan);
+
+  assert.equal(await readFile(legacyInstructions, "utf8"), canonical);
+  assert.equal(await readFile(codexInstructions, "utf8"), canonical);
+  await assert.rejects(readFile(join(legacySkill, "SKILL.md"), "utf8"));
+  assert.equal(await loadState(layout.stateFile), undefined);
+});
+
 test("state validation rejects a partially migrated legacy layout", async (t) => {
   const { home, layout } = await temporaryHome(t);
   const { state } = await createLegacyState(home, layout);

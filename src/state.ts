@@ -175,8 +175,10 @@ export function stateOwnershipErrors(
     }
   }
   collectDuplicates(instructionAdapters, "managed instruction adapter", errors);
+  const allowsMissingInstructionTargets =
+    state.pack.version === LEGACY_SHARED_LAYOUT_PACK_VERSION;
   for (const adapter of state.adapters) {
-    if (!instructionAdapters.includes(adapter)) {
+    if (!allowsMissingInstructionTargets && !instructionAdapters.includes(adapter)) {
       errors.push(adapter + " has no managed instruction target");
     }
   }
