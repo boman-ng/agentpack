@@ -1,8 +1,8 @@
-import { join } from "node:path";
+import { resolve } from "node:path";
 import { adapterById } from "./adapters/index.js";
 import { createBackup, restoreBackup } from "./backup.js";
 import { managedInstructionHash } from "./instructions.js";
-import { mcpById, skillById } from "./manifest.js";
+import { mcpById } from "./manifest.js";
 import { assertPlanCurrent } from "./preconditions.js";
 import { disposeInstallPlan } from "./sources.js";
 import type {
@@ -21,11 +21,10 @@ import {
   pathExists,
   readTextIfExists,
   removePath,
-  replaceDirectory,
   replacePath,
 } from "./util/fs.js";
 import { sha256, unique } from "./util/values.js";
-import { writeState } from "./state.js";
+import { assertStateOwnership, writeState } from "./state.js";
 
 export interface ApplyResult {
   state: InstallState;
@@ -61,6 +60,8 @@ async function applyPreparedInstallPlan(
     if (previousState === undefined) {
       throw new Error("Nothing to apply and no AgentPack state exists");
     }
+    await assertPlanCurrent(layout, plan);
+    await validateManagedState(previousState);
     return { state: previousState };
   }
 
@@ -72,6 +73,8 @@ async function applyPreparedInstallPlan(
     }
     await validateAppliedPlan(plan);
     const state = await buildNextState(pack, layout, plan, previousState, backup?.path);
+    assertStateOwnership(pack, layout, state);
+    await validateManagedState(state);
     await writeState(layout.stateFile, state);
     const result: ApplyResult = { state };
     if (backup !== undefined) {
@@ -111,13 +114,6 @@ async function applyAction(action: PlanAction): Promise<void> {
     for (const entry of action.entries) {
       await removePath(entry.target);
     }
-    return;
-  }
-  if (action.operation === "replace") {
-    await replaceDirectory(
-      action.target,
-      action.entries.map((entry) => ({ source: entry.source, name: entry.name })),
-    );
     return;
   }
   for (const entry of action.entries) {
@@ -162,6 +158,43 @@ async function validateAppliedPlan(plan: ChangePlan): Promise<void> {
   }
 }
 
+async function validateManagedState(state: InstallState): Promise<void> {
+  for (const entry of state.managed.instructions) {
+    const content = await readTextIfExists(entry.path);
+    const actual =
+      content === undefined
+        ? undefined
+        : entry.strategy === "managed-block"
+          ? managedInstructionHash(content)
+          : sha256(content);
+    if (actual !== entry.contentHash) {
+      throw new Error(
+        "Managed instructions changed during apply: " + entry.adapter,
+      );
+    }
+  }
+  for (const entry of state.managed.skills) {
+    const actual = (await pathExists(entry.path))
+      ? await hashPath(entry.path)
+      : undefined;
+    if (actual !== entry.contentHash) {
+      throw new Error("Managed skill changed during apply: " + entry.id);
+    }
+  }
+  for (const entry of state.managed.mcp) {
+    const content = await readTextIfExists(entry.path);
+    const adapter = adapterById(entry.adapter);
+    for (const [id, expected] of Object.entries(entry.entries)) {
+      const actual = content === undefined ? undefined : adapter.entryHash(content, id);
+      if (actual !== expected) {
+        throw new Error(
+          "Managed MCP entry changed during apply: " + entry.adapter + "/" + id,
+        );
+      }
+    }
+  }
+}
+
 async function buildNextState(
   pack: LoadedPack,
   layout: HomeLayout,
@@ -171,8 +204,8 @@ async function buildNextState(
 ): Promise<InstallState> {
   const previous =
     previousState?.pack.name === pack.name ? previousState : undefined;
-  const instructions = mergeInstructions(previous, plan);
-  const skills = await mergeSkills(pack, layout, previous, plan);
+  const instructions = mergeInstructions(layout, previous, plan);
+  const skills = await mergeSkills(previous, plan);
   const mcp = await mergeMcp(pack, layout, previous, plan);
   const adapters: InstallState["adapters"] = unique([
     ...(previous?.adapters ?? []),
@@ -185,7 +218,7 @@ async function buildNextState(
     mode: plan.mode,
     adapters,
     selection: {
-      skillIds: skills.map((entry) => entry.id),
+      skillIds: unique(skills.map((entry) => entry.id)),
       mcpIds: unique(mcp.flatMap((entry) => Object.keys(entry.entries))),
     },
     managed: {
@@ -201,20 +234,28 @@ async function buildNextState(
 }
 
 function mergeInstructions(
+  layout: HomeLayout,
   previous: InstallState | undefined,
   plan: ChangePlan,
 ): ManagedInstruction[] {
   const byAdapter = new Map(
     (previous?.managed.instructions ?? []).map((entry) => [entry.adapter, entry]),
   );
-  for (const adapterId of plan.adapters) {
-    const action = plan.actions.find(
-      (candidate) =>
-        candidate.kind === "file" &&
-        candidate.component === "instructions" &&
-        candidate.adapter === adapterId,
-    );
-    if (action === undefined || action.kind !== "file" || action.after === null) {
+  for (const action of plan.actions) {
+    if (action.kind !== "file" || action.component !== "instructions") {
+      continue;
+    }
+    const current = byAdapter.get(action.adapter);
+    const ownsVendorTarget =
+      resolve(action.target) ===
+      resolve(adapterById(action.adapter).instructionPath(layout));
+    if (action.after === null || !ownsVendorTarget) {
+      if (
+        current !== undefined &&
+        resolve(current.path) === resolve(action.target)
+      ) {
+        byAdapter.delete(action.adapter);
+      }
       continue;
     }
     const strategy = action.strategy ?? "overwrite";
@@ -223,10 +264,12 @@ function mergeInstructions(
         ? managedInstructionHash(action.after)
         : sha256(action.after);
     if (contentHash === undefined) {
-      throw new Error("Managed instruction block was not written for " + adapterId);
+      throw new Error(
+        "Managed instruction block was not written for " + action.adapter,
+      );
     }
-    byAdapter.set(adapterId, {
-      adapter: adapterId,
+    byAdapter.set(action.adapter, {
+      adapter: action.adapter,
       path: action.target,
       strategy,
       contentHash,
@@ -236,37 +279,35 @@ function mergeInstructions(
 }
 
 async function mergeSkills(
-  pack: LoadedPack,
-  layout: HomeLayout,
   previous: InstallState | undefined,
   plan: ChangePlan,
 ): Promise<ManagedSkill[]> {
-  const byId =
-    plan.mode === "overwrite"
-      ? new Map<string, ManagedSkill>()
-      : new Map((previous?.managed.skills ?? []).map((entry) => [entry.id, entry]));
-  const installedEntries = new Map(
-    plan.actions
-      .filter((action) => action.kind === "skills")
-      .flatMap((action) => (action.kind === "skills" ? action.entries : []))
-      .map((entry) => [entry.id, entry]),
+  const byPath = new Map(
+    (previous?.managed.skills ?? []).map((entry) => [resolve(entry.path), entry]),
   );
-  for (const id of plan.selection.skillIds) {
-    const skill = skillById(pack, id);
-    const path = join(layout.sharedSkills, skill.name);
-    const source = installedEntries.get(id)?.sourceRevision ?? byId.get(id)?.source;
-    if (source === undefined) {
-      throw new Error("Installed skill has no resolved source revision: " + id);
+  for (const action of plan.actions) {
+    if (action.kind === "skills-remove") {
+      for (const entry of action.entries) {
+        byPath.delete(resolve(entry.target));
+      }
+      continue;
     }
-    byId.set(id, {
-      id,
-      name: skill.name,
-      path,
-      contentHash: await hashPath(path),
-      source,
-    });
+    if (action.kind !== "skills") {
+      continue;
+    }
+    for (const entry of action.entries) {
+      byPath.set(resolve(entry.target), {
+        id: entry.id,
+        name: entry.name,
+        path: entry.target,
+        contentHash: await hashPath(entry.target),
+        source: entry.sourceRevision,
+      });
+    }
   }
-  return [...byId.values()].sort((a, b) => a.id.localeCompare(b.id));
+  return [...byPath.values()].sort(
+    (a, b) => a.id.localeCompare(b.id) || a.path.localeCompare(b.path),
+  );
 }
 
 async function mergeMcp(
@@ -282,8 +323,20 @@ async function mergeMcp(
     ]),
   );
   for (const adapterId of plan.adapters) {
+    const action = plan.actions.find(
+      (candidate) =>
+        candidate.kind === "file" &&
+        candidate.component === "mcp" &&
+        candidate.adapter === adapterId,
+    );
+    if (action === undefined) {
+      continue;
+    }
     const adapter = adapterById(adapterId);
     const path = adapter.mcpPath(layout);
+    if (resolve(action.target) !== resolve(path)) {
+      throw new Error("MCP action is outside its adapter target: " + adapterId);
+    }
     const content = (await readTextIfExists(path)) ?? "";
     const current =
       plan.mode === "overwrite"
@@ -301,7 +354,11 @@ async function mergeMcp(
       }
       current.entries[id] = hash;
     }
-    byAdapter.set(adapterId, current);
+    if (Object.keys(current.entries).length === 0) {
+      byAdapter.delete(adapterId);
+    } else {
+      byAdapter.set(adapterId, current);
+    }
   }
   return [...byAdapter.values()]
     .filter((entry) => Object.keys(entry.entries).length > 0)

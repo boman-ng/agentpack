@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { relative, resolve } from "node:path";
+import { isAbsolute, relative, resolve, sep } from "node:path";
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -42,6 +42,27 @@ export function optionalString(value: unknown, context: string): string | undefi
 
 export function unique<Value>(values: Value[]): Value[] {
   return [...new Set(values)];
+}
+
+export function isSafeSkillName(value: string): boolean {
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
+}
+
+export function pathsOverlap(left: string, right: string): boolean {
+  const resolvedLeft = resolve(left);
+  const resolvedRight = resolve(right);
+  return (
+    isPathInside(resolvedLeft, resolvedRight) ||
+    isPathInside(resolvedRight, resolvedLeft)
+  );
+}
+
+export function isPathInside(parent: string, candidate: string): boolean {
+  const rel = relative(resolve(parent), resolve(candidate));
+  return (
+    rel === "" ||
+    (!isAbsolute(rel) && rel !== ".." && !rel.startsWith(".." + sep))
+  );
 }
 
 export function sha256(value: string | Buffer): string {

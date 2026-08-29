@@ -37,6 +37,10 @@ export class OpenCodeAdapter implements AgentAdapter {
     return join(layout.opencodeHome, "AGENTS.md");
   }
 
+  skillsPath(layout: HomeLayout): string {
+    return join(layout.opencodeHome, "skills");
+  }
+
   mcpPath(layout: HomeLayout): string {
     return join(layout.opencodeHome, "opencode.json");
   }
@@ -48,31 +52,18 @@ export class OpenCodeAdapter implements AgentAdapter {
     ownedIds: ReadonlySet<string>,
     target: string,
   ): RenderedMcpConfig {
-    if (mode === "overwrite") {
-      const entries: Record<string, unknown> = {};
-      const hashes: Record<string, string> = {};
-      for (const server of servers) {
-        const rendered = renderServer(server);
-        entries[server.id] = rendered;
-        hashes[server.id] = entryHash(rendered);
-      }
-      return {
-        content: jsonText({
-          $schema: "https://opencode.ai/config.json",
-          mcp: entries,
-        }),
-        entryHashes: hashes,
-        conflicts: [],
-      };
-    }
-
     const parsed = parseJsoncObject(existing, "OpenCode config " + target);
     const pathPrefix = mcpPathPrefix();
-    const table = valueAtPath(parsed, pathPrefix);
+    const table = mode === "append" ? valueAtPath(parsed, pathPrefix) : {};
     const conflicts: ConfigConflict[] = [];
     const hashes: Record<string, string> = {};
+    const renderedEntries: Record<string, unknown> = {};
     for (const server of servers) {
-      if (Object.hasOwn(table, server.id) && !ownedIds.has(server.id)) {
+      if (
+        mode === "append" &&
+        Object.hasOwn(table, server.id) &&
+        !ownedIds.has(server.id)
+      ) {
         conflicts.push({
           target,
           component: "mcp:" + server.id,
@@ -81,7 +72,9 @@ export class OpenCodeAdapter implements AgentAdapter {
         });
         continue;
       }
-      hashes[server.id] = entryHash(renderServer(server));
+      const rendered = renderServer(server);
+      renderedEntries[server.id] = rendered;
+      hashes[server.id] = entryHash(rendered);
     }
     if (conflicts.length > 0) {
       return { content: existing ?? "", entryHashes: hashes, conflicts };
@@ -92,9 +85,23 @@ export class OpenCodeAdapter implements AgentAdapter {
         ? jsonText({ $schema: "https://opencode.ai/config.json" })
         : existing;
     const formatting = formattingFor(content);
+    if (mode === "overwrite") {
+      content = applyEdits(
+        content,
+        modify(content, pathPrefix, renderedEntries, {
+          formattingOptions: formatting,
+        }),
+      );
+      return { content, entryHashes: hashes, conflicts };
+    }
     for (const server of servers) {
       const path = [...pathPrefix, server.id];
-      content = applyEdits(content, modify(content, path, renderServer(server), { formattingOptions: formatting }));
+      content = applyEdits(
+        content,
+        modify(content, path, renderedEntries[server.id], {
+          formattingOptions: formatting,
+        }),
+      );
     }
     return { content, entryHashes: hashes, conflicts };
   }

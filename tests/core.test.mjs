@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { cp, mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import {
+  cp,
+  mkdtemp,
+  mkdir,
+  readFile,
+  readdir,
+  rm,
+  symlink,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
@@ -15,20 +24,30 @@ import { OpenCodeAdapter } from "../dist/adapters/opencode.js";
 import { runDoctor } from "../dist/doctor.js";
 import { applyInstallPlan } from "../dist/installer.js";
 import { createHomeLayout } from "../dist/layout.js";
-import { loadPack } from "../dist/manifest.js";
+import { loadPack, validateSkillDirectory } from "../dist/manifest.js";
 import { displayHomePath, formatGuidedReview, formatPlan, planAsJson } from "../dist/plan-output.js";
 import { buildInstallPlan } from "../dist/planner.js";
 import { disposeInstallPlan } from "../dist/sources.js";
 import { findPackRoot } from "../dist/runtime.js";
 import { loadState } from "../dist/state.js";
 import { applyUninstallPlan, buildUninstallPlan } from "../dist/uninstall.js";
-import { portablePath } from "../dist/util/values.js";
+import { hashPath } from "../dist/util/fs.js";
+import { portablePath, sha256 } from "../dist/util/values.js";
 
 const execFileAsync = promisify(execFile);
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const pack = await loadPack(repositoryRoot);
 const anysearch = pack.mcp.find((server) => server.id === "anysearch");
 assert.ok(anysearch);
+const adapters = {
+  codex: new CodexAdapter(),
+  kimi: new KimiAdapter(),
+  opencode: new OpenCodeAdapter(),
+};
+
+function skillTarget(layout, adapterId, name, ...parts) {
+  return join(adapters[adapterId].skillsPath(layout), name, ...parts);
+}
 
 async function temporaryHome(t) {
   const home = await mkdtemp(join(tmpdir(), "agentpack-test-"));
@@ -41,6 +60,62 @@ async function temporaryHome(t) {
 async function put(path, content) {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, content, "utf8");
+}
+
+async function createLegacyState(home, layout) {
+  const canonical = await readFile(pack.instructionPath, "utf8");
+  const legacyInstructions = join(home, ".agents", "AGENTS.md");
+  const legacySkill = join(home, ".agents", "skills", "cleanup");
+  const codexInstructions = join(layout.codexHome, "AGENTS.md");
+  await put(legacyInstructions, canonical);
+  await put(codexInstructions, canonical);
+  await mkdir(dirname(legacySkill), { recursive: true });
+  await cp(
+    join(repositoryRoot, "skills", "maintenance", "code-quality", "cleanup"),
+    legacySkill,
+    { recursive: true },
+  );
+  const state = {
+    schemaVersion: 1,
+    pack: { name: pack.name, version: "0.2.0" },
+    installedAt: "2026-08-29T00:00:00.000Z",
+    mode: "overwrite",
+    adapters: ["codex", "kimi"],
+    selection: { skillIds: ["cleanup"], mcpIds: [] },
+    managed: {
+      instructions: [
+        {
+          adapter: "codex",
+          path: codexInstructions,
+          strategy: "overwrite",
+          contentHash: sha256(canonical),
+        },
+        {
+          adapter: "kimi",
+          path: legacyInstructions,
+          strategy: "overwrite",
+          contentHash: sha256(canonical),
+        },
+      ],
+      skills: [
+        {
+          id: "cleanup",
+          name: "cleanup",
+          path: legacySkill,
+          contentHash: await hashPath(legacySkill),
+          source: {
+            id: "boman-cleanup",
+            kind: "local",
+            repository: "https://github.com/boman-ng/agentpack",
+            packVersion: "0.2.0",
+          },
+        },
+      ],
+      mcp: [],
+    },
+  };
+  await put(layout.stateFile, JSON.stringify(state, null, 2) + "\n");
+  return { state, legacyInstructions, legacySkill };
 }
 
 async function createOnlineFixture(home, body = "version one\n") {
@@ -102,7 +177,7 @@ async function commitOnlineFixture(fixture, body, message) {
 
 test("canonical manifest loads categorized skills, profiles, and online sources", async () => {
   assert.equal(pack.name, "boman-ng/agentpack");
-  assert.equal(pack.version, "0.2.0");
+  assert.equal(pack.version, "0.3.0");
   assert.equal(
     JSON.parse(await readFile(join(repositoryRoot, "agentpack.lock"), "utf8")).schemaVersion,
     1,
@@ -141,6 +216,96 @@ test("canonical manifest loads categorized skills, profiles, and online sources"
   assert.equal(anysearch.bearerTokenEnvVar, undefined);
 });
 
+test("unsafe skill names are rejected before adapter path construction", async () => {
+  const cleanup = pack.skills.find((skill) => skill.id === "cleanup");
+  assert.ok(cleanup);
+  const directory = join(
+    repositoryRoot,
+    "skills",
+    "maintenance",
+    "code-quality",
+    "cleanup",
+  );
+  for (const name of [".system", "../escape", "two--hyphens"]) {
+    await assert.rejects(
+      validateSkillDirectory({ ...cleanup, name }, directory),
+      /must contain only lowercase letters, digits, and single hyphens/,
+    );
+  }
+});
+
+test("a skill source root cannot be a symlink", async (t) => {
+  const { home } = await temporaryHome(t);
+  const cleanup = pack.skills.find((skill) => skill.id === "cleanup");
+  assert.ok(cleanup);
+  const realSkill = join(home, "real-skill");
+  await put(
+    join(realSkill, "SKILL.md"),
+    "---\nname: cleanup\ndescription: symlink fixture\n---\n",
+  );
+  const linkedSkill = join(home, "linked-skill");
+  await symlink(realSkill, linkedSkill, process.platform === "win32" ? "junction" : "dir");
+  await assert.rejects(
+    validateSkillDirectory(cleanup, linkedSkill),
+    /Skill root must be a real directory/,
+  );
+});
+
+test("selected skill sources reject non-portable or escaping symlinks", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const cleanup = pack.skills.find((skill) => skill.id === "cleanup");
+  assert.ok(cleanup);
+  const sourceRoot = join(home, "fixture-source");
+  const skillRoot = join(sourceRoot, "cleanup");
+  await put(
+    join(skillRoot, "SKILL.md"),
+    "---\nname: cleanup\ndescription: symlink fixture\n---\n",
+  );
+  const payload = join(skillRoot, "payload");
+  await put(join(payload, "value.txt"), "payload\n");
+  await put(join(sourceRoot, "outside", "value.txt"), "outside\n");
+  const fixturePack = {
+    ...pack,
+    skills: [{ ...cleanup, sourceId: "symlink-fixture", path: "cleanup" }],
+    skillSources: [
+      {
+        id: "symlink-fixture",
+        kind: "local",
+        root: sourceRoot,
+        repository: "https://example.invalid/symlink-fixture",
+        license: "MIT",
+      },
+    ],
+  };
+  const link = join(skillRoot, "linked");
+  await symlink(
+    payload,
+    link,
+    process.platform === "win32" ? "junction" : "dir",
+  );
+  await assert.rejects(
+    buildInstallPlan(fixturePack, layout, {
+      mode: "overwrite",
+      adapters: ["codex"],
+      selection: { skillIds: ["cleanup"], mcpIds: [] },
+    }),
+    /non-portable absolute symlink/,
+  );
+  if (process.platform === "win32") {
+    return;
+  }
+  await rm(link);
+  await symlink("../outside", link, "dir");
+  await assert.rejects(
+    buildInstallPlan(fixturePack, layout, {
+      mode: "overwrite",
+      adapters: ["codex"],
+      selection: { skillIds: ["cleanup"], mcpIds: [] },
+    }),
+    /symlink outside its root/,
+  );
+});
+
 test("lock paths use portable separators on every operating system", async () => {
   assert.equal(portablePath("profiles\\coding.yaml"), "profiles/coding.yaml");
   const lock = JSON.parse(await readFile(join(repositoryRoot, "agentpack.lock"), "utf8"));
@@ -156,6 +321,190 @@ test("lock paths use portable separators on every operating system", async () =>
 test("home-relative paths use portable separators in user-facing output", async (t) => {
   const { home } = await temporaryHome(t);
   assert.equal(displayHomePath(join(home, ".codex", "AGENTS.md"), home), "~/.codex/AGENTS.md");
+});
+
+test("adapter contracts keep every managed surface in its vendor home", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  assert.deepEqual(
+    ["codex", "kimi", "opencode"].map((id) => ({
+      id,
+      instructions: adapters[id].instructionPath(layout),
+      skills: adapters[id].skillsPath(layout),
+      mcp: adapters[id].mcpPath(layout),
+    })),
+    [
+      {
+        id: "codex",
+        instructions: join(home, ".codex", "AGENTS.md"),
+        skills: join(home, ".codex", "skills"),
+        mcp: join(home, ".codex", "config.toml"),
+      },
+      {
+        id: "kimi",
+        instructions: join(home, ".kimi-code", "AGENTS.md"),
+        skills: join(home, ".kimi-code", "skills"),
+        mcp: join(home, ".kimi-code", "mcp.json"),
+      },
+      {
+        id: "opencode",
+        instructions: join(home, ".config", "opencode", "AGENTS.md"),
+        skills: join(home, ".config", "opencode", "skills"),
+        mcp: join(home, ".config", "opencode", "opencode.json"),
+      },
+    ],
+  );
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex", "kimi", "opencode"],
+    selection: { skillIds: ["cleanup"], mcpIds: [] },
+  });
+  try {
+    const skillActions = plan.actions.filter((action) => action.kind === "skills");
+    assert.deepEqual(skillActions.map((action) => action.adapter), ["codex", "kimi", "opencode"]);
+    assert.equal(
+      plan.actions.some((action) => action.target.startsWith(join(home, ".agents"))),
+      false,
+    );
+    assert.equal(planAsJson(plan).includes(join(home, ".agents")), false);
+  } finally {
+    await disposeInstallPlan(plan);
+  }
+});
+
+test("relative vendor-home environment variables follow CLI cwd resolution", async (t) => {
+  const { home } = await temporaryHome(t);
+  const layoutModule = new URL("../dist/layout.js", import.meta.url).href;
+  const script =
+    `import { createHomeLayout } from ${JSON.stringify(layoutModule)};` +
+    "const layout=createHomeLayout();" +
+    "process.stdout.write(JSON.stringify({codex:layout.codexHome,kimi:layout.kimiHome,opencode:layout.opencodeHome}));";
+  const { stdout } = await execFileAsync(
+    process.execPath,
+    ["--input-type=module", "--eval", script],
+    {
+      cwd: home,
+      env: {
+        ...process.env,
+        CODEX_HOME: "codex-relative",
+        KIMI_CODE_HOME: "kimi-relative",
+        XDG_CONFIG_HOME: "xdg-relative",
+      },
+    },
+  );
+  assert.deepEqual(JSON.parse(stdout), {
+    codex: join(home, "codex-relative"),
+    kimi: join(home, "kimi-relative"),
+    opencode: join(home, "xdg-relative", "opencode"),
+  });
+});
+
+test("planner rejects shared-user and overlapping adapter targets", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  await assert.rejects(
+    buildInstallPlan(pack, { ...layout, kimiHome: join(home, ".agents") }, {
+      mode: "overwrite",
+      adapters: ["kimi"],
+      selection: { skillIds: [], mcpIds: [] },
+    }),
+    /must not use the shared user-agent directory/,
+  );
+  await assert.rejects(
+    buildInstallPlan(pack, { ...layout, kimiHome: join(home, ".AGENTS") }, {
+      mode: "overwrite",
+      adapters: ["kimi"],
+      selection: { skillIds: [], mcpIds: [] },
+    }),
+    /must not use the shared user-agent directory/,
+  );
+
+  await assert.rejects(
+    buildInstallPlan(
+      pack,
+      {
+        ...layout,
+        codexHome: join(home, "vendor"),
+        kimiHome: join(home, "vendor", "skills", "cleanup"),
+      },
+      {
+        mode: "overwrite",
+        adapters: ["codex", "kimi"],
+        selection: { skillIds: [], mcpIds: [] },
+      },
+    ),
+    /targets overlap/,
+  );
+
+  const aliasPlan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["kimi"],
+    selection: { skillIds: [], mcpIds: [] },
+  });
+  const sharedHome = join(home, ".agents");
+  await mkdir(sharedHome, { recursive: true });
+  await symlink(
+    sharedHome,
+    layout.kimiHome,
+    process.platform === "win32" ? "junction" : "dir",
+  );
+  await assert.rejects(
+    applyInstallPlan(pack, layout, aliasPlan),
+    /physical targets must not use the shared user-agent directory/,
+  );
+  await assert.rejects(readFile(join(sharedHome, "AGENTS.md"), "utf8"));
+  await assert.rejects(
+    buildInstallPlan(pack, layout, {
+      mode: "overwrite",
+      adapters: ["kimi"],
+      selection: { skillIds: [], mcpIds: [] },
+    }),
+    /physical targets must not use the shared user-agent directory/,
+  );
+
+  const brokenLegacy = await temporaryHome(t);
+  await symlink(
+    join(brokenLegacy.home, "missing-legacy-target"),
+    join(brokenLegacy.home, ".agents"),
+    process.platform === "win32" ? "junction" : "dir",
+  );
+  const unaffected = await buildInstallPlan(pack, brokenLegacy.layout, {
+    mode: "overwrite",
+    adapters: ["codex", "kimi"],
+    selection: { skillIds: [], mcpIds: [] },
+  });
+  await disposeInstallPlan(unaffected);
+
+  const nestedAlias = await temporaryHome(t);
+  const nestedVendor = join(nestedAlias.home, "vendor");
+  const nestedSharedTarget = join(nestedVendor, "skills", "cleanup");
+  await mkdir(nestedSharedTarget, { recursive: true });
+  await symlink(
+    nestedSharedTarget,
+    join(nestedAlias.home, ".agents"),
+    process.platform === "win32" ? "junction" : "dir",
+  );
+  await assert.rejects(
+    buildInstallPlan(pack, { ...nestedAlias.layout, kimiHome: nestedVendor }, {
+      mode: "overwrite",
+      adapters: ["kimi"],
+      selection: { skillIds: ["cleanup"], mcpIds: [] },
+    }),
+    /physical targets must not use the shared user-agent directory/,
+  );
+
+  if (process.platform !== "win32") {
+    const danglingAlias = await temporaryHome(t);
+    const futureVendor = join(danglingAlias.home, "future-vendor");
+    await symlink(futureVendor, join(danglingAlias.home, ".agents"), "dir");
+    await assert.rejects(
+      buildInstallPlan(pack, { ...danglingAlias.layout, kimiHome: futureVendor }, {
+        mode: "overwrite",
+        adapters: ["kimi"],
+        selection: { skillIds: [], mcpIds: [] },
+      }),
+      /physical targets must not use the shared user-agent directory/,
+    );
+  }
 });
 
 test("append adopts an exact canonical instruction file without duplicating it", async (t) => {
@@ -182,6 +531,117 @@ test("append adopts an exact canonical instruction file without duplicating it",
       /^# Global Codex Instructions$/gm,
     )?.length,
     1,
+  );
+});
+
+test("overwrite records ownership of an exact unmanaged instruction file", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const canonical = await readFile(pack.instructionPath, "utf8");
+  const target = join(layout.codexHome, "AGENTS.md");
+  await put(target, canonical);
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex"],
+    selection: { skillIds: [], mcpIds: [] },
+  });
+  const action = plan.actions.find(
+    (candidate) => candidate.kind === "file" && candidate.component === "instructions",
+  );
+  assert.equal(action?.operation, "adopt");
+  assert.equal(plan.backupTargets[0], layout.stateFile);
+
+  const result = await applyInstallPlan(pack, layout, plan);
+  assert.deepEqual(result.state.managed.instructions, [
+    {
+      adapter: "codex",
+      path: target,
+      strategy: "overwrite",
+      contentHash: sha256(canonical),
+    },
+  ]);
+  assert.equal(await readFile(target, "utf8"), canonical);
+});
+
+test("overwrite refreshes stale ownership when targets already match a changed pack", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const initialPlan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: ["anysearch"] },
+  });
+  const initial = await applyInstallPlan(pack, layout, initialPlan);
+
+  const changedPack = structuredClone(pack);
+  const changedInstructions =
+    (await readFile(pack.instructionPath, "utf8")) + "\n# Changed pack fixture\n";
+  changedPack.instructionPath = join(home, "changed-AGENTS.md");
+  await put(changedPack.instructionPath, changedInstructions);
+  const changedServer = changedPack.mcp.find((server) => server.id === "anysearch");
+  assert.ok(changedServer);
+  changedServer.url = "https://changed.example.invalid/mcp";
+  const changedSkill = changedPack.skills.find((skill) => skill.id === "cleanup");
+  const changedSource = changedPack.skillSources.find(
+    (source) => source.id === changedSkill?.sourceId,
+  );
+  assert.ok(changedSkill && changedSource?.kind === "local");
+  changedSource.root = join(home, "changed-source");
+  changedSkill.path = "cleanup";
+  await mkdir(changedSource.root, { recursive: true });
+  await cp(
+    join(repositoryRoot, "skills", "maintenance", "code-quality", "cleanup"),
+    join(changedSource.root, changedSkill.path),
+    { recursive: true },
+  );
+  const changedSkillFile = join(changedSource.root, changedSkill.path, "SKILL.md");
+  await writeFile(
+    changedSkillFile,
+    (await readFile(changedSkillFile, "utf8")) + "\nChanged pack fixture\n",
+    "utf8",
+  );
+  const installedSkill = skillTarget(layout, "codex", "cleanup");
+  await rm(installedSkill, { recursive: true });
+  await cp(join(changedSource.root, changedSkill.path), installedSkill, {
+    recursive: true,
+  });
+  const mcpTarget = adapters.codex.mcpPath(layout);
+  const existingMcp = await readFile(mcpTarget, "utf8");
+  const changedMcp = adapters.codex.renderMcp(
+    existingMcp,
+    [changedServer],
+    "overwrite",
+    new Set(),
+    mcpTarget,
+  ).content;
+  await writeFile(join(layout.codexHome, "AGENTS.md"), changedInstructions, "utf8");
+  await writeFile(mcpTarget, changedMcp, "utf8");
+
+  const plan = await buildInstallPlan(changedPack, layout, {
+    mode: "overwrite",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: ["anysearch"] },
+    previousState: initial.state,
+  });
+  assert.deepEqual(
+    plan.actions
+      .filter((action) => action.kind === "file")
+      .map((action) => [action.component, action.operation]),
+    [
+      ["instructions", "adopt"],
+      ["mcp", "adopt"],
+    ],
+  );
+  const skillAction = plan.actions.find((action) => action.kind === "skills");
+  assert.equal(skillAction?.entries[0]?.operation, "adopt");
+  const result = await applyInstallPlan(changedPack, layout, plan, initial.state);
+  assert.equal(result.state.managed.instructions[0]?.contentHash, sha256(changedInstructions));
+  assert.equal(
+    result.state.managed.mcp[0]?.entries.anysearch,
+    adapters.codex.entryHash(changedMcp, "anysearch"),
+  );
+  assert.equal(
+    result.state.managed.skills[0]?.contentHash,
+    await hashPath(installedSkill),
   );
 });
 
@@ -212,7 +672,7 @@ test("online install locks the previewed Git revision and update resolves latest
 
   const firstResult = await applyInstallPlan(onlinePack, layout, firstPlan);
   assert.match(
-    await readFile(join(layout.sharedSkills, "online-demo", "SKILL.md"), "utf8"),
+    await readFile(skillTarget(layout, "codex", "online-demo", "SKILL.md"), "utf8"),
     /version one/,
   );
   assert.equal(firstResult.state.managed.skills[0]?.source.commit, firstCommit);
@@ -231,7 +691,7 @@ test("online install locks the previewed Git revision and update resolves latest
     firstResult.state,
   );
   assert.match(
-    await readFile(join(layout.sharedSkills, "online-demo", "SKILL.md"), "utf8"),
+    await readFile(skillTarget(layout, "codex", "online-demo", "SKILL.md"), "utf8"),
     /version two/,
   );
   assert.equal(updateResult.state.managed.skills[0]?.source.commit, secondCommit);
@@ -343,6 +803,19 @@ test("Kimi and OpenCode adapters render native MCP schemas and preserve JSONC", 
   assert.equal(opencodeConfig.theme, "dark");
   assert.equal(opencodeConfig.mcp.anysearch.headers.Authorization, undefined);
   assert.equal(opencodeConfig.mcp.anysearch.headers["X-Anysearch-Client"], "mcp/1.0.0");
+
+  const overwritten = new OpenCodeAdapter().renderMcp(
+    '{\n  // preserve overwrite comment\n  "theme": "kept",\n  "mcp": "obsolete"\n}\n',
+    [],
+    "overwrite",
+    new Set(),
+    "/isolated/.config/opencode/opencode.json",
+  );
+  assert.match(overwritten.content, /preserve overwrite comment/);
+  assert.deepEqual(parseJsonc(overwritten.content), {
+    theme: "kept",
+    mcp: {},
+  });
 });
 
 test("append install is transactional, idempotent, diagnosable, and safely uninstallable", async (t) => {
@@ -351,7 +824,7 @@ test("append install is transactional, idempotent, diagnosable, and safely unins
   const kimiInstructions = "User generic rules\n";
   const opencodeInstructions = "User OpenCode rules\n";
   await put(join(layout.codexHome, "AGENTS.md"), codexInstructions);
-  await put(join(layout.sharedAgentsHome, "AGENTS.md"), kimiInstructions);
+  await put(join(layout.kimiHome, "AGENTS.md"), kimiInstructions);
   await put(join(layout.opencodeHome, "AGENTS.md"), opencodeInstructions);
   await put(
     join(layout.codexHome, "config.toml"),
@@ -366,7 +839,7 @@ test("append install is transactional, idempotent, diagnosable, and safely unins
     '{\n  // user comment\n  "theme": "kept",\n  "mcp": {"existing":{"type":"remote","url":"https://existing.invalid/mcp"}}\n}\n',
   );
   await put(
-    join(layout.sharedSkills, "user-skill", "SKILL.md"),
+    skillTarget(layout, "kimi", "user-skill", "SKILL.md"),
     "---\nname: user-skill\ndescription: user owned\n---\n",
   );
 
@@ -386,8 +859,11 @@ test("append install is transactional, idempotent, diagnosable, and safely unins
     await readFile(join(layout.codexHome, "AGENTS.md"), "utf8"),
     /agentpack:boman-ng\/agentpack:start/,
   );
-  assert.ok(await readFile(join(layout.sharedSkills, "cleanup", "SKILL.md"), "utf8"));
-  assert.ok(await readFile(join(layout.sharedSkills, "user-skill", "SKILL.md"), "utf8"));
+  for (const adapterId of ["codex", "kimi", "opencode"]) {
+    assert.ok(await readFile(skillTarget(layout, adapterId, "cleanup", "SKILL.md"), "utf8"));
+  }
+  assert.ok(await readFile(skillTarget(layout, "kimi", "user-skill", "SKILL.md"), "utf8"));
+  await assert.rejects(readdir(join(home, ".agents")));
   assert.match(await readFile(join(layout.codexHome, "config.toml"), "utf8"), /user comment/);
   assert.match(await readFile(join(layout.opencodeHome, "opencode.json"), "utf8"), /user comment/);
 
@@ -410,13 +886,15 @@ test("append install is transactional, idempotent, diagnosable, and safely unins
   await applyUninstallPlan(layout, uninstallPlan);
   assert.equal(await loadState(layout.stateFile), undefined);
   assert.equal(await readFile(join(layout.codexHome, "AGENTS.md"), "utf8"), codexInstructions);
-  assert.equal(await readFile(join(layout.sharedAgentsHome, "AGENTS.md"), "utf8"), kimiInstructions);
+  assert.equal(await readFile(join(layout.kimiHome, "AGENTS.md"), "utf8"), kimiInstructions);
   assert.equal(
     await readFile(join(layout.opencodeHome, "AGENTS.md"), "utf8"),
     opencodeInstructions,
   );
-  await assert.rejects(readFile(join(layout.sharedSkills, "cleanup", "SKILL.md"), "utf8"));
-  assert.ok(await readFile(join(layout.sharedSkills, "user-skill", "SKILL.md"), "utf8"));
+  for (const adapterId of ["codex", "kimi", "opencode"]) {
+    await assert.rejects(readFile(skillTarget(layout, adapterId, "cleanup", "SKILL.md"), "utf8"));
+  }
+  assert.ok(await readFile(skillTarget(layout, "kimi", "user-skill", "SKILL.md"), "utf8"));
   const codexAfter = parseToml(
     await readFile(join(layout.codexHome, "config.toml"), "utf8"),
     { integersAsBigInt: false },
@@ -434,18 +912,31 @@ test("append install is transactional, idempotent, diagnosable, and safely unins
   assert.equal(opencodeAfter.theme, "kept");
   assert.ok(opencodeAfter.mcp.existing);
   assert.equal(opencodeAfter.mcp.anysearch, undefined);
-  void home;
 });
 
 test("overwrite resets only supported configuration surfaces and preserves credentials", async (t) => {
   const { layout } = await temporaryHome(t);
-  await put(join(layout.codexHome, "config.toml"), 'model = "remove-me"\n');
+  await put(
+    join(layout.codexHome, "config.toml"),
+    'model = "preserve-me"\n\n[mcp_servers.old]\nurl = "https://old.invalid/mcp"\n',
+  );
   await put(join(layout.codexHome, "credentials.json"), '{"token":"preserve-me"}\n');
   await put(join(layout.kimiHome, "credentials", "account.json"), '{"keep":true}\n');
-  await put(join(layout.opencodeHome, "opencode.json"), '{"theme":"remove-me"}\n');
   await put(
-    join(layout.sharedSkills, "old-skill", "SKILL.md"),
-    "---\nname: old-skill\ndescription: remove in overwrite\n---\n",
+    join(layout.kimiHome, "mcp.json"),
+    '{"other":"preserve-me","mcpServers":{"old":{"url":"https://old.invalid/mcp"}}}\n',
+  );
+  await put(
+    join(layout.opencodeHome, "opencode.json"),
+    '{\n  // preserve this comment\n  "theme": "preserve-me",\n  "mcp": {"old": {"type": "remote", "url": "https://old.invalid/mcp"}}\n}\n',
+  );
+  await put(
+    skillTarget(layout, "codex", ".system", "sentinel.txt"),
+    "Codex-owned system data\n",
+  );
+  await put(
+    skillTarget(layout, "kimi", "user-skill", "SKILL.md"),
+    "---\nname: user-skill\ndescription: preserve in overwrite\n---\n",
   );
 
   const plan = await buildInstallPlan(pack, layout, {
@@ -464,22 +955,231 @@ test("overwrite resets only supported configuration surfaces and preserves crede
     await readFile(join(layout.kimiHome, "credentials", "account.json"), "utf8"),
     '{"keep":true}\n',
   );
-  await assert.rejects(readFile(join(layout.sharedSkills, "old-skill", "SKILL.md"), "utf8"));
+  assert.equal(
+    await readFile(skillTarget(layout, "codex", ".system", "sentinel.txt"), "utf8"),
+    "Codex-owned system data\n",
+  );
+  assert.match(
+    await readFile(skillTarget(layout, "kimi", "user-skill", "SKILL.md"), "utf8"),
+    /preserve in overwrite/,
+  );
   assert.equal(
     await readFile(join(layout.codexHome, "AGENTS.md"), "utf8"),
     await readFile(pack.instructionPath, "utf8"),
   );
   const codexConfig = await readFile(join(layout.codexHome, "config.toml"), "utf8");
-  assert.equal(Object.keys(parseToml(codexConfig, { integersAsBigInt: false })).length, 0);
-  const openCode = JSON.parse(
-    await readFile(join(layout.opencodeHome, "opencode.json"), "utf8"),
+  const parsedCodex = parseToml(codexConfig, { integersAsBigInt: false });
+  assert.equal(parsedCodex.model, "preserve-me");
+  assert.equal(parsedCodex.mcp_servers, undefined);
+  const kimiConfig = JSON.parse(
+    await readFile(join(layout.kimiHome, "mcp.json"), "utf8"),
   );
+  assert.equal(kimiConfig.other, "preserve-me");
+  assert.deepEqual(kimiConfig.mcpServers, {});
+  const openCodeText = await readFile(join(layout.opencodeHome, "opencode.json"), "utf8");
+  assert.match(openCodeText, /preserve this comment/);
+  const openCode = parseJsonc(openCodeText);
   assert.deepEqual(openCode.mcp, {});
-  assert.equal(openCode.theme, undefined);
+  assert.equal(openCode.theme, "preserve-me");
   const state = await loadState(layout.stateFile);
   assert.ok(state);
   assert.deepEqual(state.selection, { skillIds: [], mcpIds: [] });
   assert.equal((await runDoctor(pack, layout, state)).every((check) => check.ok), true);
+});
+
+test("overwrite removes only unchanged AgentPack skills from each adapter", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const initialPlan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex", "kimi", "opencode"],
+    selection: { skillIds: ["cleanup"], mcpIds: [] },
+  });
+  const initial = await applyInstallPlan(pack, layout, initialPlan);
+  for (const adapterId of ["codex", "kimi", "opencode"]) {
+    await put(
+      skillTarget(layout, adapterId, "user-skill", "SKILL.md"),
+      "---\nname: user-skill\ndescription: preserve sibling\n---\n",
+    );
+  }
+  await put(
+    skillTarget(layout, "codex", ".system", "sentinel.txt"),
+    "preserve system skill cache\n",
+  );
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex", "kimi", "opencode"],
+    selection: { skillIds: [], mcpIds: [] },
+    previousState: initial.state,
+  });
+  const removals = plan.actions.filter((action) => action.kind === "skills-remove");
+  assert.equal(removals.length, 3);
+  assert.equal(removals.every((action) => action.entries.length === 1), true);
+  assert.equal(
+    plan.backupTargets.some((target) =>
+      ["codex", "kimi", "opencode"].some(
+        (id) => target === adapters[id].skillsPath(layout),
+      ),
+    ),
+    false,
+  );
+
+  const result = await applyInstallPlan(pack, layout, plan, initial.state);
+  for (const adapterId of ["codex", "kimi", "opencode"]) {
+    await assert.rejects(
+      readFile(skillTarget(layout, adapterId, "cleanup", "SKILL.md"), "utf8"),
+    );
+    assert.match(
+      await readFile(skillTarget(layout, adapterId, "user-skill", "SKILL.md"), "utf8"),
+      /preserve sibling/,
+    );
+  }
+  assert.equal(
+    await readFile(skillTarget(layout, "codex", ".system", "sentinel.txt"), "utf8"),
+    "preserve system skill cache\n",
+  );
+  assert.deepEqual(result.state.selection.skillIds, []);
+  assert.equal(result.state.managed.skills.length, 0);
+  await assert.rejects(readdir(join(home, ".agents")));
+});
+
+test("catalog identity changes fail closed instead of rewriting skill ownership", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const initialPlan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: [] },
+  });
+  const initial = await applyInstallPlan(pack, layout, initialPlan);
+  const changedPack = structuredClone(pack);
+  const changedSkill = changedPack.skills.find((skill) => skill.id === "cleanup");
+  assert.ok(changedSkill);
+  changedSkill.id = "cleanup-renamed";
+
+  const plan = await buildInstallPlan(changedPack, layout, {
+    mode: "overwrite",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup-renamed"], mcpIds: [] },
+    previousState: initial.state,
+  });
+  assert.match(plan.conflicts[0]?.message ?? "", /different catalog id/);
+  await assert.rejects(
+    applyInstallPlan(changedPack, layout, plan, initial.state),
+    /conflicts/,
+  );
+  assert.match(
+    await readFile(skillTarget(layout, "codex", "cleanup", "SKILL.md"), "utf8"),
+    /name: cleanup/,
+  );
+  assert.deepEqual((await loadState(layout.stateFile))?.selection.skillIds, ["cleanup"]);
+});
+
+test("schema v1 keeps one skill selection across every recorded adapter", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const initialPlan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: [] },
+  });
+  const initial = await applyInstallPlan(pack, layout, initialPlan);
+
+  await assert.rejects(
+    buildInstallPlan(pack, layout, {
+      mode: "overwrite",
+      adapters: ["kimi"],
+      selection: { skillIds: [], mcpIds: [] },
+      previousState: initial.state,
+    }),
+    /requires every recorded adapter.*codex/,
+  );
+
+  const addKimi = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex", "kimi"],
+    selection: { skillIds: [], mcpIds: [] },
+    previousState: initial.state,
+  });
+  assert.deepEqual(addKimi.selection.skillIds, ["cleanup"]);
+  assert.ok(
+    addKimi.actions.some(
+      (action) =>
+        action.kind === "skills" &&
+        action.adapter === "kimi" &&
+        action.entries.some((entry) => entry.id === "cleanup"),
+    ),
+  );
+  const expanded = await applyInstallPlan(pack, layout, addKimi, initial.state);
+  assert.equal(expanded.state.managed.skills.length, 2);
+  assert.match(
+    await readFile(skillTarget(layout, "kimi", "cleanup", "SKILL.md"), "utf8"),
+    /name: cleanup/,
+  );
+
+  const clearEverywhere = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex", "kimi"],
+    selection: { skillIds: [], mcpIds: [] },
+    previousState: expanded.state,
+  });
+  assert.equal(
+    clearEverywhere.actions.filter((action) => action.kind === "skills-remove").length,
+    2,
+  );
+  const cleared = await applyInstallPlan(
+    pack,
+    layout,
+    clearEverywhere,
+    expanded.state,
+  );
+  assert.deepEqual(cleared.state.selection.skillIds, []);
+  assert.equal(cleared.state.managed.skills.length, 0);
+});
+
+test("schema v1 fills the recorded MCP selection into every added adapter", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const initialPlan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: { skillIds: [], mcpIds: ["anysearch"] },
+  });
+  const initial = await applyInstallPlan(pack, layout, initialPlan);
+
+  const addKimi = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex", "kimi"],
+    selection: { skillIds: [], mcpIds: [] },
+    previousState: initial.state,
+  });
+  assert.deepEqual(addKimi.selection.mcpIds, ["anysearch"]);
+  assert.ok(
+    addKimi.actions.some(
+      (action) =>
+        action.kind === "file" &&
+        action.component === "mcp" &&
+        action.adapter === "kimi",
+    ),
+  );
+  const expanded = await applyInstallPlan(pack, layout, addKimi, initial.state);
+  assert.deepEqual(expanded.state.selection.mcpIds, ["anysearch"]);
+  assert.deepEqual(
+    expanded.state.managed.mcp.map((entry) => entry.adapter),
+    ["codex", "kimi"],
+  );
+  assert.equal(
+    expanded.state.managed.mcp.every(
+      (entry) => typeof entry.entries.anysearch === "string",
+    ),
+    true,
+  );
+  assert.equal((await runDoctor(pack, layout, expanded.state)).every((check) => check.ok), true);
+
+  const update = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: expanded.state.adapters,
+    selection: { skillIds: [], mcpIds: [] },
+    previousState: expanded.state,
+  });
+  assert.equal(update.actions.length, 0);
 });
 
 test("CLI plan has a scannable safe default and performs no writes", async (t) => {
@@ -525,27 +1225,48 @@ test("guided review exposes impact, backup, and MCP network boundaries", async (
 
 test("JSON install output stays machine-readable and never opens the TUI", async (t) => {
   const { home } = await temporaryHome(t);
+  const args = [
+    join(repositoryRoot, "dist", "cli.js"),
+    "install",
+    "--json",
+    "--home",
+    home,
+    "--agents",
+    "codex",
+    "--skills",
+    "none",
+    "--mcp",
+    "none",
+  ];
   const { stdout } = await execFileAsync(
     process.execPath,
-    [
-      join(repositoryRoot, "dist", "cli.js"),
-      "install",
-      "--json",
-      "--home",
-      home,
-      "--agents",
-      "codex",
-      "--skills",
-      "none",
-      "--mcp",
-      "none",
-    ],
+    args,
     { cwd: repositoryRoot },
   );
   const output = JSON.parse(stdout);
   assert.equal(output.mode, "overwrite");
   assert.deepEqual(output.selection, { skillIds: [], mcpIds: [] });
   await assert.rejects(readFile(join(home, ".agentpack", "state.json"), "utf8"));
+
+  const applied = await execFileAsync(process.execPath, [...args, "--yes"], {
+    cwd: repositoryRoot,
+  });
+  assert.equal(JSON.parse(applied.stdout).operation, "install");
+  assert.ok(await loadState(join(home, ".agentpack", "state.json")));
+  const removed = await execFileAsync(
+    process.execPath,
+    [
+      join(repositoryRoot, "dist", "cli.js"),
+      "uninstall",
+      "--json",
+      "--home",
+      home,
+      "--yes",
+    ],
+    { cwd: repositoryRoot },
+  );
+  assert.equal(JSON.parse(removed.stdout).operation, "uninstall");
+  assert.equal(await loadState(join(home, ".agentpack", "state.json")), undefined);
 });
 
 test("plain plan and help describe the new guided interaction", async (t) => {
@@ -576,7 +1297,7 @@ test("plain plan and help describe the new guided interaction", async (t) => {
 
 test("CLI reconcile previews and applies explicit targeted replacements", async (t) => {
   const { home, layout } = await temporaryHome(t);
-  const skillFile = join(layout.sharedSkills, "cleanup", "SKILL.md");
+  const skillFile = skillTarget(layout, "codex", "cleanup", "SKILL.md");
   const mcpPath = join(layout.codexHome, "config.toml");
   await put(
     skillFile,
@@ -670,6 +1391,64 @@ test("apply rejects a stale preview before backup or mutation", async (t) => {
   assert.equal(await loadState(layout.stateFile), undefined);
 });
 
+test("planning rejects a state object that no longer matches the state file", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const initialPlan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex"],
+    selection: { skillIds: [], mcpIds: [] },
+  });
+  const initial = await applyInstallPlan(pack, layout, initialPlan);
+  const changedState = structuredClone(initial.state);
+  changedState.installedAt = "2099-01-01T00:00:00.000Z";
+  await writeFile(
+    layout.stateFile,
+    JSON.stringify(changedState, null, 2) + "\n",
+    "utf8",
+  );
+
+  await assert.rejects(
+    buildInstallPlan(pack, layout, {
+      mode: "overwrite",
+      adapters: ["codex", "kimi"],
+      selection: initial.state.selection,
+      previousState: initial.state,
+    }),
+    /state changed before planning/,
+  );
+  await assert.rejects(readFile(join(layout.kimiHome, "AGENTS.md"), "utf8"));
+});
+
+test("apply validates unchanged managed targets before recording success", async (t) => {
+  const { layout } = await temporaryHome(t);
+  const initialPlan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex"],
+    selection: { skillIds: ["cleanup"], mcpIds: [] },
+  });
+  const initial = await applyInstallPlan(pack, layout, initialPlan);
+  const expandPlan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: ["codex", "kimi"],
+    selection: { skillIds: [], mcpIds: [] },
+    previousState: initial.state,
+  });
+  const codexSkill = skillTarget(layout, "codex", "cleanup", "SKILL.md");
+  await writeFile(
+    codexSkill,
+    (await readFile(codexSkill, "utf8")) + "\nconcurrent edit\n",
+    "utf8",
+  );
+
+  await assert.rejects(
+    applyInstallPlan(pack, layout, expandPlan, initial.state),
+    /Managed skill changed during apply/,
+  );
+  assert.match(await readFile(codexSkill, "utf8"), /concurrent edit/);
+  await assert.rejects(readFile(join(layout.kimiHome, "AGENTS.md"), "utf8"));
+  assert.deepEqual((await loadState(layout.stateFile))?.adapters, ["codex"]);
+});
+
 test("failed apply restores every changed target from its backup", async (t) => {
   const { layout } = await temporaryHome(t);
   const target = join(layout.codexHome, "AGENTS.md");
@@ -687,7 +1466,7 @@ test("failed apply restores every changed target from its backup", async (t) => 
 
   await assert.rejects(applyInstallPlan(pack, layout, plan));
   assert.equal(await readFile(target, "utf8"), "original instructions\n");
-  await assert.rejects(readFile(join(layout.sharedSkills, "cleanup", "SKILL.md"), "utf8"));
+  await assert.rejects(readFile(skillTarget(layout, "codex", "cleanup", "SKILL.md"), "utf8"));
   assert.equal(await loadState(layout.stateFile), undefined);
   assert.equal((await readdir(layout.backupsRoot)).length, 1);
 });
@@ -695,7 +1474,7 @@ test("failed apply restores every changed target from its backup", async (t) => 
 test("append mode refuses unmanaged skill and MCP collisions", async (t) => {
   const { layout } = await temporaryHome(t);
   const unmanagedSkill = "---\nname: cleanup\ndescription: user-owned collision\n---\n";
-  await put(join(layout.sharedSkills, "cleanup", "SKILL.md"), unmanagedSkill);
+  await put(skillTarget(layout, "codex", "cleanup", "SKILL.md"), unmanagedSkill);
   const unmanagedMcp =
     '[mcp_servers.anysearch]\nurl = "https://user-owned.invalid/mcp"\n';
   await put(join(layout.codexHome, "config.toml"), unmanagedMcp);
@@ -708,7 +1487,7 @@ test("append mode refuses unmanaged skill and MCP collisions", async (t) => {
   assert.equal(plan.conflicts.length, 2);
   await assert.rejects(applyInstallPlan(pack, layout, plan), /conflicts/);
   assert.equal(
-    await readFile(join(layout.sharedSkills, "cleanup", "SKILL.md"), "utf8"),
+    await readFile(skillTarget(layout, "codex", "cleanup", "SKILL.md"), "utf8"),
     unmanagedSkill,
   );
   assert.equal(await readFile(join(layout.codexHome, "config.toml"), "utf8"), unmanagedMcp);
@@ -724,8 +1503,11 @@ test("reconcile adopts exact unmanaged skills and MCP entries", async (t) => {
     "code-quality",
     "cleanup",
   );
-  await mkdir(layout.sharedSkills, { recursive: true });
-  await cp(cleanupSource, join(layout.sharedSkills, "cleanup"), { recursive: true });
+  for (const adapterId of ["codex", "kimi", "opencode"]) {
+    const root = adapters[adapterId].skillsPath(layout);
+    await mkdir(root, { recursive: true });
+    await cp(cleanupSource, join(root, "cleanup"), { recursive: true });
+  }
 
   for (const adapter of [new CodexAdapter(), new KimiAdapter(), new OpenCodeAdapter()]) {
     const target = adapter.mcpPath(layout);
@@ -741,7 +1523,9 @@ test("reconcile adopts exact unmanaged skills and MCP entries", async (t) => {
   });
   assert.equal(plan.conflicts.length, 0);
   assert.deepEqual(plan.reconciliation?.kept, []);
-  assert.ok(plan.reconciliation?.adopted.includes("skill:cleanup"));
+  assert.ok(plan.reconciliation?.adopted.includes("skill:cleanup@codex"));
+  assert.ok(plan.reconciliation?.adopted.includes("skill:cleanup@kimi"));
+  assert.ok(plan.reconciliation?.adopted.includes("skill:cleanup@opencode"));
   assert.ok(plan.reconciliation?.adopted.includes("mcp:anysearch@codex"));
   assert.ok(plan.reconciliation?.adopted.includes("mcp:anysearch@kimi"));
   assert.ok(plan.reconciliation?.adopted.includes("mcp:anysearch@opencode"));
@@ -773,7 +1557,9 @@ test("reconcile adopts exact unmanaged skills and MCP entries", async (t) => {
   const uninstall = await buildUninstallPlan(pack, layout, result.state);
   assert.equal(uninstall.conflicts.length, 0);
   await applyUninstallPlan(layout, uninstall);
-  await assert.rejects(readFile(join(layout.sharedSkills, "cleanup", "SKILL.md"), "utf8"));
+  for (const adapterId of ["codex", "kimi", "opencode"]) {
+    await assert.rejects(readFile(skillTarget(layout, adapterId, "cleanup", "SKILL.md"), "utf8"));
+  }
   for (const adapter of [new CodexAdapter(), new KimiAdapter(), new OpenCodeAdapter()]) {
     const content = await readFile(adapter.mcpPath(layout), "utf8");
     assert.equal(adapter.entryHash(content, "anysearch"), undefined);
@@ -782,8 +1568,8 @@ test("reconcile adopts exact unmanaged skills and MCP entries", async (t) => {
 
 test("reconcile adoption rejects a target changed after preview", async (t) => {
   const { layout } = await temporaryHome(t);
-  const target = join(layout.sharedSkills, "cleanup");
-  await mkdir(layout.sharedSkills, { recursive: true });
+  const target = skillTarget(layout, "codex", "cleanup");
+  await mkdir(adapters.codex.skillsPath(layout), { recursive: true });
   await cp(
     join(repositoryRoot, "skills", "maintenance", "code-quality", "cleanup"),
     target,
@@ -813,7 +1599,7 @@ test("reconcile replaces divergent unmanaged components transactionally", async 
   const unmanagedSkill = "---\nname: cleanup\ndescription: old unmanaged copy\n---\n";
   const unmanagedMcp =
     'model = "preserved"\n\n[mcp_servers.anysearch]\nurl = "https://old.invalid/mcp"\n';
-  const skillPath = join(layout.sharedSkills, "cleanup");
+  const skillPath = skillTarget(layout, "codex", "cleanup");
   const mcpPath = join(layout.codexHome, "config.toml");
   await put(join(skillPath, "SKILL.md"), unmanagedSkill);
   await put(mcpPath, unmanagedMcp);
@@ -830,7 +1616,7 @@ test("reconcile replaces divergent unmanaged components transactionally", async 
     },
   });
   assert.equal(plan.conflicts.length, 0);
-  assert.ok(plan.reconciliation?.replaced.includes("skill:cleanup"));
+  assert.ok(plan.reconciliation?.replaced.includes("skill:cleanup@codex"));
   assert.ok(plan.reconciliation?.replaced.includes("mcp:anysearch@codex"));
   assert.equal(
     plan.actions
@@ -895,7 +1681,7 @@ test("reconcile keeps divergent components unmanaged by removing them from selec
   const unmanagedSkill = "---\nname: cleanup\ndescription: keep this copy\n---\n";
   const unmanagedMcp =
     '[mcp_servers.anysearch]\nurl = "https://keep.invalid/mcp"\n';
-  const skillFile = join(layout.sharedSkills, "cleanup", "SKILL.md");
+  const skillFile = skillTarget(layout, "codex", "cleanup", "SKILL.md");
   const mcpPath = join(layout.codexHome, "config.toml");
   await put(skillFile, unmanagedSkill);
   await put(mcpPath, unmanagedMcp);
@@ -994,7 +1780,7 @@ test("uninstall refuses drifted managed content", async (t) => {
     selection: { skillIds: ["cleanup"], mcpIds: [] },
   });
   const { state } = await applyInstallPlan(pack, layout, plan);
-  const skillPath = join(layout.sharedSkills, "cleanup", "SKILL.md");
+  const skillPath = skillTarget(layout, "codex", "cleanup", "SKILL.md");
   await writeFile(skillPath, (await readFile(skillPath, "utf8")) + "\nuser edit\n", "utf8");
 
   const uninstallPlan = await buildUninstallPlan(pack, layout, state);
@@ -1002,6 +1788,225 @@ test("uninstall refuses drifted managed content", async (t) => {
   await assert.rejects(applyUninstallPlan(layout, uninstallPlan), /conflicts/);
   assert.match(await readFile(skillPath, "utf8"), /user edit/);
   assert.ok(await loadState(layout.stateFile));
+});
+
+test("legacy v0.2 shared targets migrate exactly once into vendor homes", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const { state, legacyInstructions, legacySkill } = await createLegacyState(home, layout);
+  await put(join(home, ".agents", "user-sentinel.txt"), "preserve unrelated data\n");
+
+  await writeFile(
+    join(legacySkill, "SKILL.md"),
+    (await readFile(join(legacySkill, "SKILL.md"), "utf8")) + "\nuser drift\n",
+    "utf8",
+  );
+  const blocked = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex", "kimi"],
+    selection: state.selection,
+    previousState: state,
+  });
+  assert.equal(blocked.conflicts.some((entry) => /Legacy managed skill/.test(entry.message)), true);
+  await assert.rejects(applyInstallPlan(pack, layout, blocked, state), /conflicts/);
+  await rm(legacySkill, { recursive: true });
+  await cp(
+    join(repositoryRoot, "skills", "maintenance", "code-quality", "cleanup"),
+    legacySkill,
+    { recursive: true },
+  );
+
+  await assert.rejects(
+    buildInstallPlan(pack, layout, {
+      mode: "overwrite",
+      adapters: ["codex"],
+      selection: state.selection,
+      previousState: state,
+    }),
+    /must first be migrated unchanged/,
+  );
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: ["codex", "kimi"],
+    selection: state.selection,
+    previousState: state,
+  });
+  assert.equal(plan.conflicts.length, 0);
+  assert.ok(
+    plan.actions.some(
+      (action) => action.kind === "skills-remove" && action.adapter === "legacy",
+    ),
+  );
+  const result = await applyInstallPlan(pack, layout, plan, state);
+  await assert.rejects(readFile(legacyInstructions, "utf8"));
+  await assert.rejects(readFile(join(legacySkill, "SKILL.md"), "utf8"));
+  assert.equal(
+    await readFile(join(home, ".agents", "user-sentinel.txt"), "utf8"),
+    "preserve unrelated data\n",
+  );
+  for (const adapterId of ["codex", "kimi"]) {
+    assert.match(
+      await readFile(skillTarget(layout, adapterId, "cleanup", "SKILL.md"), "utf8"),
+      /name: cleanup/,
+    );
+  }
+  assert.equal(
+    await readFile(join(layout.kimiHome, "AGENTS.md"), "utf8"),
+    await readFile(pack.instructionPath, "utf8"),
+  );
+  assert.equal(result.state.managed.skills.length, 2);
+  assert.equal(
+    JSON.stringify(result.state).includes(join(home, ".agents")),
+    false,
+  );
+  assert.equal((await runDoctor(pack, layout, result.state)).every((check) => check.ok), true);
+
+  const update = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: result.state.adapters,
+    selection: result.state.selection,
+    previousState: result.state,
+  });
+  assert.equal(update.actions.length, 0);
+});
+
+test("legacy v0.2 append update migrates every adapter and preserves unrelated data", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const { state, legacyInstructions, legacySkill } = await createLegacyState(home, layout);
+  state.mode = "append";
+  await writeFile(layout.stateFile, JSON.stringify(state, null, 2) + "\n", "utf8");
+  const sentinel = join(home, ".agents", "user-sentinel.txt");
+  await put(sentinel, "preserve unrelated data\n");
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: state.adapters,
+    selection: state.selection,
+    previousState: state,
+  });
+  assert.equal(plan.conflicts.length, 0);
+  const result = await applyInstallPlan(pack, layout, plan, state);
+
+  await assert.rejects(readFile(legacyInstructions, "utf8"));
+  await assert.rejects(readFile(join(legacySkill, "SKILL.md"), "utf8"));
+  assert.equal(await readFile(sentinel, "utf8"), "preserve unrelated data\n");
+  for (const adapterId of state.adapters) {
+    assert.match(
+      await readFile(skillTarget(layout, adapterId, "cleanup", "SKILL.md"), "utf8"),
+      /name: cleanup/,
+    );
+  }
+  assert.equal(result.state.pack.version, pack.version);
+  assert.equal(result.state.mode, "append");
+  assert.equal(result.state.managed.skills.length, state.adapters.length);
+  assert.equal((await runDoctor(pack, layout, result.state)).every((check) => check.ok), true);
+
+  const update = await buildInstallPlan(pack, layout, {
+    mode: "append",
+    adapters: result.state.adapters,
+    selection: result.state.selection,
+    previousState: result.state,
+  });
+  assert.equal(update.actions.length, 0);
+});
+
+test("state validation rejects a partially migrated legacy layout", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const { state } = await createLegacyState(home, layout);
+  const vendorSkill = skillTarget(layout, "codex", "cleanup");
+  await mkdir(dirname(vendorSkill), { recursive: true });
+  await cp(
+    join(repositoryRoot, "skills", "maintenance", "code-quality", "cleanup"),
+    vendorSkill,
+    { recursive: true },
+  );
+  state.managed.skills[0].path = vendorSkill;
+  state.managed.skills[0].contentHash = await hashPath(vendorSkill);
+  await writeFile(layout.stateFile, JSON.stringify(state, null, 2) + "\n", "utf8");
+
+  await assert.rejects(
+    buildUninstallPlan(pack, layout, state),
+    /legacy state must keep every managed skill in the shared layout/,
+  );
+});
+
+test("legacy migration rejects a symlinked shared root", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const { state } = await createLegacyState(home, layout);
+  const sharedRoot = join(home, ".agents");
+  const physicalRoot = join(home, "legacy-physical-root");
+  await cp(sharedRoot, physicalRoot, { recursive: true });
+  await rm(sharedRoot, { recursive: true });
+  await symlink(
+    physicalRoot,
+    sharedRoot,
+    process.platform === "win32" ? "junction" : "dir",
+  );
+
+  await assert.rejects(
+    buildInstallPlan(pack, layout, {
+      mode: "overwrite",
+      adapters: state.adapters,
+      selection: state.selection,
+      previousState: state,
+    }),
+    /must be a real directory before migration/,
+  );
+});
+
+test("legacy migration rejects a symlinked shared skills parent", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const { state } = await createLegacyState(home, layout);
+  const sharedSkills = join(home, ".agents", "skills");
+  const physicalSkills = join(home, "legacy-physical-skills");
+  await cp(sharedSkills, physicalSkills, { recursive: true });
+  await rm(sharedSkills, { recursive: true });
+  await symlink(
+    physicalSkills,
+    sharedSkills,
+    process.platform === "win32" ? "junction" : "dir",
+  );
+
+  await assert.rejects(
+    buildInstallPlan(pack, layout, {
+      mode: "overwrite",
+      adapters: state.adapters,
+      selection: state.selection,
+      previousState: state,
+    }),
+    /must be a real directory before migration.*skills/,
+  );
+});
+
+test("instruction-only legacy migration ignores an unrelated shared skills symlink", async (t) => {
+  const { home, layout } = await temporaryHome(t);
+  const { state } = await createLegacyState(home, layout);
+  state.selection.skillIds = [];
+  state.managed.skills = [];
+  await writeFile(layout.stateFile, JSON.stringify(state, null, 2) + "\n", "utf8");
+  const sharedSkills = join(home, ".agents", "skills");
+  const unrelatedSkills = join(home, "unrelated-shared-skills");
+  await mkdir(unrelatedSkills, { recursive: true });
+  await rm(sharedSkills, { recursive: true });
+  await symlink(
+    unrelatedSkills,
+    sharedSkills,
+    process.platform === "win32" ? "junction" : "dir",
+  );
+
+  const plan = await buildInstallPlan(pack, layout, {
+    mode: "overwrite",
+    adapters: state.adapters,
+    selection: state.selection,
+    previousState: state,
+  });
+  assert.equal(
+    plan.actions.some(
+      (action) => action.kind === "skills-remove" && action.adapter === "legacy",
+    ),
+    false,
+  );
+  await disposeInstallPlan(plan);
 });
 
 test("tampered state cannot redirect uninstall outside owned paths", async (t) => {

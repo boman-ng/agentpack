@@ -7,12 +7,21 @@ import {
   readFile,
   readdir,
   readlink,
+  realpath,
   rename,
   rm,
   stat,
   writeFile,
 } from "node:fs/promises";
-import { basename, dirname, join, relative, resolve, sep } from "node:path";
+import {
+  basename,
+  dirname,
+  isAbsolute,
+  join,
+  relative,
+  resolve,
+  sep,
+} from "node:path";
 
 export async function pathExists(path: string): Promise<boolean> {
   try {
@@ -143,6 +152,37 @@ export async function hashPath(path: string): Promise<string> {
   return hash.digest("hex");
 }
 
+export function hashRootFileContent(content: string | Buffer): string {
+  const hash = createHash("sha256");
+  hash.update("F\0\0");
+  hash.update(content);
+  hash.update("\0");
+  return hash.digest("hex");
+}
+
+export async function resolvePhysicalPath(path: string): Promise<string> {
+  let current = resolve(path);
+  const missing: string[] = [];
+  while (true) {
+    try {
+      await lstat(current);
+    } catch (error) {
+      if (!isNotFound(error)) {
+        throw error;
+      }
+      const parent = dirname(current);
+      if (parent === current) {
+        throw error;
+      }
+      missing.push(basename(current));
+      current = parent;
+      continue;
+    }
+    const physical = await realpath(current);
+    return resolve(physical, ...missing.reverse());
+  }
+}
+
 async function feedHash(hash: ReturnType<typeof createHash>, path: string, relativePath: string) {
   const info = await lstat(path);
   if (info.isSymbolicLink()) {
@@ -167,7 +207,7 @@ async function feedHash(hash: ReturnType<typeof createHash>, path: string, relat
   }
 }
 
-async function assertSafeSymlinks(root: string): Promise<void> {
+export async function assertSafeSymlinks(root: string): Promise<void> {
   const rootAbsolute = resolve(root);
   const rootInfo = await lstat(rootAbsolute);
   if (!rootInfo.isDirectory()) {
@@ -189,7 +229,11 @@ async function assertSafeSymlinks(root: string): Promise<void> {
       if (!entry.isSymbolicLink()) {
         continue;
       }
-      const target = resolve(dirname(path), await readlink(path));
+      const link = await readlink(path);
+      if (isAbsolute(link)) {
+        throw new Error("Skill contains a non-portable absolute symlink: " + path);
+      }
+      const target = resolve(dirname(path), link);
       const rel = relative(rootAbsolute, target);
       if (rel === ".." || rel.startsWith(".." + sep)) {
         throw new Error("Skill contains a symlink outside its root: " + path);

@@ -5,7 +5,15 @@ import {
   removeManagedInstructions,
 } from "./instructions.js";
 import { assertPlanCurrent } from "./preconditions.js";
-import { assertStateOwnership } from "./state.js";
+import {
+  assertAdapterTargetsSafe,
+  assertLegacyTargetsSafe,
+  assertStateOwnership,
+  captureStateHash,
+  legacySkillsPath,
+  managedSkillOwner,
+  stateUsesLegacyLayout,
+} from "./state.js";
 import type {
   ChangePlan,
   ConfigConflict,
@@ -31,6 +39,16 @@ export async function buildUninstallPlan(
   state: InstallState,
 ): Promise<ChangePlan> {
   assertStateOwnership(pack, layout, state);
+  const expectedStateHash = await captureStateHash(layout, state);
+  await assertAdapterTargetsSafe(layout, state.adapters);
+  if (stateUsesLegacyLayout(layout, state)) {
+    await assertLegacyTargetsSafe(
+      layout,
+      state.managed.skills.some(
+        (entry) => managedSkillOwner(layout, entry) === "legacy",
+      ),
+    );
+  }
   const actions: PlanAction[] = [];
   const conflicts: ConfigConflict[] = [];
 
@@ -77,7 +95,14 @@ export async function buildUninstallPlan(
     actions.push(action);
   }
 
-  const skillEntries: SkillsRemovePlanAction["entries"] = [];
+  const skillGroups = new Map<
+    string,
+    {
+      adapter: SkillsRemovePlanAction["adapter"];
+      target: string;
+      entries: SkillsRemovePlanAction["entries"];
+    }
+  >();
   for (const entry of state.managed.skills) {
     if (!(await pathExists(entry.path))) {
       continue;
@@ -91,19 +116,35 @@ export async function buildUninstallPlan(
       });
       continue;
     }
-    skillEntries.push({
+    const owner = managedSkillOwner(layout, entry);
+    if (owner === undefined) {
+      throw new Error("Managed skill has no owning adapter: " + entry.id);
+    }
+    const target =
+      owner === "legacy"
+        ? legacySkillsPath(layout)
+        : adapterById(owner).skillsPath(layout);
+    const group = skillGroups.get(target) ?? {
+      adapter: owner,
+      target,
+      entries: [],
+    };
+    group.entries.push({
       id: entry.id,
       name: entry.name,
       target: entry.path,
       beforeHash: actual,
     });
+    skillGroups.set(target, group);
   }
-  if (skillEntries.length > 0) {
+  for (const group of skillGroups.values()) {
     actions.push({
       kind: "skills-remove",
-      target: layout.sharedSkills,
-      entries: skillEntries,
-      summary: "Remove AgentPack-managed skills and preserve unrelated skill directories.",
+      adapter: group.adapter,
+      target: group.target,
+      entries: group.entries,
+      summary:
+        "Remove AgentPack-managed skills and preserve unrelated vendor skill directories.",
     });
   }
 
@@ -144,13 +185,13 @@ export async function buildUninstallPlan(
   }
 
   const backupTargets = unique([
+    layout.stateFile,
     ...actions.flatMap((action) => {
       if (action.kind === "file") {
         return [action.target];
       }
       return action.entries.map((entry) => entry.target);
     }),
-    layout.stateFile,
   ]);
 
   return {
@@ -165,9 +206,7 @@ export async function buildUninstallPlan(
     actions,
     conflicts,
     backupTargets,
-    expectedStateHash: (await pathExists(layout.stateFile))
-      ? await hashPath(layout.stateFile)
-      : null,
+    expectedStateHash,
     resolvedSources: [],
     temporaryPaths: [],
     uninstall: true,

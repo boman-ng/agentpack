@@ -8,7 +8,8 @@ This repository is the canonical source for `boman-ng/agentpack`. The global ins
 - Skills use the Agent Skills `SKILL.md` format. `skills/sources.yaml` and the catalog are canonical; the planner resolves selected Git branch heads to immutable commits before adapters materialize them.
 - MCP catalog entries contain environment-variable names only. Never add credential values.
 - Installer effects follow plan → backup → apply → validate → state. A failed apply must roll back its exact targets.
-- Overwrite mode owns only global instructions, the shared skills directory, and MCP configuration. Never remove credentials, sessions, logs, or an entire CLI home.
+- Every adapter owns its instruction, skills, and MCP target paths. Resolve each selected skill source once, then materialize independent copies in the selected vendor directories.
+- Overwrite mode owns only global instructions, exact selected or previously managed skill entries, and each adapter's MCP namespace. Never replace a whole vendor skills directory or general configuration file, or remove credentials, sessions, logs, cache, or an entire CLI home.
 
 ## Development
 

@@ -107,11 +107,13 @@ async function main(): Promise<void> {
       return;
     }
     const backupPath = await applyUninstallPlan(layout, plan);
-    process.stdout.write(
-      "Uninstall complete." +
-        (backupPath === undefined ? "" : " Backup: " + backupPath) +
-        "\n",
-    );
+    if (!parsed.options.json) {
+      process.stdout.write(
+        "Uninstall complete." +
+          (backupPath === undefined ? "" : " Backup: " + backupPath) +
+          "\n",
+      );
+    }
     return;
   }
 
@@ -188,11 +190,13 @@ async function main(): Promise<void> {
       return;
     }
     const result = await applyInstallPlan(pack, layout, plan, state);
-    process.stdout.write(
-      (reconcile ? "Reconciliation complete." : "Install complete.") +
-        (result.backupPath === undefined ? "" : " Backup: " + result.backupPath) +
-        "\n",
-    );
+    if (!parsed.options.json) {
+      process.stdout.write(
+        (reconcile ? "Reconciliation complete." : "Install complete.") +
+          (result.backupPath === undefined ? "" : " Backup: " + result.backupPath) +
+          "\n",
+      );
+    }
   } finally {
     await disposeInstallPlan(plan);
   }
