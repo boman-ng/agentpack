@@ -225,11 +225,14 @@ CI runs the canonical lock check, behavior suite, and native distribution build 
 Stable releases are tag-driven. After the package version and canonical manifest version are updated together and CI passes, push the matching `vMAJOR.MINOR.PATCH` tag. The release workflow:
 
 1. repeats the complete three-platform CI matrix at the tagged commit;
-2. rejects a tag that does not exactly match `package.json`;
+2. rejects a tag that does not exactly match `package.json` or whose commit is not contained in `origin/main`;
 3. builds and smoke-tests the installable npm tarball;
 4. writes a SHA-256 checksum and a GitHub build-provenance attestation;
-5. creates the GitHub Release from the existing tag with generated notes.
+5. publishes that exact tarball as the public `@boman-ng/agentpack` npm package with npm provenance;
+6. creates the GitHub Release from the existing tag with generated notes.
 
-The workflow does not publish to npm. Native packages remain online-resolved build outputs rather than release assets; the universal CLI tarball remains the installable artifact and resolves configured skill branches at each plan, install, or update invocation.
+The release job uses Node.js 24 with npm's dependency cache disabled and publishes through npm provenance. Because npm trusted publishing cannot be configured until the package exists, the first npm release needs a short-lived read/write token with bypass 2FA enabled in the `NPM_TOKEN` Actions secret. After that bootstrap release, configure `release.yml` as the package's trusted GitHub Actions publisher and remove the token; the same workflow then uses OIDC without a long-lived credential. A rerun accepts an existing npm version only when its registry integrity matches the newly built tarball, and repairs same-named GitHub Release assets, so a partial release failure can be retried safely.
+
+Native packages remain online-resolved build outputs rather than release assets; the universal CLI tarball remains the installable artifact and resolves configured skill branches at each plan, install, or update invocation.
 
 See [SECURITY.md](SECURITY.md) for the security model and [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for provenance and license boundaries.
