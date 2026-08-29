@@ -1,7 +1,12 @@
 import { adapterById } from "./adapters/index.js";
 import { managedInstructionHash } from "./instructions.js";
 import { lockMatches } from "./lock.js";
-import { stateOwnershipErrors } from "./state.js";
+import {
+  adapterTargetSafetyErrors,
+  managedSkillOwner,
+  stateOwnershipErrors,
+  stateUsesLegacyLayout,
+} from "./state.js";
 import type {
   DoctorCheck,
   HomeLayout,
@@ -38,6 +43,15 @@ export async function runDoctor(
     return checks;
   }
 
+  const legacyLayout = stateUsesLegacyLayout(layout, state);
+  checks.push({
+    ok: !legacyLayout,
+    label: "Vendor layout",
+    detail: legacyLayout
+      ? "Legacy shared AgentPack targets remain; run `agentpack update` to migrate them."
+      : "Instructions and skills use adapter-owned vendor directories.",
+  });
+
   const ownershipErrors = stateOwnershipErrors(pack, layout, state);
   checks.push({
     ok: ownershipErrors.length === 0,
@@ -46,6 +60,16 @@ export async function runDoctor(
       ownershipErrors.length === 0
         ? "Managed paths and owners stay within AgentPack boundaries."
         : ownershipErrors.join("; "),
+  });
+
+  const targetSafetyErrors = await adapterTargetSafetyErrors(layout, state.adapters);
+  checks.push({
+    ok: targetSafetyErrors.length === 0,
+    label: "Adapter target safety",
+    detail:
+      targetSafetyErrors.length === 0
+        ? "Vendor targets are distinct and do not resolve into the shared user-agent directory."
+        : targetSafetyErrors.join("; "),
   });
 
   for (const entry of state.managed.instructions) {
@@ -69,9 +93,10 @@ export async function runDoctor(
   for (const entry of state.managed.skills) {
     const exists = await pathExists(entry.path);
     const actual = exists ? await hashPath(entry.path) : undefined;
+    const owner = managedSkillOwner(layout, entry) ?? "unknown";
     checks.push({
       ok: actual === entry.contentHash,
-      label: "skill " + entry.id,
+      label: owner + " skill " + entry.id,
       detail:
         actual === entry.contentHash
           ? "Installed skill hash matches state (" + formatSourceRevision(entry.source) + ")."

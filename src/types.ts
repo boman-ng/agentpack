@@ -93,8 +93,6 @@ export interface LoadedPack {
 
 export interface HomeLayout {
   home: string;
-  sharedAgentsHome: string;
-  sharedSkills: string;
   stateRoot: string;
   stateFile: string;
   backupsRoot: string;
@@ -151,6 +149,7 @@ export interface AgentAdapter {
   readonly displayName: string;
   detect(layout: HomeLayout): Promise<boolean>;
   instructionPath(layout: HomeLayout): string;
+  skillsPath(layout: HomeLayout): string;
   mcpPath(layout: HomeLayout): string;
   renderMcp(
     existing: string | undefined,
@@ -194,27 +193,28 @@ export interface SkillInstallEntry {
   sourceRevision: SkillSourceRevision;
   target: string;
   operation: "adopt" | "install" | "replace";
-  beforeHash?: string | null;
+  beforeHash: string | null;
 }
 
 export interface SkillsPlanAction {
   kind: "skills";
+  adapter: AdapterId;
   target: string;
   operation: "replace" | "merge";
   entries: SkillInstallEntry[];
   summary: string;
-  beforeHash?: string | null;
 }
 
 export interface SkillRemoveEntry {
   id: string;
   name: string;
   target: string;
-  beforeHash: string;
+  beforeHash: string | null;
 }
 
 export interface SkillsRemovePlanAction {
   kind: "skills-remove";
+  adapter: AdapterId | "legacy";
   target: string;
   entries: SkillRemoveEntry[];
   summary: string;

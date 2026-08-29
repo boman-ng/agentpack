@@ -56,7 +56,7 @@ In a terminal, `install` opens guided setup:
 5. review exact target paths, backup scope, source commits, and network boundaries;
 6. install, return to change the choices, or cancel without writing files.
 
-The guided flow suggests the `minimal` profile but does not apply anything until `Install now` is selected. `Ctrl+C` cancels cleanly. An existing AgentPack setup is preselected when reconfiguring it.
+The guided flow suggests the `minimal` profile but does not apply anything until `Install now` is selected. `Ctrl+C` cancels cleanly. An existing AgentPack setup is preselected when reconfiguring it; its recorded adapters remain selected, and the prompt can add more adapters.
 
 Flags are the automation interface. Supplying selection flags skips guided setup and prints the complete plan; in a non-interactive shell it remains plan-only unless `--yes` is present. `--json` never opens the TUI or appends human-readable output. Use `--dry-run` to prohibit application explicitly.
 
@@ -101,13 +101,13 @@ Or choose an opt-in profile:
 | Behavior | `overwrite` (default) | `append` |
 |---|---|---|
 | Global instructions | Replace the target instruction file | Adopt an exact canonical copy, or add/refresh one marked AgentPack block |
-| Skills | Replace the shared skills directory with the exact selection | Add or refresh selected managed skills beside unrelated skills |
-| MCP | Replace the adapter's MCP configuration with the exact selection | Semantically merge selected servers and preserve unrelated configuration |
-| Collision handling | The supported surface is intentionally replaced | Unmanaged skill directories and MCP names block apply |
+| Skills | Replace the exact AgentPack-managed entries for each selected adapter | Add or refresh selected managed skills beside unrelated vendor skills |
+| MCP | Replace the adapter's MCP namespace with the exact selection; preserve other settings | Semantically merge selected servers and preserve unrelated configuration |
+| Collision handling | Exact selected instruction, skill, and MCP targets are intentionally replaced | Unmanaged skill directories and MCP names block apply |
 
-Overwrite owns only the supported global instruction file, shared skills directory, and MCP configuration file. It never removes an agent's credentials, sessions, logs, cache, or entire home directory.
+Overwrite owns only the supported global instruction file, exact selected or previously managed skill entries, and each adapter's MCP namespace. It never replaces a vendor's whole `skills` directory or whole general configuration file, so unrelated skills, Codex's `.system` subtree, and non-MCP settings survive. It also never removes an agent's credentials, sessions, logs, cache, or entire home directory. A deselected managed skill is removed only while its recorded hash still matches; drift blocks the plan.
 
-Append mode is additive across successive installs. Use overwrite when the selected components should become the exact managed set. Uninstall removes only content whose recorded hash still matches; edited managed content is reported as a conflict and preserved.
+Schema v1 records one pack-wide adapter list and component selection. Reconfiguring an existing installation must include every recorded adapter in `--agents`; adapters can be added, but removing one requires uninstalling the pack first. Append mode takes the union of the recorded and requested skills and MCP servers, then fills that selection across every listed adapter. Overwrite applies the exact requested selection across every listed adapter. Catalog changes that move an installed skill ID to a different target, or reuse its target for another ID, fail closed instead of being auto-migrated; uninstall before adopting that changed identity. Uninstall removes only content whose recorded hash still matches; edited managed content is reported as a conflict and preserved.
 
 ## Reconcile ownership conflicts
 
@@ -138,15 +138,19 @@ Reconciliation is append-only; it never turns a component collision into permiss
 
 ## Adapter paths
 
-| Agent | Global instructions | Shared skills | MCP configuration |
+| Agent | Global instructions | Skills | MCP configuration |
 |---|---|---|---|
-| Codex | `$CODEX_HOME/AGENTS.md` or `~/.codex/AGENTS.md` | `~/.agents/skills` | `$CODEX_HOME/config.toml` or `~/.codex/config.toml` |
-| Kimi Code | `~/.agents/AGENTS.md` | `~/.agents/skills` | `$KIMI_CODE_HOME/mcp.json` or `~/.kimi-code/mcp.json` |
-| OpenCode | `$XDG_CONFIG_HOME/opencode/AGENTS.md` or `~/.config/opencode/AGENTS.md` | `~/.agents/skills` | `$XDG_CONFIG_HOME/opencode/opencode.json` or `~/.config/opencode/opencode.json` |
+| Codex | `$CODEX_HOME/AGENTS.md` or `~/.codex/AGENTS.md` | `$CODEX_HOME/skills` or `~/.codex/skills` | `$CODEX_HOME/config.toml` or `~/.codex/config.toml` |
+| Kimi Code | `$KIMI_CODE_HOME/AGENTS.md` or `~/.kimi-code/AGENTS.md` | `$KIMI_CODE_HOME/skills` or `~/.kimi-code/skills` | `$KIMI_CODE_HOME/mcp.json` or `~/.kimi-code/mcp.json` |
+| OpenCode | `$XDG_CONFIG_HOME/opencode/AGENTS.md` or `~/.config/opencode/AGENTS.md` | `$XDG_CONFIG_HOME/opencode/skills` or `~/.config/opencode/skills` | `$XDG_CONFIG_HOME/opencode/opencode.json` or `~/.config/opencode/opencode.json` |
 
-The shared Agent Skills path is written once even when multiple adapters are selected. Codex TOML comments and unrelated keys, Kimi JSON keys, and OpenCode JSONC comments are preserved in append mode. OpenCode MCP entries use its official `mcp.<name>` layout.
+Each adapter owns all of its installed content. A selected skill source is resolved once, then copied independently to every recorded adapter; MCP selection follows the same pack-wide rule. A normal plan or install neither creates nor installs into a shared user-agent directory, and vendor targets that lexically or physically resolve there are rejected. Codex TOML comments and unrelated keys, Kimi JSON keys, and OpenCode JSONC comments are preserved in append mode. OpenCode MCP entries use its official `mcp.<name>` layout.
 
-`--home PATH` creates a fully isolated layout beneath that path and ignores `CODEX_HOME`, `KIMI_CODE_HOME`, and `XDG_CONFIG_HOME`. It is intended for tests, previews, and advanced controlled installs on Linux, macOS, and Windows.
+The Kimi paths are first-class [`KIMI_CODE_HOME` resources](https://github.com/MoonshotAI/kimi-code/blob/9d2304c23ca30c781b1a39540971dcaef085a500/docs/en/configuration/data-locations.md). OpenCode documents its [global rules](https://opencode.ai/docs/rules) and [global skills](https://opencode.ai/docs/skills) beneath the XDG configuration home. Codex global instructions and MCP use [`CODEX_HOME`](https://developers.openai.com/codex/guides/agents-md), but the Codex 0.150.1 implementation labels `$CODEX_HOME/skills` as a [deprecated compatibility location](https://github.com/openai/codex/blob/90854393966b21e9ebfd21b122334eb09a20c93d/codex-rs/ext/skills/src/host_roots.rs); the current public [Codex Skills guide](https://developers.openai.com/codex/skills) recommends the cross-client user location instead. AgentPack deliberately uses this still-discovered compatibility location to satisfy strict vendor-directory isolation. A future Codex release may remove that discovery path, so Codex upgrades require a real skill-discovery check rather than assuming continued support.
+
+State created by AgentPack 0.2.0 can record legacy shared targets. The next unchanged `agentpack update` recognizes only those exact state-owned paths, verifies their hashes, installs an independent copy for every recorded adapter, removes only the old AgentPack content, and preserves unrelated legacy files and directories. A 0.2.0 instruction file that already matched during its original install may have no ownership record; update adopts the new vendor copy while leaving that unowned old file untouched, and uninstall likewise preserves it. Reconfiguration is blocked until the one-time migration of recorded legacy targets finishes; no legacy runtime fallback remains afterward. This compatibility boundary can be removed when 0.2.0 state is no longer supported.
+
+`--home PATH` creates a fully isolated layout beneath that path and ignores `CODEX_HOME`, `KIMI_CODE_HOME`, and `XDG_CONFIG_HOME`. Without `--home`, absolute environment paths are used directly and relative values resolve from the current working directory, matching normal CLI path resolution. The isolated override is intended for tests, previews, and advanced controlled installs on Linux, macOS, and Windows.
 
 ## AnySearch
 
@@ -221,11 +225,14 @@ CI runs the canonical lock check, behavior suite, and native distribution build 
 Stable releases are tag-driven. After the package version and canonical manifest version are updated together and CI passes, push the matching `vMAJOR.MINOR.PATCH` tag. The release workflow:
 
 1. repeats the complete three-platform CI matrix at the tagged commit;
-2. rejects a tag that does not exactly match `package.json`;
+2. rejects a tag that does not exactly match `package.json` or whose commit is not contained in `origin/main`;
 3. builds and smoke-tests the installable npm tarball;
 4. writes a SHA-256 checksum and a GitHub build-provenance attestation;
-5. creates the GitHub Release from the existing tag with generated notes.
+5. publishes that exact tarball as the public `@boman-ng/agentpack` npm package with npm provenance;
+6. creates the GitHub Release from the existing tag with generated notes.
 
-The workflow does not publish to npm. Native packages remain online-resolved build outputs rather than release assets; the universal CLI tarball remains the installable artifact and resolves configured skill branches at each plan, install, or update invocation.
+The release job uses Node.js 24 with npm's dependency cache disabled and publishes through npm provenance. Repository rules prevent deletion or non-fast-forward updates of `main` and prevent updates or deletion of matching `v*.*.*` release tags. The workflow re-fetches both refs before each irreversible publication boundary to verify that the tag still resolves to the triggering commit and that the commit remains in `main`. Because npm trusted publishing cannot be configured until the package exists, the first npm release needs a short-lived read/write token with bypass 2FA enabled in the `NPM_TOKEN` Actions secret. After that bootstrap release, configure `release.yml` as the package's trusted GitHub Actions publisher and remove the token; the same workflow then uses OIDC without a long-lived credential. A rerun accepts an existing npm version only when its registry integrity matches the newly built tarball, and repairs same-named GitHub Release assets, so a partial release failure can be retried safely.
+
+Native packages remain online-resolved build outputs rather than release assets; the universal CLI tarball remains the installable artifact and resolves configured skill branches at each plan, install, or update invocation.
 
 See [SECURITY.md](SECURITY.md) for the security model and [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for provenance and license boundaries.

@@ -158,7 +158,7 @@ function formatAction(action: PlanAction): string[] {
   }
   if (action.kind === "skills") {
     const lines = [
-      "  " + action.operation.toUpperCase().padEnd(8) + "[shared] skills",
+      "  " + action.operation.toUpperCase().padEnd(8) + "[" + action.adapter + "] skills",
       "          " + action.target,
       "          " + action.summary,
     ];
@@ -171,7 +171,7 @@ function formatAction(action: PlanAction): string[] {
     return lines;
   }
   const lines = [
-    "  REMOVE  [shared] skills",
+    "  REMOVE  [" + action.adapter + "] skills",
     "          " + action.target,
     "          " + action.summary,
   ];
@@ -194,7 +194,11 @@ function guidedActionTitle(action: PlanAction): string {
   if (action.kind === "file") {
     return `${adapterById(action.adapter).displayName} ${action.component}`;
   }
-  return action.kind === "skills" ? "Shared skills" : "Managed skills";
+  const owner =
+    action.adapter === "legacy"
+      ? "Legacy"
+      : adapterById(action.adapter).displayName;
+  return owner + " skills";
 }
 
 export function displayHomePath(path: string, home: string): string {
@@ -243,6 +247,7 @@ function publicAction(action: PlanAction): Record<string, unknown> {
   }
   return {
     kind: action.kind,
+    adapter: action.adapter,
     target: action.target,
     operation: action.kind === "skills" ? action.operation : "remove",
     entries: action.entries.map((entry) => ({

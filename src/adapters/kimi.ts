@@ -27,7 +27,11 @@ export class KimiAdapter implements AgentAdapter {
   }
 
   instructionPath(layout: HomeLayout): string {
-    return join(layout.sharedAgentsHome, "AGENTS.md");
+    return join(layout.kimiHome, "AGENTS.md");
+  }
+
+  skillsPath(layout: HomeLayout): string {
+    return join(layout.kimiHome, "skills");
   }
 
   mcpPath(layout: HomeLayout): string {
@@ -41,9 +45,11 @@ export class KimiAdapter implements AgentAdapter {
     ownedIds: ReadonlySet<string>,
     target: string,
   ): RenderedMcpConfig {
-    const base =
-      mode === "overwrite" ? {} : parseJsonObject(existing, "Kimi MCP config " + target);
-    const current = tableAt(base, "mcpServers", "Kimi mcpServers");
+    const base = parseJsonObject(existing, "Kimi MCP config " + target);
+    const current =
+      mode === "overwrite"
+        ? {}
+        : tableAt(base, "mcpServers", "Kimi mcpServers");
     const conflicts: ConfigConflict[] = [];
     const hashes: Record<string, string> = {};
     for (const server of servers) {

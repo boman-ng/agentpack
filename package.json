@@ -1,6 +1,6 @@
 {
   "name": "@boman-ng/agentpack",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Online installer for agent instructions, upstream skills, MCP servers, and profiles.",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",

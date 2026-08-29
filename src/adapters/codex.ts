@@ -1,4 +1,4 @@
-import { parse, patch, stringify } from "@decimalturn/toml-patch";
+import { parse, patch } from "@decimalturn/toml-patch";
 import { join } from "node:path";
 import type {
   AdapterValidation,
@@ -30,6 +30,10 @@ export class CodexAdapter implements AgentAdapter {
     return join(layout.codexHome, "AGENTS.md");
   }
 
+  skillsPath(layout: HomeLayout): string {
+    return join(layout.codexHome, "skills");
+  }
+
   mcpPath(layout: HomeLayout): string {
     return join(layout.codexHome, "config.toml");
   }
@@ -41,9 +45,11 @@ export class CodexAdapter implements AgentAdapter {
     ownedIds: ReadonlySet<string>,
     target: string,
   ): RenderedMcpConfig {
-    const base =
-      mode === "overwrite" ? {} : parseToml(existing ?? "", "Codex config " + target);
-    const mcpServers = tableAt(base, "mcp_servers", "Codex mcp_servers");
+    const base = parseToml(existing ?? "", "Codex config " + target);
+    const mcpServers =
+      mode === "overwrite"
+        ? {}
+        : tableAt(base, "mcp_servers", "Codex mcp_servers");
     const conflicts: ConfigConflict[] = [];
     const hashes: Record<string, string> = {};
 
@@ -73,13 +79,10 @@ export class CodexAdapter implements AgentAdapter {
     } else {
       delete base.mcp_servers;
     }
-    const content =
-      mode === "overwrite"
-        ? stringify(base, { trailingNewline: 1 })
-        : patch(existing ?? "", base, {
-            updateOrder: false,
-            ...(existing === undefined ? { trailingNewline: 1 } : {}),
-          });
+    const content = patch(existing ?? "", base, {
+      updateOrder: false,
+      ...(existing === undefined ? { trailingNewline: 1 } : {}),
+    });
     return { content, entryHashes: hashes, conflicts };
   }
 

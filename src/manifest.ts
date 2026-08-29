@@ -1,4 +1,4 @@
-import { readFile, readdir } from "node:fs/promises";
+import { lstat, readFile, readdir } from "node:fs/promises";
 import { dirname, extname, isAbsolute, join, normalize, sep } from "node:path";
 import { parse as parseYaml } from "yaml";
 import type {
@@ -12,6 +12,7 @@ import type {
 import {
   assertAdapterId,
   optionalString,
+  isSafeSkillName,
   requireBoolean,
   requireRecord,
   requireString,
@@ -174,9 +175,13 @@ async function loadSkills(
     if (!sourceIds.has(sourceId)) {
       throw new Error("Skill references unknown sourceId: " + sourceId);
     }
+    const id = requireString(entry.id, "skill.id");
+    const name = requireString(entry.name, "skill.name");
+    assertSafeSkillName(id, "skill.id");
+    assertSafeSkillName(name, "skill.name");
     const skill: SkillDefinition = {
-      id: requireString(entry.id, "skill.id"),
-      name: requireString(entry.name, "skill.name"),
+      id,
+      name,
       category: requireString(entry.category, "skill.category"),
       domain: requireString(entry.domain, "skill.domain"),
       sourceId,
@@ -209,6 +214,12 @@ export async function validateSkillDirectory(
   skill: SkillDefinition,
   directory: string,
 ): Promise<void> {
+  assertSafeSkillName(skill.id, "skill.id");
+  assertSafeSkillName(skill.name, "skill.name");
+  const root = await lstat(directory);
+  if (!root.isDirectory()) {
+    throw new Error("Skill root must be a real directory: " + directory);
+  }
   const text = await readFile(join(directory, "SKILL.md"), "utf8");
   const match = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(text);
   if (match === null || match[1] === undefined) {
@@ -222,6 +233,14 @@ export async function validateSkillDirectory(
     );
   }
   requireString(frontmatter.description, directory + " frontmatter.description");
+}
+
+function assertSafeSkillName(value: string, context: string): void {
+  if (!isSafeSkillName(value)) {
+    throw new Error(
+      context + " must contain only lowercase letters, digits, and single hyphens",
+    );
+  }
 }
 
 function requireSourceRelativePath(value: string, context: string): string {
@@ -393,14 +412,6 @@ function assignOptional<
   if (value !== undefined) {
     target[key] = value;
   }
-}
-
-export function skillById(pack: LoadedPack, id: string): SkillDefinition {
-  const skill = pack.skills.find((candidate) => candidate.id === id);
-  if (skill === undefined) {
-    throw new Error("Unknown skill: " + id);
-  }
-  return skill;
 }
 
 export function mcpById(pack: LoadedPack, id: string): McpDefinition {

@@ -12,7 +12,7 @@ import type {
   SkillSource,
   SkillSourceRevision,
 } from "./types.js";
-import { hashPath, pathExists } from "./util/fs.js";
+import { assertSafeSymlinks, hashPath, pathExists } from "./util/fs.js";
 
 export interface PreparedSkill {
   skill: SkillDefinition;
@@ -90,6 +90,7 @@ export async function prepareSelectedSkills(
           );
         }
         await validateSkillDirectory(skill, sourcePath);
+        await assertSafeSymlinks(sourcePath);
         return {
           skill,
           sourcePath,

@@ -65,7 +65,12 @@ export async function runGuidedInstall(
 
   try {
     while (true) {
-      const configuration = await promptConfiguration(pack, detected, defaults);
+      const configuration = await promptConfiguration(
+        pack,
+        detected,
+        defaults,
+        state?.adapters ?? [],
+      );
       const progress = spinner({ indicator: "timer" });
       progress.start("Resolving selected sources and inspecting target files");
       try {
@@ -226,21 +231,40 @@ async function promptConfiguration(
   pack: LoadedPack,
   detected: AdapterId[],
   defaults: GuidedConfiguration | undefined,
+  recordedAdapters: AdapterId[],
 ): Promise<GuidedConfiguration> {
   const initialAdapters = defaults?.adapters ?? detected;
-  const adapters = unwrap(
-    await multiselect<AdapterId>({
-      message: "Which agents should AgentPack configure?",
-      required: true,
-      initialValues: initialAdapters,
-      maxItems: pack.targets.length,
-      options: pack.targets.map((id) => ({
-        value: id,
-        label: adapterById(id).displayName,
-        hint: detected.includes(id) ? "detected" : "not detected in this home",
-      })),
-    }),
+  const additionalTargets = pack.targets.filter(
+    (id) => !recordedAdapters.includes(id),
   );
+  let adapters: AdapterId[];
+  if (recordedAdapters.length === 0) {
+    adapters = unwrap(
+      await multiselect<AdapterId>({
+        message: "Which agents should AgentPack configure?",
+        required: true,
+        initialValues: initialAdapters,
+        maxItems: pack.targets.length,
+        options: adapterOptions(pack.targets, detected),
+      }),
+    );
+  } else {
+    log.info(
+      `Schema v1 reconfiguration keeps recorded agents selected: ${recordedAdapters.map((id) => adapterById(id).displayName).join(", ")}.`,
+    );
+    const additional = additionalTargets.length === 0
+      ? []
+      : unwrap(
+          await multiselect<AdapterId>({
+            message: "Configure any additional agents?",
+            required: false,
+            initialValues: initialAdapters.filter((id) => additionalTargets.includes(id)),
+            maxItems: additionalTargets.length,
+            options: adapterOptions(additionalTargets, detected),
+          }),
+        );
+    adapters = [...recordedAdapters, ...additional];
+  }
 
   const mode = unwrap(
     await select<InstallMode>({
@@ -325,6 +349,14 @@ async function promptConfiguration(
   }
 
   return { adapters, mode, selection };
+}
+
+function adapterOptions(ids: AdapterId[], detected: AdapterId[]) {
+  return ids.map((id) => ({
+    value: id,
+    label: adapterById(id).displayName,
+    hint: detected.includes(id) ? "detected" : "not detected in this home",
+  }));
 }
 
 async function promptReviewAction(blocked: boolean): Promise<ReviewAction> {
