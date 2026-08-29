@@ -1,6 +1,7 @@
 {
   "name": "@boman-ng/agentpack",
   "version": "0.3.0",
+  "private": true,
   "description": "Online installer for agent instructions, upstream skills, MCP servers, and profiles.",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
@@ -40,7 +41,8 @@
     "lock": "npm run build && node dist/lock-cli.js --write",
     "lock:check": "node dist/lock-cli.js --check",
     "native:build": "node dist/native-build.js",
-    "prepack": "npm run build && npm run lock:check"
+    "prepack": "npm run build && npm run lock:check",
+    "prepublishOnly": "node -e \"throw new Error('AgentPack is distributed only through GitHub Releases')\""
   },
   "engines": {
     "node": ">=22"

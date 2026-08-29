@@ -2,7 +2,7 @@
 
 AgentPack is a vendor-neutral, opt-in online installer for global agent instructions, Agent Skills, and MCP server configuration for Codex CLI, Kimi Code CLI, and OpenCode.
 
-The repository keeps one canonical source catalog. At plan time, AgentPack fetches each selected open-source skill from its declared Git branch, resolves the branch head to an immutable commit, and renders each agent's native files from that exact revision. Installing the npm package has no side effects: there is no `postinstall` script, and user configuration changes only after an `agentpack install` plan is previewed and approved.
+The repository keeps one canonical source catalog. At plan time, AgentPack fetches each selected open-source skill from its declared Git branch, resolves the branch head to an immutable commit, and renders each agent's native files from that exact revision. Installing the GitHub Release tarball has no side effects: there is no `postinstall` script, and user configuration changes only after an `agentpack install` plan is previewed and approved.
 
 > **License boundary:** the Academic Research Suite fetched by AgentPack is licensed under CC BY-NC 4.0. Its non-commercial restriction applies after selection and installation. AgentPack's original code is MIT-licensed, but an installation containing third-party skills is mixed-license; read [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) before redistribution or commercial use.
 
@@ -40,10 +40,12 @@ node dist/cli.js install
 node dist/cli.js doctor
 ```
 
-After the package is published, the equivalent global installation is:
+To install the verified archive from GitHub Release v0.3.0:
 
 ```bash
-npm install --global @boman-ng/agentpack
+gh release download v0.3.0 --repo boman-ng/agentpack --pattern '*.tgz' --pattern SHA256SUMS
+sha256sum --check SHA256SUMS
+npm install --global ./boman-ng-agentpack-0.3.0.tgz
 agentpack install
 ```
 
@@ -202,7 +204,7 @@ This creates:
 - `dist/native/codex/agentpack/`, with `.codex-plugin/plugin.json`, skills, licenses, and `.mcp.json`;
 - `dist/native/kimi/agentpack/`, with `kimi.plugin.json`, skills, licenses, and MCP declarations.
 
-`native-build` performs the same online resolution at build time and records the resolved revisions in each generated plugin's `AGENTPACK_SOURCES.json`. Those directories are point-in-time build artifacts, not AgentPack's install source, and are intentionally excluded from the npm tarball. The online CLI is the normal installation path and the only path that resolves source heads for each invocation.
+`native-build` performs the same online resolution at build time and records the resolved revisions in each generated plugin's `AGENTPACK_SOURCES.json`. Those directories are point-in-time build artifacts, not AgentPack's install source, and are intentionally excluded from the universal CLI release tarball. The online CLI is the normal installation path and the only path that resolves source heads for each invocation.
 
 Kimi can install the generated local directory from its TUI with `/plugins install <absolute-path>` and then activate it with `/reload` or a new session. Codex native distribution uses its plugin marketplace/browser flow; the universal `agentpack` installer remains the direct local-install path and does not modify a personal marketplace.
 
@@ -226,12 +228,11 @@ Stable releases are tag-driven. After the package version and canonical manifest
 
 1. repeats the complete three-platform CI matrix at the tagged commit;
 2. rejects a tag that does not exactly match `package.json` or whose commit is not contained in `origin/main`;
-3. builds and smoke-tests the installable npm tarball;
+3. builds and smoke-tests the installable CLI tarball;
 4. writes a SHA-256 checksum and a GitHub build-provenance attestation;
-5. publishes that exact tarball as the public `@boman-ng/agentpack` npm package with npm provenance;
-6. creates the GitHub Release from the existing tag with generated notes.
+5. creates the GitHub Release from the existing tag with generated notes.
 
-The release job uses Node.js 24 with npm's dependency cache disabled and publishes through npm provenance. Repository rules prevent deletion or non-fast-forward updates of `main` and prevent updates or deletion of matching `v*.*.*` release tags. The workflow re-fetches both refs before each irreversible publication boundary to verify that the tag still resolves to the triggering commit and that the commit remains in `main`. Because npm trusted publishing cannot be configured until the package exists, the first npm release needs a short-lived read/write token with bypass 2FA enabled in the `NPM_TOKEN` Actions secret. After that bootstrap release, configure `release.yml` as the package's trusted GitHub Actions publisher and remove the token; the same workflow then uses OIDC without a long-lived credential. A rerun accepts an existing npm version only when its registry integrity matches the newly built tarball, and repairs same-named GitHub Release assets, so a partial release failure can be retried safely.
+The project is marked private in npm metadata, `prepublishOnly` rejects registry publication, and the workflow never runs `npm publish`; `npm pack` is used only as the reproducible archive format for the GitHub Release asset. The release job uses Node.js 24 with npm's dependency cache disabled. Repository rules prevent deletion or non-fast-forward updates of `main` and prevent updates or deletion of matching `v*.*.*` release tags. The workflow re-fetches both refs before creating the Release to verify that the tag still resolves to the triggering commit and that the commit remains in `main`. A rerun repairs same-named GitHub Release assets, so a partial release failure can be retried safely.
 
 Native packages remain online-resolved build outputs rather than release assets; the universal CLI tarball remains the installable artifact and resolves configured skill branches at each plan, install, or update invocation.
 
