@@ -378,7 +378,7 @@ test("relative vendor-home environment variables follow CLI cwd resolution", asy
   const script =
     `import { createHomeLayout } from ${JSON.stringify(layoutModule)};` +
     "const layout=createHomeLayout();" +
-    "process.stdout.write(JSON.stringify({codex:layout.codexHome,kimi:layout.kimiHome,opencode:layout.opencodeHome}));";
+    "process.stdout.write(JSON.stringify({cwd:process.cwd(),codex:layout.codexHome,kimi:layout.kimiHome,opencode:layout.opencodeHome}));";
   const { stdout } = await execFileAsync(
     process.execPath,
     ["--input-type=module", "--eval", script],
@@ -392,10 +392,11 @@ test("relative vendor-home environment variables follow CLI cwd resolution", asy
       },
     },
   );
-  assert.deepEqual(JSON.parse(stdout), {
-    codex: join(home, "codex-relative"),
-    kimi: join(home, "kimi-relative"),
-    opencode: join(home, "xdg-relative", "opencode"),
+  const { cwd, ...homes } = JSON.parse(stdout);
+  assert.deepEqual(homes, {
+    codex: join(cwd, "codex-relative"),
+    kimi: join(cwd, "kimi-relative"),
+    opencode: join(cwd, "xdg-relative", "opencode"),
   });
 });
 
