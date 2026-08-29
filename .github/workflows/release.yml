@@ -153,6 +153,8 @@ jobs:
           release_tag_ref="refs/agentpack/release-tag"
           git fetch --force --no-tags origin "refs/tags/$GITHUB_REF_NAME:$release_tag_ref"
           test "$(git rev-parse "${release_tag_ref}^{commit}")" = "$GITHUB_SHA"
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main
           npm publish "${{ steps.package.outputs.tarball }}" --access public --provenance
 
       - name: Create GitHub release
@@ -162,6 +164,8 @@ jobs:
           release_tag_ref="refs/agentpack/release-tag"
           git fetch --force --no-tags origin "refs/tags/$GITHUB_REF_NAME:$release_tag_ref"
           test "$(git rev-parse "${release_tag_ref}^{commit}")" = "$GITHUB_SHA"
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" \
               release/*.tgz release/SHA256SUMS \
