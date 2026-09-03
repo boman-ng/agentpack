@@ -1,6 +1,6 @@
 schemaVersion: 1
 name: boman-ng/agentpack
-version: 0.3.0
+version: 0.4.0
 description: Online source catalog and installer for cross-agent instructions, skills, MCP servers, and profiles.
 instructions:
   global: ./instructions/global/AGENTS.md

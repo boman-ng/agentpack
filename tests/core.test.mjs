@@ -177,7 +177,7 @@ async function commitOnlineFixture(fixture, body, message) {
 
 test("canonical manifest loads categorized skills, profiles, and online sources", async () => {
   assert.equal(pack.name, "boman-ng/agentpack");
-  assert.equal(pack.version, "0.3.0");
+  assert.equal(pack.version, "0.4.0");
   assert.equal(
     JSON.parse(await readFile(join(repositoryRoot, "agentpack.lock"), "utf8")).schemaVersion,
     1,
