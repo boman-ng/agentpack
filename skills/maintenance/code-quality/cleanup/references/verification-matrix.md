@@ -70,6 +70,7 @@ AI review can add findings and triage attention. It does not satisfy a required 
 | Documentation cleanup | Current executable or structured source of truth | Owner confirmation for policy/product claims | Code recency alone |
 | Architecture relocation | Named ownership and dependency direction | Structural test, integration/runtime check | Coupling score alone |
 | Security cleanup | Threat model and secure boundary contract | SAST, secret/dependency scan, fuzz, specialist review | General unit tests |
+| Defensive or precautionary mechanism | Named invariant, condition, owner, simplest baseline, and independent oracle | Targeted neutralization, fault injection, interaction test, replay, runtime evidence, or qualified threat review | Generic safety claim, imagined possibility, mechanism presence, or green co-authored tests |
 
 ## 5. Test Pruning
 
@@ -96,6 +97,8 @@ Keep or add a sensor only when all are named:
 - the normal remediation path;
 - the enforcement surface: advisory, required merge check, release gate, or runtime alert;
 - the exception and removal condition.
+
+Where a mechanism's effectiveness is economically testable, prefer an independent sensor that detects the protected invariant failing when the mechanism is neutralized under the named condition. When empirical ablation is unsafe or infeasible, state the structural, formal, contractual, or qualified evidence and its limits.
 
 Delete or narrow sensors that are redundant, routinely ignored, unactionable, flaky, or more expensive than the risk they expose.
 

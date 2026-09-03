@@ -51,7 +51,7 @@
   "artifacts": {
     "instructions": {
       "path": "instructions/global/AGENTS.md",
-      "sha256": "49ff413b64377b086e7a3ae2847560136816166a095808b9fa86382ec55e81ed"
+      "sha256": "d619f6030e47efb8f6a56d27528160e864b63fe6db256d49af9d6d9bce5d320f"
     },
     "skills": [
       {
@@ -117,7 +117,7 @@
         "domain": "code-quality",
         "path": "maintenance/code-quality/cleanup",
         "sourceId": "boman-cleanup",
-        "sha256": "333f377eb438934a35ea9c37820e790856069d11001e510c893cb0ddf0fba366"
+        "sha256": "a764ffe549683b77db68807b84c40f54ca56fc246f6326ab930193a92bc31021"
       },
       {
         "id": "emil-design-eng",

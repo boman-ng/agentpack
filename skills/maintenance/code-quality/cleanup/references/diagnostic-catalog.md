@@ -16,6 +16,7 @@ Use this catalog to classify evidence-backed maintenance slop. Do not treat it a
 10. Documentation and operational residue
 11. Cognitive and change-amplification signals
 12. Root-cause questions
+13. Defensive and precautionary inflation
 
 ## 1. Evidence Levels
 
@@ -302,3 +303,37 @@ Ask these before choosing an action:
 6. What is the failure mode if this is deleted?
 7. What evidence would falsify the cleanup hypothesis?
 8. Will the proposed fix reduce future touch points, or merely move them?
+
+## 13. Defensive and Precautionary Inflation
+
+### Signals
+
+- Retries, fallbacks, validation layers, backups, rollback paths, feature flags, compatibility paths, telemetry, or audit mechanisms are justified only by generic safety, robustness, production-readiness, or possible future failure.
+- The same invariant is enforced in multiple internal layers without distinct trust boundaries or failure responsibilities.
+- Development-time uncertainty, tool limitations, review caution, or temporary migration safeguards became permanent runtime behavior.
+- A guard has no independent oracle capable of detecting its removal.
+- A fallback converts failure into success-shaped output without preserving the domain contract.
+- Precautionary infrastructure introduces more states and failure paths than the named risk.
+
+### Strong evidence
+
+- No current contract, consumer, threat model, continuity duty, or reproducible failure supports the mechanism.
+- The simplest valid baseline preserves the required outcome.
+- Targeted neutralization shows no benefit or exposes negative effects such as retry amplification or stale fallback data.
+- Multiple layers have the same owner, assumptions, inputs, and common-mode failure.
+
+### Cleanup actions
+
+- Omit an unsupported proposed mechanism; preserve and escalate an unresolved existing high-consequence control.
+- Consolidate enforcement at the owning boundary.
+- Replace a success-shaped fallback with explicit contract-valid failure.
+- Scope a conditional mechanism to the condition in which it has demonstrated value.
+- Keep unresolved uncertainty in the report rather than encoding it as configuration or a parallel path.
+
+### False positives
+
+- Distinct trust boundaries or privilege domains.
+- Explicit threat-model controls.
+- Incident-backed recovery or continuity mechanisms.
+- Legally or contractually mandated controls.
+- Rare but high-consequence duties supported by appropriate non-production evidence.

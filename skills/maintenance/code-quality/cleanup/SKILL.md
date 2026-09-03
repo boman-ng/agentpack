@@ -1,6 +1,6 @@
 ---
 name: cleanup
-description: Evidence-driven maintenance audit and pruning for existing codebases and diffs. Use when Codex needs to clean up AI-assisted or human-authored development slop; deslop, simplify, or unbloat code; reduce accidental complexity or technical debt; remove dead, duplicate, obsolete, speculative, compatibility, fallback, wrapper, glue, state, dependency, configuration, documentation, or test paths; consolidate ownership and sources of truth; or review uncommitted changes for unnecessary implementation while preserving verified behavior. Support both diagnosis-only reviews and explicitly authorized cleanup implementation; do not use for AI-authorship detection or style-only rewriting.
+description: Evidence-driven maintenance audit and pruning for existing codebases and diffs. Use when Codex needs to clean up AI-assisted or human-authored development slop; deslop, simplify, or unbloat code; reduce accidental complexity or technical debt; remove dead, duplicate, obsolete, speculative, compatibility, fallback, wrapper, glue, state, dependency, configuration, documentation, or test paths; consolidate ownership and sources of truth; counterfactually test whether safeguards, abstractions, compatibility, fallback, recovery, or operational machinery earn their lifecycle cost; or review uncommitted changes for unnecessary implementation while preserving verified behavior. Support both diagnosis-only reviews and explicitly authorized cleanup implementation; do not use for AI-authorship detection or style-only rewriting.
 ---
 
 # Cleanup
@@ -25,6 +25,31 @@ Apply one quality standard to human- and AI-authored work. Treat AI provenance o
 - Preserve user changes and unrelated work. Never discard, overwrite, or rewrite them to make cleanup easier.
 - Respect request authority: diagnose when asked to review; edit only when implementation or cleanup is authorized.
 - Stop when the requested scope and verification boundary are satisfied.
+
+## Counterfactual Complexity Gate
+
+Treat each non-trivial mechanism as a claim that its lifecycle cost buys a current project outcome. When its necessity, scope, or effectiveness is material or disputed, record:
+
+- **Protected outcome:** the current user value, contract, or invariant to preserve.
+- **Relevant condition:** the load, trust boundary, failure, threat, migration, or continuity event in which it matters.
+- **Owner:** the boundary responsible for that outcome.
+- **Baseline:** omission or the simplest valid owner-local replacement.
+- **Oracle:** an independent observable expected to differ when the mechanism is neutralized.
+- **Lifecycle cost:** concepts, owners, paths, states, dependencies, configuration, operational objects, and future touch points introduced.
+
+Generic robustness, safety, production-readiness, best-practice, future-proofing, graceful-degradation, or defense-in-depth language is not evidence. Preserve the outcome while ablating the implementation mechanism.
+
+A reasoned counterfactual is a hypothesis, not an observed result. Label whether the evidence is static, test-based, simulated, replayed, canaried, runtime-observed, or based on qualified accountable judgment.
+
+Use asymmetric defaults:
+
+- For proposed complexity, an unresolved claim means do not add it.
+- For existing local and reversible complexity, use the smallest bounded comparison and simplify when the baseline preserves the outcome.
+- For existing high-consequence controls, contracts, or durable data paths, unresolved evidence means preserve and escalate rather than delete.
+
+An unchanged result does not settle the claim. Check credible redundancy, interaction, rare or failure-only duties, external consumers, compensating mechanisms, and observation-window limits before classification.
+
+Use existing seams and project-native tools. Do not add lasting flags, wrappers, dual paths, telemetry, or experiment frameworks solely to satisfy this gate. Apply the full gate only to non-trivial, costly, disputed, layered, public, persistent, privileged, or precautionary mechanisms; use a minimal counterfactual check for obvious local reversible changes.
 
 ## Route the Request
 
@@ -78,6 +103,12 @@ Ask in order:
 
 Reject implementation polish on an invalid or unverified premise. Do not invent product value or silently remove a real contract.
 
+For each material mechanism, formulate the complexity claim before judging the implementation:
+
+> Under &lt;relevant condition&gt;, &lt;mechanism&gt; preserves &lt;current outcome or invariant&gt;, owned by &lt;boundary&gt;; without it, &lt;independent oracle&gt; should show &lt;observable loss&gt;.
+
+Do not accept safer, more robust, production-ready, future-proof, or best practice as the protected outcome.
+
 ### 2. Inspect Sources of Truth and Establish a Baseline
 
 Inspect before designing:
@@ -91,6 +122,8 @@ Inspect before designing:
 Use `rg` or project-native structured tools before ad hoc scanning. Run the narrowest meaningful existing check first when behavior is at risk. Do not use static presence as a substitute for runtime evidence when the claim is dynamic.
 
 Do not run a full build or test matrix merely to establish a clean baseline for a diagnosis-only audit. Form a concrete falsifiable claim first, then run only the check needed to evaluate that claim.
+
+For a material complexity claim, compare the mechanism with omission and with the simplest valid owner-local alternative. Keep interfaces, workload, capacity, timeout budget, input data, versions, upstream and downstream state, fixtures, observation windows, and compensating mechanisms equivalent where they could confound the result.
 
 ### 3. Build a Slop Ledger
 
@@ -114,6 +147,17 @@ Avoid a scalar slop score. Prioritize by evidence confidence, lifecycle benefit,
 
 For investigation leads, record the observed signal, missing evidence, consequence if confirmed, and next decisive check outside the actionable ledger.
 
+Do not expand the ledger into an experiment-management system. When a retry, fallback, compatibility or security layer, recovery mechanism, flag, abstraction, configuration, cache, queue, state machine, audit control, or other material mechanism needs counterfactual analysis, append only:
+
+**Complexity claim — &lt;finding ID&gt;**
+
+- Protected outcome:
+- Relevant condition:
+- Simplest baseline:
+- Independent oracle:
+- Expected or observed ablation delta:
+- Confounders and interactions:
+
 ### 4. Select the Smallest Complete Slice
 
 Prefer actions in this order:
@@ -126,6 +170,15 @@ Prefer actions in this order:
 
 Keep feature changes, behavior changes, mechanical movement, and unrelated cleanup separate. Do not broaden a local cleanup into a platform rewrite.
 
+Classify counterfactual evidence before selecting the action:
+
+- If the baseline violates the invariant and the mechanism restores it, retain the smallest effective mechanism.
+- If a simpler alternative produces the same result, replace the complex mechanism.
+- If removing one mechanism has no effect because another compensates, perform only the necessary safe joint comparison and consolidate redundant ownership.
+- If the mechanism matters only under a named condition, narrow it to that condition.
+- If removal improves correctness, performance, or operability, delete or redesign the mechanism.
+- If no credible oracle exists or the condition cannot be reproduced, omit proposed complexity; preserve and escalate high-consequence existing controls.
+
 When a consequential architecture or build-versus-adopt decision remains uncertain after repository inspection, inspect current primary sources and mature implementations. If independent subagents are available, use one bounded evidence pass without leaking the expected conclusion. Do not delay straightforward, well-evidenced deletion for ceremonial research.
 
 For diagnosis-only work, stop implementation here. Report inspected scope, actionable findings, investigation leads, strongest counterevidence, proposed smallest actions, verification plans, and evidence limits. Do not claim that anything was cleaned or report a realized net complexity delta.
@@ -135,6 +188,8 @@ For diagnosis-only work, stop implementation here. Report inspected scope, actio
 ### 5. Establish the Safety Boundary
 
 For behavior changes, bug fixes, migrations, and regression-prone cleanup, demonstrate the existing behavior or failure and add or identify a focused test before implementation where practical.
+
+Never ablate a mandated safety, privacy, authorization, integrity, audit, recovery, compliance, durable-data, or public-contract outcome. Hold the invariant constant and compare owner-local implementations through isolated tests, representative replay, fault injection, static or formal analysis, migration rehearsal, or qualified review when live removal could cause unacceptable harm.
 
 Use independent oracles:
 
@@ -153,6 +208,7 @@ Apply one coherent change at a time. Run the narrow check after each risk-bearin
 During implementation:
 
 - Reuse the existing project or platform primitive when it is sound.
+- Change one material factor at a time when performing a bounded comparison, and remove temporary mutations or substitutions before completion.
 - Remove the old path in the same bounded change when no verified migration need exists.
 - Do not add aliases, shims, adapters, fallback branches, glue layers, broad casts, or swallowed errors to make the cleanup appear safe.
 - Do not add speculative configuration, extension points, generic managers, providers, factories, or dependencies.
@@ -175,6 +231,8 @@ Distinguish:
 
 Treat coverage and static metrics as gap-finding and triage signals, not acceptance verdicts. Keep a sensor only when it protects a named invariant, has an owner and response, and saves more work than its false positives create.
 
+Where safe and economical, neutralize the mechanism and confirm that an independent oracle fails for the claimed reason under the relevant condition. Restore the mechanism or substitute the simpler baseline and confirm that the invariant recovers. Prefer focused manual mutation, dependency substitution, an existing test seam, replay, or fault injection; do not install a general mutation-testing, chaos, telemetry, or experiment framework by default.
+
 ### 8. Deslop the Final Change Set
 
 Read the complete task change set using the project-native review surface when available, and explain every non-trivial change. Then:
@@ -188,6 +246,15 @@ Read the complete task change set using the project-native review surface when a
 - Confirm that user changes and unrelated files remain intact.
 - Run formatting and diff-integrity checks when available.
 
+Perform a final self-ablation of the task change set. For each newly introduced non-trivial concept, state, branch, option, dependency, compatibility path, fallback, wrapper, test fixture, or operational object, ask:
+
+1. Which current outcome requires it?
+2. Which independent check would detect its removal?
+3. Can an existing owner or simpler baseline satisfy the same outcome?
+4. Does removing it reduce future touch points without weakening a verified invariant?
+
+Remove task-introduced complexity that cannot answer these questions.
+
 If the result is harder to explain or requires more future touch points, continue simplifying or report why the complexity is essential.
 
 ## Report the Result
@@ -197,7 +264,7 @@ For diagnosis-only work, lead with the audit conclusion and include inspected sc
 For authorized implementation, lead with the achieved maintenance outcome. Include:
 
 1. **Scope and preserved contract:** what was cleaned and what behavior remained authoritative.
-2. **Root causes and decisions:** what was deleted, consolidated, relocated, renamed, narrowed, or deliberately retained, with evidence.
+2. **Root causes and decisions:** what was deleted, consolidated, relocated, renamed, narrowed, or deliberately retained after its complexity claim was supported, with evidence.
 3. **Verification:** exact static, test, runtime, migration, or review evidence and its limits.
 4. **Net complexity delta:** report applicable changes in files and source lines, concepts, owners, normal paths, states/transitions, public interfaces, dependencies/options, tests/fixtures, and architecture violations.
 5. **Residual risk:** unresolved unknowns, external contracts, weak evidence, or follow-up work that remains genuinely necessary.
