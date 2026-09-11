@@ -40,12 +40,12 @@ node dist/cli.js install
 node dist/cli.js doctor
 ```
 
-To install the verified archive from GitHub Release v0.3.0:
+To install the verified archive from GitHub Release v0.5.0:
 
 ```bash
-gh release download v0.3.0 --repo boman-ng/agentpack --pattern '*.tgz' --pattern SHA256SUMS
+gh release download v0.5.0 --repo boman-ng/agentpack --pattern '*.tgz' --pattern SHA256SUMS
 sha256sum --check SHA256SUMS
-npm install --global ./boman-ng-agentpack-0.3.0.tgz
+npm install --global ./boman-ng-agentpack-0.5.0.tgz
 agentpack install
 ```
 

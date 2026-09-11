@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "pack": {
     "name": "boman-ng/agentpack",
-    "version": "0.4.0"
+    "version": "0.5.0"
   },
   "sources": [
     {
@@ -51,7 +51,7 @@
   "artifacts": {
     "instructions": {
       "path": "instructions/global/AGENTS.md",
-      "sha256": "d619f6030e47efb8f6a56d27528160e864b63fe6db256d49af9d6d9bce5d320f"
+      "sha256": "aff96edfc56e556918ec783d0352ae3c0ded3850eb7db6c24748d72efb8be212"
     },
     "skills": [
       {
@@ -117,7 +117,7 @@
         "domain": "code-quality",
         "path": "maintenance/code-quality/cleanup",
         "sourceId": "boman-cleanup",
-        "sha256": "a764ffe549683b77db68807b84c40f54ca56fc246f6326ab930193a92bc31021"
+        "sha256": "29a4e2cd066b211fa408aa98db0622b3b465d7a5eb218980663e281f64ac7e3c"
       },
       {
         "id": "emil-design-eng",

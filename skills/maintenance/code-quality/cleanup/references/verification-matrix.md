@@ -1,124 +1,43 @@
 # Verification Matrix
 
-Use this reference to choose proportionate evidence. Do not run every sensor on every cleanup.
+Choose evidence that can resolve the actual cleanup claim. These examples guide judgment; they do not create mandatory tiers, approval systems, or a sequence of checks.
 
-## Contents
+## Match Evidence To The Change
 
-1. Risk dimensions
-2. Consequence tiers
-3. Sensor hierarchy
-4. Change-to-evidence matrix
-5. Test pruning
-6. Sensor quality
-7. Net complexity delta
-
-## 1. Risk Dimensions
-
-Increase verification depth when any dimension increases:
-
-- **Blast radius:** number and importance of users, callers, services, or workflows affected.
-- **Durability:** expected lifetime of the code, contract, or data.
-- **Irreversibility:** ability to revert code, data, releases, or external effects.
-- **Privilege:** access to secrets, identity, production, network, filesystem, or destructive operations.
-- **Contract scope:** public API, persistence, protocol, package, or cross-team boundary.
-- **Novelty:** unfamiliar technology, new mechanism, or weak local precedent.
-- **Evidence weakness:** poor tests, unavailable owners, dynamic registration, or incomplete telemetry.
-
-AI involvement alone does not determine technical risk. Autonomous external action always raises governance risk.
-
-## 2. Consequence Tiers
-
-| Tier | Typical cleanup | Minimum evidence |
+| Change | Useful evidence | What can require more investigation |
 |---|---|---|
-| R0: observational | Read, inventory, explain; no state change | Source references and explicit uncertainty |
-| R1: local and reversible | Dead local helper, duplicate test setup, contained rename | Focused tests or compile/type/lint evidence; complete diff review |
-| R2: shared behavior | Shared module, dependency, user-visible behavior, build/CI | Domain owner evidence, regression/contract test, broader affected checks, rollback description |
-| R3: durable or privileged | Public API, schema/data, auth, security boundary, release path | Prior design/contract decision, specialist review, migration and rollback evidence, runtime or representative-data validation |
-| R4: irreversible external action | Production mutation, destructive migration, release, credential or public action | Explicit execution-time human authorization, least privilege, auditable execution, rehearsed recovery where feasible |
+| Local code removal or rename | Relevant references, compile/type/lint or focused behavior checks, complete diff review | Dynamic registration or external consumers |
+| Duplicate implementation or wrapper removal | Caller contracts and observable behavior | Different error, protocol, performance, or trust semantics |
+| Shared code, dependency, or build change | Affected regression checks, manifest and lock consistency | Broader consumers or unavailable affected-test selection |
+| State or schema change | Lifecycle invariants, representative persisted data, migration and recovery checks | Durable data, irreversible operations, or unknown consumers |
+| Compatibility or configuration pruning | Actual consumer and supported-environment evidence | Deployment variation, public contracts, or continuity obligations |
+| Test pruning | The behavior and failure it detects, including coverage supplied elsewhere | Unique incident, migration, security, concurrency, or performance evidence |
+| Security or recovery mechanism | The threat or failure contract and independent evidence of effectiveness | Distinct trust boundaries, mandated review, or unsafe live comparisons |
+| Documentation change | Current authoritative behavior, policy, or owner decision | Historical context or an unresolved product decision |
+| Agent instruction or skill change | Authority and entrypoint consistency, metadata and reference integrity | Consequential behavior changes or claims about quality and resource use |
 
-Move a change upward when its evidence is weak even if its code diff is small.
+Use existing project tools and complete required checks. Broaden only when the changed surface or residual uncertainty warrants it. A full suite, high coverage, successful parsing, or unchanged runtime output is not automatically sufficient for every claim.
 
-## 3. Sensor Hierarchy
+## Preserve Outcomes And Authority
 
-Select the lowest-cost independent evidence that can falsify the cleanup claim:
+Keep mandated safety, privacy, integrity, authorization, audit, recovery, and public-contract outcomes intact. Use isolated tests, representative replay, migration rehearsal, static or formal analysis, or qualified review when a live comparison could cause harm.
 
-1. **Repository integrity:** formatting, parse, manifest validation, generated-file consistency, `git diff --check`.
-2. **Static correctness:** compile, typecheck, lint, schema validation, dependency resolution.
-3. **Focused behavior:** unit, contract, state-transition, integration, CLI/API/UI/workflow checks.
-4. **Structural invariants:** dependency direction, forbidden edges, cycles, public API compatibility, schema constraints.
-5. **Adversarial effectiveness:** targeted mutation, property, fuzz, fault injection, concurrency, security analysis.
-6. **Runtime and operational evidence:** representative execution, migration rehearsal, observability, canary, SLO, rollback.
-7. **Qualified human judgment:** premise, product value, domain semantics, architecture ownership, legal or safety decisions.
+External actions require authorization covering the actual action and target. Reuse valid authorization already provided, respect changed instructions, and preserve independently required approvals. An evidence gap should not create a project-side approval or recovery system.
 
-Stop at the first level or combination that covers the actual claim. Do not run every lower and higher level as a ritual. A broad suite is warranted only when the repository mandates it, affected-test selection is unavailable for a shared surface, or the cleanup can alter behavior outside the focused boundary.
+## Test Value
 
-AI review can add findings and triage attention. It does not satisfy a required accountable approval.
+Remove or rewrite tests when they protect retired behavior, repeat the same risk, or cannot detect plausible incorrect behavior. Preserve unique evidence for an active invariant, even when the current test is inconvenient. Do not weaken assertions to turn failures green or use coverage and mutation scores as automatic pruning thresholds.
 
-## 4. Change-to-Evidence Matrix
+Temporary neutralization or fault injection can help establish whether a check detects the claimed loss. Use it where safe and useful, restore the final implementation, and avoid creating permanent experiment machinery for a one-time question.
 
-| Cleanup type | Required evidence | Add when risk warrants | Misleading substitute |
-|---|---|---|---|
-| Dead local code | References plus build/type/test | Runtime registration or coverage trace for dynamic systems | Text search alone |
-| Duplicate implementation | Shared contract and caller comparison | Characterization tests, change-history analysis | Similar syntax alone |
-| Wrapper/abstraction removal | Caller behavior and ownership | Performance or protocol checks | One implementation alone |
-| State-machine pruning | Reachability and business lifecycle contract | Property/model checks, representative persisted states | Enum-reference count |
-| Schema/data removal | Consumer inventory and data inspection | Migration rehearsal, backup/restore, rollback | ORM model search alone |
-| Compatibility deletion | Verified consumer and deprecation evidence | Usage telemetry, release-window proof | Age of code |
-| Dependency removal | Call sites, manifest/lockfile, build/test | License, supply-chain, performance checks | Package unused warning alone |
-| Configuration/flag removal | Supported environment and consumer evidence | Deployment config scan, runtime telemetry | Repository default alone |
-| Test pruning | Behavior contract and counterfactual test value | Mutation/property/fault checks | Coverage percentage |
-| Documentation cleanup | Current executable or structured source of truth | Owner confirmation for policy/product claims | Code recency alone |
-| Architecture relocation | Named ownership and dependency direction | Structural test, integration/runtime check | Coupling score alone |
-| Security cleanup | Threat model and secure boundary contract | SAST, secret/dependency scan, fuzz, specialist review | General unit tests |
-| Defensive or precautionary mechanism | Named invariant, condition, owner, simplest baseline, and independent oracle | Targeted neutralization, fault injection, interaction test, replay, runtime evidence, or qualified threat review | Generic safety claim, imagined possibility, mechanism presence, or green co-authored tests |
+## Agent Instruction Changes
 
-## 5. Test Pruning
+Check agreement among the description, default prompt, body, references, and applicable instructions. Confirm what the host actually loads; use a fresh session when instructions are read at startup.
 
-Delete or rewrite a test only when at least one is established:
+For a substantial workflow change, representative isolated tasks can test the affected decisions: ordinary local cleanup, audit-only work, a consequential contract, existing authorization, a follow-up correction, or a request that should not activate the skill. Judge actions and artifacts rather than recited rules. If independent evaluation is warranted and available, provide the task and raw artifacts without the desired answer.
 
-- The behavior or contract it protects has been explicitly removed.
-- It duplicates another test without covering a distinct risk.
-- It asserts implementation trivia rather than a supported contract.
-- Its fixture represents an obsolete state, schema, flag, or compatibility path.
-- Its assertions cannot fail under plausible incorrect behavior.
-- It is permanently skipped, retried into success, or disconnected from the normal test target.
+Claims of improvement need comparable task inputs, models, reasoning settings, tools, and permissions. Observe completion quality, scope, unnecessary pauses, repeated work, and measured resource use as relevant. Report sample size and limits; one successful case does not prove a general performance gain.
 
-Before deleting, identify whether the test is the only evidence for an incident, migration, protocol, security, recovery, concurrency, or performance invariant. Promote that invariant to a clearer test when still required.
+## Report What Was Established
 
-Do not use a global coverage or mutation threshold as the pruning criterion.
-
-## 6. Sensor Quality
-
-Keep or add a sensor only when all are named:
-
-- the invariant it protects;
-- the owner responsible for failures;
-- the meaning of failure;
-- the normal remediation path;
-- the enforcement surface: advisory, required merge check, release gate, or runtime alert;
-- the exception and removal condition.
-
-Where a mechanism's effectiveness is economically testable, prefer an independent sensor that detects the protected invariant failing when the mechanism is neutralized under the named condition. When empirical ablation is unsafe or infeasible, state the structural, formal, contractual, or qualified evidence and its limits.
-
-Delete or narrow sensors that are redundant, routinely ignored, unactionable, flaky, or more expensive than the risk they expose.
-
-Make diagnostics tell the agent what boundary or invariant failed and what evidence is expected. Avoid prescriptive fixes when several valid designs exist.
-
-## 7. Net Complexity Delta
-
-Report dimensions that are meaningful for the scoped cleanup:
-
-| Dimension | Examples |
-|---|---|
-| Physical size | source files and lines added/deleted; exclude generated or vendored artifacts when they distort the result |
-| Conceptual load | domain concepts, aliases, models, sources of truth, owners |
-| Control flow | normal paths, fallback branches, feature flags, error paths |
-| State space | states, transitions, stored fields, invalid combinations |
-| Coupling | dependency edges, cycles, callers requiring synchronized edits |
-| Public surface | APIs, commands, options, environment variables, schemas |
-| Supply chain | direct/transitive dependencies, build tools, containers |
-| Test burden | tests, mocks, fixtures, snapshots, flakes, execution time |
-| Operational burden | jobs, dashboards, alerts, runbooks, migrations, release steps |
-| Verification strength | behavior contracts or executable invariants added, removed, or weakened |
-
-Use before/after counts only where definitions are stable. Explain qualitative reductions such as single ownership or removal of a parallel normal path. Never collapse these dimensions into one score.
+Distinguish static inspection, test or simulated evidence, runtime observation, and achieved outcomes. Explain the meaningful change in concepts, owners, paths, states, dependencies, or future touch points; counts are useful only with stable definitions. Stop once the claim and required checks are covered.
