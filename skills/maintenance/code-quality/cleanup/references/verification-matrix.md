@@ -34,9 +34,13 @@ Temporary neutralization or fault injection can help establish whether a check d
 
 Check agreement among the description, default prompt, body, references, and applicable instructions. Confirm what the host actually loads; use a fresh session when instructions are read at startup.
 
-For a substantial workflow change, representative isolated tasks can test the affected decisions: ordinary local cleanup, audit-only work, a consequential contract, existing authorization, a follow-up correction, or a request that should not activate the skill. Judge actions and artifacts rather than recited rules. If independent evaluation is warranted and available, provide the task and raw artifacts without the desired answer.
+For a substantial workflow change, choose representative isolated tasks that distinguish the affected decisions. Useful contrasts include a mistaken diagnosis versus an explicit method constraint, read-only audits versus authorized implementation, active versus ended compatibility obligations, or repeated knowledge versus superficially similar code. Small tasks should stay small, valid no-change outcomes should remain possible, and follow-up corrections should preserve valid work and authorization. These are candidate scenarios, not a required suite.
 
-Claims of improvement need comparable task inputs, models, reasoning settings, tools, and permissions. Observe completion quality, scope, unnecessary pauses, repeated work, and measured resource use as relevant. Report sample size and limits; one successful case does not prove a general performance gain.
+Judge actions and artifacts rather than recited rules. Check Rule effects against the actual decisions, diff, and execution record. Evaluate domain judgment by whether the solution fits the task; do not reward length, jargon, complexity, or restated principles. If independent evaluation is warranted and available, provide the task and raw artifacts without the desired answer.
+
+Compare old and candidate instructions with comparable task inputs, models, settings, tools, and permissions, using fresh sessions and confirming what each loaded. Evaluate correctness, authority, completion, and engineering tradeoffs before unnecessary pauses, repeated work, time, or resource use. Performance gains cannot offset unauthorized actions, data damage, or broken contracts. Report sample size and limits; one successful case does not prove a general improvement.
+
+Static checks can establish metadata, reference, entrypoint, and canonical-lock consistency. Successful parsing, shorter text, and passing project tests cannot establish better model behavior. If model execution is unavailable, complete the supported edits and project checks and explicitly report that no behavior comparison was performed.
 
 ## Report What Was Established
 

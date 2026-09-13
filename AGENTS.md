@@ -14,12 +14,12 @@ This repository is the canonical source for `boman-ng/agentpack`. The global ins
 ## Development
 
 - Use Node.js 22 or newer, npm, and Git.
-- Run `npm test` for behavior changes and `npm run check` before release handoff.
-- Run end-to-end installer tests only with an explicit temporary `--home`; never test mutations against the real user home.
 - Keep generated lock hashes reproducible with `npm run lock`.
 - Preserve third-party provenance, notices, and licenses. Open-source skills are fetched from their declared Git sources at plan time; do not add a bundled fallback snapshot.
 - Keep append-mode collisions fail-closed. Existing unmanaged skills or MCP names must not be overwritten silently.
 
-## Review
+## Verification
 
-Before completion, verify all three adapters in isolated homes, both install modes, backup creation, plan-only behavior, selectable components, idempotent updates, doctor, and uninstall safety.
+- Match verification to the changed surface. Use affected checks for localized edits. Shared installer, ownership, rollback, or adapter-contract changes require the full installer matrix: all three adapters, both install modes, backups, plan-only behavior, component selection, idempotent updates, doctor, and uninstall safety.
+- Release qualification keeps the full installer matrix and existing project gates, including the three-platform CI and native distribution builds. Run `npm run check` before release handoff; it already includes `npm test`. Do not repeat unchanged checks without a material reason.
+- Run installer tests only with an explicit temporary `--home` or the suite's disposable-home fixtures; never test mutations against the real user home. Within existing permissions, complete scoped fixes and rerun affected checks without stepwise approval.

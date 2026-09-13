@@ -8,7 +8,7 @@ The repository keeps one canonical source catalog. At plan time, AgentPack fetch
 
 ## What is included
 
-- The current global Codex instructions, copied verbatim to `instructions/global/AGENTS.md` and protected by `agentpack.lock`.
+- Global agent defaults maintained in `instructions/global/AGENTS.md` and protected by `agentpack.lock`.
 - The local `cleanup` maintenance skill.
 - Online source declarations for the latest `main` revision of `academic-research-skills-codex`, `pbakaus/impeccable`, and all 12 skills from `emilkowalski/skills`.
 - AnySearch's remote Streamable HTTP MCP server at `https://api.anysearch.com/mcp`.
