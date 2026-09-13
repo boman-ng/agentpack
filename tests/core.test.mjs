@@ -189,7 +189,7 @@ test("canonical manifest loads categorized skills, profiles, and online sources"
     pack.profiles.find((profile) => profile.id === "full")?.skills.length,
     pack.skills.length,
   );
-  assert.match(await readFile(pack.instructionPath, "utf8"), /^# Global Codex Instructions/m);
+  assert.match(await readFile(pack.instructionPath, "utf8"), /^# Global Agent Instructions/m);
   const impeccable = pack.skillSources.find((source) => source.id === "impeccable");
   assert.equal(impeccable?.kind, "git");
   assert.equal(impeccable?.ref, "refs/heads/main");
@@ -522,14 +522,14 @@ test("append adopts an exact canonical instruction file without duplicating it",
     (candidate) => candidate.kind === "file" && candidate.component === "instructions",
   );
   assert.equal(action?.kind, "file");
-  assert.equal(action?.after?.match(/^# Global Codex Instructions$/gm)?.length, 1);
+  assert.equal(action?.after?.match(/^# Global Agent Instructions$/gm)?.length, 1);
   assert.match(action?.after ?? "", /agentpack:boman-ng\/agentpack:start/);
 
   const result = await applyInstallPlan(pack, layout, plan);
   assert.equal(result.state.managed.instructions[0]?.strategy, "managed-block");
   assert.equal(
     (await readFile(join(layout.codexHome, "AGENTS.md"), "utf8")).match(
-      /^# Global Codex Instructions$/gm,
+      /^# Global Agent Instructions$/gm,
     )?.length,
     1,
   );
@@ -1751,8 +1751,8 @@ test("append update refuses drifted managed instructions and MCP entries", async
   const instructionsPath = join(layout.codexHome, "AGENTS.md");
   const mcpPath = join(layout.codexHome, "config.toml");
   const editedInstructions = (await readFile(instructionsPath, "utf8")).replace(
-    "# Global Codex Instructions",
-    "# User-edited Global Codex Instructions",
+    "# Global Agent Instructions",
+    "# User-edited Global Agent Instructions",
   );
   const editedMcp = (await readFile(mcpPath, "utf8")).replace(
     "https://api.anysearch.com/mcp",
