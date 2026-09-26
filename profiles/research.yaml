@@ -1,8 +1,0 @@
-schemaVersion: 1
-id: research
-description: Academic research and writing workflows with current web search.
-skills:
-  - cleanup
-  - academic-research-suite
-mcp:
-  - anysearch

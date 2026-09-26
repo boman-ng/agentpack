@@ -1,7 +1,0 @@
-schemaVersion: 1
-servers:
-  - id: anysearch
-    name: AnySearch
-    category: search
-    domain: web
-    path: ./search/web/anysearch.yaml

@@ -1,20 +1,17 @@
-# Security Policy
+# Security and recovery
 
-Report vulnerabilities privately through the repository owner's GitHub security advisory channel.
+Report vulnerabilities privately through this repository's GitHub security advisory channel.
 
-AgentPack treats install plans and MCP launch/connect metadata as security-sensitive:
+AgentPack distributes content and installation guidance. It does not run an installer, background updater, or automatic migration. The executing Codex session is responsible for following [INSTALL.md](INSTALL.md) within the user's authorization and its host permissions.
 
-- The package has no `postinstall` script and never mutates a user home during package installation.
-- Selected open-source skills are fetched with the system Git executable from credential-free HTTPS repositories and explicit branch refs.
-- Git credential prompts, system/global Git configuration, hooks, and LFS smudge execution are disabled for source preparation.
-- `agentpack install` previews the full plan, including resolved upstream commit SHAs, before any user-home write.
-- Apply rechecks staged source hashes and target preconditions; a moved branch cannot change an already previewed plan.
-- Every apply backs up exact targets and rolls them back on failure.
-- Apply rejects stale previews, and state ownership checks prevent managed paths from escaping adapter targets.
-- Canonical MCP files may name environment variables but must not contain credential values.
-- Append mode refuses collisions with unmanaged skills and MCP server names. `reconcile` may claim only catalog-equivalent content or explicitly replace named conflicting targets after preview and backup.
-- Tests must use an isolated `--home`.
+- Installation requires an explicit user request and a confirmed scope showing actual replacements and removals. Selected user collections may include content created by other tools; their replacement is intentional only within that disclosed scope.
+- Prepare selected sources before modifying targets. Use the commits in [SOURCES.md](SOURCES.md), inspect skill resources and licenses, and do not execute upstream setup code merely to copy a skill. A commit identifies content; it does not prove the content is safe.
+- Inspect target links and overlapping roots. Do not let pruning traverse links into unrelated projects or protected locations.
+- Preserve skipped components, built-in and plugin content, project configuration, credentials, sessions, logs, caches, and non-MCP settings.
+- Archive affected targets outside discovery roots before changes. Preserve older recovery copies, record absent targets, and report failures and any incomplete recovery honestly.
+- Backups may contain personal instructions or existing configuration secrets. Keep them local, restrict access to the current user, and never commit or publish them. Installation records and reports must not contain credentials.
+- MCP examples contain no credentials. AnySearch is an optional third-party remote service; enabling it allows queries and requested URLs to leave the machine. Anonymous access does not imply service availability or unlimited usage.
 
-Online source repositories are a supply-chain boundary. AgentPack validates source paths, skill frontmatter, and filesystem hashes, but a current branch head is not equivalent to a maintainer signature or security review. Inspect the displayed repository and commit before approval when installing privileged or unfamiliar skills. Source failures stop explicitly; there is no bundled or cached fallback.
+Natural-language instructions do not enforce atomic application, rollback, or identical agent behavior. Verify the resulting files and actual Codex discovery, distinguish configuration from connectivity, and retain backups for interrupted runs. No automated cross-platform installation guarantee is made.
 
-AnySearch is a remote third-party service. Review its endpoint, tools, privacy terms, and authentication behavior before enabling it. AgentPack configures anonymous access, does not register accounts, and does not persist API keys.
+Use disposable directories for maintenance checks. Never validate installation changes against the maintainer's real home. See [third-party attribution](THIRD_PARTY_LICENSES.md) for the license boundaries of selected content.

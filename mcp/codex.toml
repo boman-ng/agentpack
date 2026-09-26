@@ -1,0 +1,5 @@
+# Optional AnySearch MCP. Apply only the user-confirmed mcp_servers collection.
+# Keep all other Codex configuration settings unchanged.
+[mcp_servers.anysearch]
+url = "https://api.anysearch.com/mcp"
+http_headers = { "X-Anysearch-Client" = "mcp/1.0.0" }
