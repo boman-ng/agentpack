@@ -27,6 +27,7 @@ The recommended starting point is the global instructions and `cleanup`. Third-p
 |---|---|
 | [Global instructions](instructions/AGENTS.md) | Personal working preferences for Codex |
 | [cleanup](skills/cleanup/SKILL.md) | Review and simplify code or agent instructions |
+| [ui-translate](skills/ui-translate/SKILL.md) | Turn rough UI and motion ideas into frontend terms and developer descriptions |
 | [Optional skills and sources](SOURCES.md) | Fifteen upstream skills at recorded Git commits |
 | [AnySearch configuration](mcp/codex.toml) | Optional anonymous remote search MCP |
 

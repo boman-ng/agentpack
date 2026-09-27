@@ -1,8 +1,8 @@
 # Components and sources
 
-Select skills by name. `cleanup` is local; the other fifteen skills are fetched only when selected. Use the full commits below, not the current branch heads. These pins were resolved and their listed paths and license files checked on 2026-09-26.
+Select skills by name. `cleanup` and `ui-translate` are local; the other fifteen skills are fetched only when selected. Use the full commits below, not the current branch heads. These pins were resolved and their listed paths and license files checked on 2026-09-26.
 
-The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), [cleanup](skills/cleanup/SKILL.md), and [the MCP snippet](mcp/codex.toml). No separate content lock or bundled upstream snapshot is required.
+The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills [cleanup](skills/cleanup/SKILL.md) and [ui-translate](skills/ui-translate/SKILL.md), and [the MCP snippet](mcp/codex.toml). No separate content lock or bundled upstream snapshot is required.
 
 ## Upstream revisions
 
@@ -20,12 +20,13 @@ Paths below are relative to the corresponding repository at its recorded commit.
 | Skill | Source | Path | Use |
 |---|---|---|---|
 | `cleanup` | This AgentPack commit | `skills/cleanup` | Code and instruction maintenance |
+| `ui-translate` | This AgentPack commit | `skills/ui-translate` | UI and motion intent, terminology, and developer descriptions |
 | `academic-research-suite` | ARS | `skills/academic-research-suite` | Research and academic writing |
 | `impeccable` | Impeccable | `.agents/skills/impeccable` | Frontend design and improvement |
 | `agent-browser` | Browser | `skills/agent-browser` | Browser automation |
 | `animate` | Emil | `skills/animate` | Interface animation |
 | `animate-expo` | Emil | `skills/animate-expo` | Expo animation |
-| `animation-vocabulary` | Emil | `skills/animation-vocabulary` | Motion terminology |
+| `animation-vocabulary` | Emil | `skills/animation-vocabulary` | Quick lookup of motion-effect names |
 | `apple-design` | Emil | `skills/apple-design` | Apple platform design |
 | `ask-sonner` | Emil | `skills/ask-sonner` | Sonner guidance |
 | `emil-design-eng` | Emil | `skills/emil-design-eng` | Design engineering |
