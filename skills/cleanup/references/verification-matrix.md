@@ -1,47 +1,49 @@
 # Verification Matrix
 
-Choose evidence that can resolve the actual cleanup claim. These examples guide judgment; they do not create mandatory tiers, approval systems, or a sequence of checks.
+Choose evidence that resolves the actual cleanup claim. These examples do not create mandatory tiers, approval systems, or a sequence of checks.
 
 ## Match Evidence To The Change
 
 | Change | Useful evidence | What can require more investigation |
 |---|---|---|
-| Local code removal or rename | Relevant references, compile/type/lint or focused behavior checks, complete diff review | Dynamic registration or external consumers |
-| Duplicate implementation or wrapper removal | Caller contracts and observable behavior | Different error, protocol, performance, or trust semantics |
-| Shared code, dependency, or build change | Affected regression checks, manifest and lock consistency | Broader consumers or unavailable affected-test selection |
-| State or schema change | Lifecycle invariants, representative persisted data, migration and recovery checks | Durable data, irreversible operations, or unknown consumers |
-| Compatibility or configuration pruning | Actual consumer and supported-environment evidence | Deployment variation, public contracts, or continuity obligations |
-| Test pruning | The behavior and failure it detects, including coverage supplied elsewhere | Unique incident, migration, security, concurrency, or performance evidence |
-| Security or recovery mechanism | The threat or failure contract and independent evidence of effectiveness | Distinct trust boundaries, mandated review, or unsafe live comparisons |
-| Documentation change | Current authoritative behavior, policy, or owner decision | Historical context or an unresolved product decision |
-| Agent instruction or skill change | Authority and entrypoint consistency, metadata and reference integrity | Consequential behavior changes or claims about quality and resource use |
+| Local removal or rename | Relevant references, focused behavior or compile/type/lint checks, complete diff | Dynamic registration or external consumers |
+| Implementation or wrapper replacement | Observable caller guarantees, error behavior, and invariants of the retained contract | Protocol, performance, or trust differences despite matching signatures |
+| Shared code, dependency, or build change | Affected regression checks and manifest/lock consistency where present | Broader consumers or unavailable affected-test selection |
+| State or schema change | Lifecycle invariants, representative persisted data, migration and recovery checks | Durable data or irreversible operations |
+| Compatibility or configuration pruning | Migrated in-scope callers, retired-path removal, explicit retained obligations | Out-of-scope consumers, data formats, or deployment variation |
+| Test pruning | The behavior and fault detected, including evidence supplied elsewhere | Unique incident, migration, security, concurrency, or performance coverage |
+| Security or recovery mechanism | Concrete threat or failure contract and independent evidence | Distinct trust boundaries, mandated review, or unsafe live comparisons |
+| Documentation change | Current authoritative behavior, policy, or owner decision | Historical context or unresolved requirements |
+| Agent instruction or skill change | Authority, entrypoint, metadata, and reference consistency | Consequential behavior changes or performance claims |
 
-Use existing project tools and complete required checks. Broaden only when the changed surface or residual uncertainty warrants it. A full suite, high coverage, successful parsing, or unchanged runtime output is not automatically sufficient for every claim.
+Complete required checks and broaden only when impact or residual uncertainty warrants it. A full suite, high coverage, or unchanged ordinary output cannot settle every claim.
+
+**End-to-end argument:** Place correctness responsibility at the boundary that can establish the actual outcome; lower-layer success alone cannot prove it. Local checks may serve concrete faults, trust boundaries, or performance needs, but do not replace that responsibility. This does not mandate full end-to-end tests for every change.
 
 ## Preserve Outcomes And Authority
 
-Keep mandated safety, privacy, integrity, authorization, audit, recovery, and public-contract outcomes intact. Use isolated tests, representative replay, migration rehearsal, static or formal analysis, or qualified review when a live comparison could cause harm.
+Use isolated tests, representative replay, or migration rehearsal when live investigation could endanger required data, safety, privacy, authorization, integrity, audit, recovery, or external-contract outcomes. Evidence of technical feasibility is not permission for an irreversible or external action; reuse valid authorization and resolve the actual target.
 
-External actions require authorization covering the actual action and target. Reuse valid authorization already provided, respect changed instructions, and preserve independently required approvals. An evidence gap should not create a project-side approval or recovery system.
+Distinguish replacement under a retained contract from an authorized contract change: test behavioral substitutability for the former and caller migration plus the new behavior for the latter. Do not silently turn a breaking refactor into permanent compatibility, or confuse removal of code with permission to delete data.
 
 ## Test Value
 
-Remove or rewrite tests when they protect retired behavior, repeat the same risk, or cannot detect plausible incorrect behavior. Preserve unique evidence for an active invariant, even when the current test is inconvenient. Do not weaken assertions to turn failures green or use coverage and mutation scores as automatic pruning thresholds.
+Remove or rewrite tests that protect retired behavior, repeat the same risk, or cannot detect plausible incorrect behavior. Preserve unique evidence for an active invariant; never weaken assertions to turn failures green or use coverage as an automatic pruning threshold.
 
-Temporary neutralization or fault injection can help establish whether a check detects the claimed loss. Use it where safe and useful, restore the final implementation, and avoid creating permanent experiment machinery for a one-time question.
+Temporary fault injection or neutralization can establish what a check detects when the answer matters. Restore the implementation afterward; a one-time question does not require permanent experiment infrastructure.
 
 ## Agent Instruction Changes
 
-Check agreement among the description, default prompt, body, references, and applicable instructions. Confirm what the host actually loads; use a fresh session when instructions are read at startup.
+Check agreement among the description, default prompt, body, references, and applicable instructions. Confirm what the host loads; use a fresh context when instructions are read at startup.
 
-For a substantial workflow change, choose representative isolated tasks that distinguish the affected decisions. Useful contrasts include a mistaken diagnosis versus an explicit method constraint, read-only audits versus authorized implementation, active versus ended compatibility obligations, or repeated knowledge versus superficially similar code. Small tasks should stay small, valid no-change outcomes should remain possible, and follow-up corrections should preserve valid work and authorization. These are candidate scenarios, not a required suite.
+For substantial changes, use representative isolated tasks that exercise changed decisions. Useful contrasts include routine facts versus material uncertainty requiring research, same-contract substitution versus authorized breaking changes, actual goals versus proxy metrics, read-only audits versus implementation, and similar syntax versus shared knowledge. Check that counterevidence can change an approach, small tasks stay small, zero findings remain valid, and corrections preserve valid work and authorization.
 
-Judge actions and artifacts rather than recited rules. Check Rule effects against the actual decisions, diff, and execution record. Evaluate domain judgment by whether the solution fits the task; do not reward length, jargon, complexity, or restated principles. If independent evaluation is warranted and available, provide the task and raw artifacts without the desired answer.
+Judge actions and artifacts rather than recited principles. Check `Decision` statements against actual choices and records: uncertain claims need a next check, planned actions are not completed results, and routine compliance needs no label. If independent evaluation is warranted and available, provide the task and raw artifacts without the desired answer.
 
-Compare old and candidate instructions with comparable task inputs, models, settings, tools, and permissions, using fresh sessions and confirming what each loaded. Evaluate correctness, authority, completion, and engineering tradeoffs before unnecessary pauses, repeated work, time, or resource use. Performance gains cannot offset unauthorized actions, data damage, or broken contracts. Report sample size and limits; one successful case does not prove a general improvement.
+For comparative performance claims, compare old and candidate instructions with equivalent inputs, models, settings, tools, and permissions in fresh contexts. Evaluate correctness, authority, completion, and tradeoffs before pauses, repeated work, latency, or resource use. Report the model, sample size, and limits; results on one model or scenario do not establish family-wide improvement.
 
-Static checks can establish metadata, reference, entrypoint, and canonical-lock consistency. Successful parsing, shorter text, and passing project tests cannot establish better model behavior. If model execution is unavailable, complete the supported edits and project checks and explicitly report that no behavior comparison was performed.
+Static checks establish metadata, links, and instruction consistency, not better model behavior. If model execution is unavailable, finish supported edits and static checks and explicitly report that limitation.
 
 ## Report What Was Established
 
-Distinguish static inspection, test or simulated evidence, runtime observation, and achieved outcomes. Explain the meaningful change in concepts, owners, paths, states, dependencies, or future touch points; counts are useful only with stable definitions. Stop once the claim and required checks are covered.
+Distinguish static inspection, simulated evidence, runtime observations, and achieved outcomes. Explain changes to concepts, owners, paths, states, dependencies, or future touch points; counts alone do not establish improvement. Stop when the claim and required checks are covered.

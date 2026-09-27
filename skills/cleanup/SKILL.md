@@ -5,40 +5,40 @@ description: Use for cleanup, deslop, or simplification of existing code and age
 
 # Cleanup
 
-Reduce accidental complexity and future change cost while preserving user value, contracts, data, and security. Prefer fewer concepts, owners, states, dependencies, and normal paths over fewer lines. Apply the same standard to human- and AI-authored work.
-
-Use engineering judgment to choose the approach. The principles below guide decisions; they do not require a fixed sequence, exhaustive inventory, or report template.
+Reduce accidental complexity and future change cost. Prefer fewer concepts, owners, states, dependencies, and normal paths over fewer lines. Apply the same evidence standard to human- and AI-authored work; no change is a valid outcome.
 
 ## Scope And Authority
 
-Follow the user's requested scope: a diff, artifact set, boundary, or repository. Audit, explanation, and review requests are read-only; implementation requests authorize scoped cleanup and relevant verification. Carry forward valid authorization and complete the authorized work without requesting approval for every ordinary step. Skill activation does not itself authorize edits or expand the task.
+Audit, explanation, and review requests are read-only; implementation requests authorize scoped cleanup and relevant verification. Skill activation does not authorize edits or expand scope. Within higher-priority instructions and permissions, explicit user instructions override skill guidelines. Preserve unrelated work and carry forward settled authorization.
 
-Within higher-priority instructions and permission constraints, explicit user instructions override skill guidelines. Preserve unrelated user changes. If a material decision or missing authority blocks an action, explain the issue and continue independent authorized work.
-
-Ordinary recoverable source removal is covered by a cleanup implementation request. Destructive data operations and external actions need authorization covering the actual action and target; reuse valid authorization already given.
+Ordinary recoverable source removal is covered by scoped implementation authorization. Destructive data operations, other irreversible actions, privilege or credential changes, and external publication require authorization for the actual action and target. Resolve destructive targets before acting; continue independent work when only a dependent action is blocked.
 
 ## Maintenance Judgment
 
-- Establish the current outcome and inspect the relevant source of truth, callers, and contracts. Read more only when it can resolve a material question.
-- Decide whether the behavior or mechanism is still needed before improving its implementation. Preserve supported user outcomes and active obligations, not every historical implementation choice.
-- Tie each finding to a concrete artifact, a meaningful cost or violated invariant, and a smaller action with a way to verify it. Report uncertain candidates as leads rather than treating them as proven defects.
-- Prefer deletion, reuse, consolidation, relocation of responsibility, or narrowing. Consolidate shared knowledge and change reasons, not merely similar code; reuse a sound existing owner before adding an abstraction or dependency.
-- Correct the owning concept or boundary. Avoid hiding problems with speculative compatibility, configuration, retries, fallbacks, wrappers, or swallowed errors.
-- Omit unsupported new complexity and remove or narrow local, recoverable mechanisms when adequate evidence shows they are unnecessary. Keep compatibility and operational controls that serve current consumers, contracts, data, threats, or continuity needs. For an unresolved high-consequence mechanism, preserve the affected part and identify the missing evidence and next decisive check. Speculative unknown consumers do not justify indefinite retention.
-- Use a simpler baseline or counterfactual comparison when it helps decide a consequential or disputed claim. Ordinary local changes can rely on adequate source and focused verification evidence; experiments are not mandatory.
-- Preserve required safety, privacy, authorization, integrity, recovery, audit, and public-contract outcomes. Compare implementations through isolated or representative evidence when live removal could cause harm.
+- Inspect the source of truth and actual callers, registration, and contracts; use search to locate relevant code, then read enough context to establish behavior.
+- Identify what a mechanism serves before improving or removing it; retire ended obligations without treating historical implementation choices as requirements.
+- Tie findings to a concrete artifact, meaningful cost or violated invariant, and a smaller action with a verification path; separate uncertain leads from supported findings.
+- Prefer deletion, reuse, consolidation, relocation, or narrowing; share repeated knowledge rather than merely similar syntax, and investigate established options before a custom solution when local capabilities do not suffice.
+- Default to breaking changes within authorized code scope: update known callers and remove old paths and dependent artifacts; retain compatibility only when the user explicitly requires it, resolving durable-data and out-of-scope contract impacts separately.
+- Fix the owning boundary instead of hiding legacy behavior with glue; keep adapters only for real protocol differences and defenses only for concrete failures, trust boundaries, or required outcomes.
+- Preserve required safety, privacy, authorization, integrity, audit, recovery, and public-contract outcomes while simplifying their implementation.
+- Preserve unresolved high-consequence protections while identifying the missing evidence or authority and next decisive check; neither passing tests nor hypothetical unknown consumers settle the issue alone.
+- If local inspection leaves a material ambiguity, disagreement, or blind spot affecting architecture, correctness, data, or substantial cost, delegate a focused researcher/scout investigation and verify its evidence; if unavailable, disclose that limit and investigate directly.
+- When evidence contradicts the diagnosis or repeated attempts add no information, reconsider the approach before adding patches; use independent review for consequential disputed claims, without a fixed reviewer sequence or concurrency quota.
 
 ## Verification And Completion
 
-Use existing project tools and the narrowest checks that cover the changed behavior. Complete required checks, then broaden only when a failure, shared impact, or remaining uncertainty warrants it. Do not add permanent testing or experiment infrastructure solely to justify cleanup.
+Use existing tools and the narrowest checks that cover changed behavior, including required project checks. Broaden only for failures, shared impact, or residual uncertainty. Restore temporary experiments; do not create permanent experiment infrastructure just to justify cleanup.
 
-Review the complete task diff, remove obsolete references and task-introduced excess, restore temporary experiments, and preserve unrelated work. When an obligation has ended, remove the retired path and its dependent tests, configuration, and documentation together rather than adding another compatibility layer. Tests should constrain supported behavior, not merely reflect implementation structure.
+Inspect the complete task diff and remove task-introduced excess and obsolete dependent tests, configuration, and documentation. Judge tests by the active behavior and faults they detect, not their count or coverage score.
 
-Lead with the outcome and report material evidence and limits. For an audit, distinguish findings from leads and state that no files changed. For implementation, explain what became simpler and what was verified. Use a ledger only when it helps compare findings; a small task may need only a short paragraph. No change is a valid outcome when no evidence-backed simplification is justified. Stop when the requested outcome, dependent cleanup, and relevant verification are complete; do not manufacture changes or continue speculative refactoring.
+Explain material choices with `Decision — <principle or constraint>: <evidence or uncertainty> → <action>; <result or next check, when needed>.` Name the principle or concrete constraint before the colon. Follow an applicable global output convention when present; do not duplicate it. Emit only for choices actually affected, include a decisive next check for unresolved uncertainty, and distinguish plans from observed results.
+
+For audits, rank supported findings by consequence when useful, separate leads, and state that no files changed; zero findings is valid. For implementation, report what became simpler and what was verified. Stop when the requested outcome, dependent cleanup, and necessary checks are complete.
 
 ## Optional References
 
-Read only the relevant section when the task needs more detail:
+Read only the section needed for the current question:
 
-- [Diagnostic catalog](references/diagnostic-catalog.md): ambiguous maintenance findings, consequential complexity comparisons, and audits of agent instructions or skills.
-- [Verification matrix](references/verification-matrix.md): choosing evidence for shared, persistent, privileged, weakly tested, or instruction-changing work.
+- [Diagnostic catalog](references/diagnostic-catalog.md): ambiguous findings, complexity comparisons, independent review, and instruction audits.
+- [Verification matrix](references/verification-matrix.md): evidence for shared, persistent, privileged, weakly tested, or instruction-changing work.
