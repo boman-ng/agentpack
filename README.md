@@ -11,7 +11,8 @@ You need a working Codex CLI and Git. Paste this into Codex:
 ```text
 Install https://github.com/boman-ng/agentpack from its master branch.
 Read README.md and INSTALL.md first, then inspect my Codex setup.
-Ask which optional components I want and show the exact content that will
+Ask which local skills and complete third-party suites I want, along with
+instructions and optional MCP. Show the exact content that will
 be replaced or removed. After I confirm that scope, complete the backup,
 installation, and verification without asking again about settled choices.
 Report the installed revisions, verification results, and backup location.
@@ -28,10 +29,12 @@ The recommended starting point is the global instructions and `cleanup`. Third-p
 | [Global instructions](instructions/AGENTS.md) | Personal working preferences for Codex |
 | [cleanup](skills/cleanup/SKILL.md) | Review and simplify code or agent instructions |
 | [ui-translate](skills/ui-translate/SKILL.md) | Turn rough UI and motion ideas into frontend terms and developer descriptions |
-| [Optional skills and sources](SOURCES.md) | Fifteen upstream skills at recorded Git commits |
+| [Skill catalog and sources](SOURCES.md) | Local skills and complete optional upstream suites at recorded Git commits |
 | [AnySearch configuration](mcp/codex.toml) | Optional anonymous remote search MCP |
 
-Third-party skills are fetched from their recorded sources when selected; they are not bundled here. Their required tools are separate: installing the `agent-browser` skill, for example, does not install its executable or a browser. [SOURCES.md](SOURCES.md) records these prerequisites and licenses. Academic Research Suite has a non-commercial license.
+Browse skills by task: [engineering maintenance](SOURCES.md#engineering-maintenance), [interface design and development](SOURCES.md#interface-design-and-development), [research and academic writing](SOURCES.md#research-and-academic-writing), or [browser and app automation](SOURCES.md#browser-and-app-automation). Categories help you find capabilities; select local skills individually and third-party suites as complete units. Opening a category does not select everything in it.
+
+Third-party skills are fetched from their recorded sources when their suite is selected; they are not bundled here. Their required tools are separate: installing the `agent-browser` skill, for example, does not install its executable or a browser. Motion's connected tools need separate MCP setup and may require account or paid access. [SOURCES.md](SOURCES.md) records prerequisites and licenses. Academic Research Suite has a non-commercial license.
 
 ## Update and recover
 

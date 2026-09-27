@@ -1,6 +1,6 @@
 # Third-party content
 
-AgentPack does not vendor the open-source skills listed below. [SOURCES.md](SOURCES.md) records their repositories, full Git commits, skill paths, and expected licenses. Codex fetches selected revisions during guided installation and records their commits in a readable installation note. The preserved license texts document the expected licensing boundary; the terms present in the fetched source remain authoritative for that revision.
+AgentPack does not vendor the upstream skills listed below. [SOURCES.md](SOURCES.md) records their repositories, full Git commits, complete suite membership, and expected licenses. Codex fetches selected suites during guided installation and records their commits and installed members in a readable installation note. The preserved license texts and explicitly identified declaration record document the expected licensing boundary; upstream's actual grant remains authoritative.
 
 | Component | Source | License | Preserved text |
 |---|---|---|---|
@@ -8,6 +8,11 @@ AgentPack does not vendor the open-source skills listed below. [SOURCES.md](SOUR
 | Impeccable skill | https://github.com/pbakaus/impeccable | Apache-2.0 | `third_party/licenses/impeccable-Apache-2.0.txt` and `third_party/licenses/impeccable-NOTICE.md` |
 | agent-browser skill | https://github.com/vercel-labs/agent-browser | Apache-2.0 | `third_party/licenses/vercel-labs-agent-browser-Apache-2.0.txt` |
 | Skills for Designers and Engineers | https://github.com/emilkowalski/skills | MIT | `third_party/licenses/emilkowalski-skills-MIT.txt` |
+| GSAP AI Skills | https://github.com/greensock/gsap-skills | MIT for skill content; separate from the GSAP runtime license | [Preserved MIT text](third_party/licenses/gsap-skills-MIT.txt) |
+| Motion AI Kit skill | https://github.com/motiondivision/ai-kit | MIT declared by upstream; no standalone license file at the recorded commit | [Official declaration and provenance record](third_party/licenses/motion-ai-kit-LICENSE-DECLARATION.md) |
+| LottieFiles Motion Design Skill | https://github.com/LottieFiles/motion-design-skill | MIT | [Preserved MIT text](third_party/licenses/lottiefiles-motion-design-MIT.txt) |
 | AnySearch MCP documentation/configuration basis | https://github.com/anysearch-ai/anysearch-mcp-server | Apache-2.0 | `third_party/licenses/anysearch-mcp-server-Apache-2.0.txt` and `anysearch-mcp-server-NOTICE.txt` |
 
 Content fetched from the Academic Research Skills source is not covered by AgentPack's MIT grant. Its CC BY-NC 4.0 terms, including attribution and non-commercial use, govern that content. If an upstream source changes its license, installation must be stopped and the source declaration reviewed; AgentPack does not convert or override upstream terms.
+
+Motion's record preserves the official MIT statement and its package metadata, not an upstream LICENSE file or an AgentPack-authored substitute license. Copy that record with the installed Motion skill. Skill installation does not grant access to hosted services, paid tools, or separately licensed runtimes.
