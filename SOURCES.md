@@ -2,15 +2,16 @@
 
 Browse skills by the task they serve, then select a local skill or a complete third-party suite. Categories are navigation, not installation selections. Each selectable item has one primary category; broader capabilities are described in its purpose rather than duplicating it across categories.
 
-`cleanup` and `ui-translate` are independent local selections. The seven optional upstream suites contain 26 skills in total. Selecting a suite includes every member listed below, with its complete resources; individual upstream skills are not separate installation choices. Instructions and MCP remain separate components.
+`cleanup`, `dev`, and `ui-translate` are independent local selections. The seven optional upstream suites contain 26 skills in total. Selecting a suite includes every member listed below, with its complete resources; individual upstream skills are not separate installation choices. Instructions and MCP remain separate components.
 
 The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP snippet](mcp/codex.toml). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
 
-## Engineering Maintenance
+## Engineering Development and Maintenance
 
 | Selection | Unit | Purpose |
 |---|---|---|
 | [`cleanup`](skills/cleanup/SKILL.md) | Local skill | Simplify, consolidate, and retire existing code, tests, configuration, documentation, and instructions |
+| [`dev`](skills/dev/SKILL.md) | Local skill | Make engineering decisions for complex features and changes across boundaries, from acceptance to verified delivery |
 
 ## Interface Design and Development
 
