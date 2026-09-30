@@ -46,7 +46,7 @@ For recovery, ask Codex to inspect the recorded backup and restore the affected 
 
 ## Maintenance
 
-The root [AGENTS.md](AGENTS.md) describes repository maintenance; it is not the global instruction payload. Keep content, source revisions, and links valid. Installation changes are exercised in disposable directories, never against the maintainer's real Codex configuration.
+Keep content, source revisions, and links valid. Installation changes are exercised in disposable directories, never against the maintainer's real Codex configuration.
 
 Earlier software releases remain identifiable by their Git tags. Their installation commands, build workflows, and state formats do not apply to this content-based setup.
 
