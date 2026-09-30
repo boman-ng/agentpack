@@ -26,7 +26,7 @@ The recommended starting point is the global instructions and `cleanup`. Third-p
 
 | Content | Purpose |
 |---|---|
-| [Global instructions](instructions/AGENTS.md) | Personal working preferences for Codex |
+| [Global instructions](instructions/AGENTS.md) | Cross-task decision principles, evidence standards, and authorization boundaries |
 | [cleanup](skills/cleanup/SKILL.md) | Review and simplify code or agent instructions |
 | [ui-translate](skills/ui-translate/SKILL.md) | Turn rough UI and motion ideas into frontend terms and developer descriptions |
 | [Skill catalog and sources](SOURCES.md) | Local skills and complete optional upstream suites at recorded Git commits |

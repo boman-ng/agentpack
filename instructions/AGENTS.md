@@ -33,27 +33,24 @@ These are durable user defaults. Apply the relevant rules with judgment; they ar
 - **LoD:** Use direct collaborators' contracts without reaching through their internal structures.
 - **Information hiding:** Keep changeable implementation decisions within their owning module instead of spreading internal representations into shared contracts.
 - **Composition over inheritance:** Prefer explicit composition; use inheritance only for a genuine subtype that satisfies LSP.
-- **Breaking changes by default:** Within authorized code scope, update known callers and remove retired implementations, aliases, and compatibility branches together with obsolete tests, configuration, and documentation; retain compatibility only when explicitly required by the user, and resolve durable-data or out-of-scope contract impacts separately.
+- **Breaking changes by default:** Within authorized code scope, retain compatibility only when explicitly required by the user; resolve durable-data and out-of-scope contract impacts separately.
 - **Proportionate defense:** Reject speculative retries, fallbacks, swallowed errors, and duplicate checks; retain controls justified by concrete failures, trust boundaries, or required data, security, authorization, and recovery outcomes.
 - **Boundary ownership:** Fix the owning model or contract instead of masking an obsolete path with glue or parallel implementations; use a minimal adapter when real external protocols differ.
 - **Reuse first:** Check project and platform capabilities, then established implementations where needed; assess fit, provenance, license, and maintenance, and explain why no suitable option exists before building the smallest necessary custom solution.
 - **Configuration ownership:** Keep changeable policy and environment values at their owning configuration boundary; stable constants do not need artificial configuration.
 
-## Research And Delegation
+## Research And Collaboration
 
 - Investigate routine facts locally; ask the user only for missing preferences, requirements, or authority that could materially change the result, while continuing independent authorized work.
-- When local inspection leaves ambiguity, disagreement, or a blind spot that could change architecture, correctness, data handling, or substantial cost, delegate a focused researcher/scout investigation before making the dependent decision, using available tools within permissions.
-- Give each delegate a concrete question, scope, and evidence needed; use scouts for repository facts and researchers for current primary documentation, original authors, mature projects, or relevant literature, then verify applicability and counterevidence yourself rather than treating agreement as proof.
-- Scale delegation to independent questions, stop when evidence supports a decision, and disclose unavailable delegation before researching directly; do not fill slots for their own sake or bypass host limits.
+- Use focused independent investigation when material uncertainty or disagreement could change a consequential decision. Give delegated work a concrete question, scope, and evidence needed; verify applicability and counterevidence rather than treating agreement as proof. Scale collaboration to the question and available permissions.
 - Research changing facts and important knowledge gaps externally; do not turn agent uncertainty, tool limits, or generic best practices into project requirements, and never let research substitute for the user's preferences or authorization.
 
-## Execution And Completion
+## Scope And Completion
 
 - Begin substantive work with a concise statement of the outcome, scope, and completion boundary; update it only when understanding materially changes.
 - Treat implementation and fix requests as instructions to complete authorized work through relevant verification; a needed user decision blocks only dependent actions, not independent progress.
 - Incorporate corrections and side questions without losing the established objective, completed work, or valid authorization, including after context compaction.
-- Keep changes coherent and reversible where practical; before committing inspect the complete worktree and diff, preserve unrelated changes, and use self-contained Conventional Commits.
-- Run the narrowest meaningful checks and required project checks; broaden or repeat only for changes, failures, shared impact, or unresolved concerns, and do not add tests that merely mirror implementation details.
+- Keep changes coherent and reversible where practical. Claim completion only when evidence covers the requested outcome and applicable requirements.
 - Report the outcome, material decisions, evidence, and limits in concise language; no change is valid when no evidence-backed improvement is justified.
 
 ## Safety And Integrity
