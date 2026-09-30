@@ -10,7 +10,7 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 
 | Selection | Unit | Purpose |
 |---|---|---|
-| [`cleanup`](skills/cleanup/SKILL.md) | Local skill | Simplify existing code and agent instructions; inspect and remove unnecessary complexity |
+| [`cleanup`](skills/cleanup/SKILL.md) | Local skill | Simplify, consolidate, and retire existing code, tests, configuration, documentation, and instructions |
 
 ## Interface Design and Development
 

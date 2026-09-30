@@ -1,44 +1,34 @@
 ---
 name: cleanup
-description: Use for cleanup, deslop, or simplification of existing code and agent instructions, including read-only cleanup audits; not general code review, feature development, or formatting-only changes.
+description: Simplify, consolidate, or retire existing code, tests, configuration, documentation, and agent instructions, including read-only cleanup audits. Use for maintenance, not new feature design, general code review, or formatting alone.
 ---
 
 # Cleanup
 
-Reduce accidental complexity and future change cost. Prefer fewer concepts, owners, states, dependencies, and normal paths over fewer lines. Apply the same evidence standard to human- and AI-authored work; no change is a valid outcome.
+Reduce the cost of understanding and changing existing work by removing unnecessary concepts, owners, states, dependencies, and paths. Select this skill for a maintenance purpose, regardless of project size. Feature design and full development delivery are outside its scope; no other skill is a prerequisite.
 
-## Scope And Authority
+Audits and explanations remain read-only. Apply edits only within the requested maintenance scope; skill selection does not expand authorization. No change is a valid outcome.
 
-Audit, explanation, and review requests are read-only; implementation requests authorize scoped cleanup and relevant verification. Skill activation does not authorize edits or expand scope. Within higher-priority instructions and permissions, explicit user instructions override skill guidelines. Preserve unrelated work and carry forward settled authorization.
+## Maintenance Decisions
 
-Ordinary recoverable source removal is covered by scoped implementation authorization. Destructive data operations, other irreversible actions, privilege or credential changes, and external publication require authorization for the actual action and target. Resolve destructive targets before acting; continue independent work when only a dependent action is blocked.
+- Trace the authoritative behavior, actual callers, registration, and contracts before changing a mechanism. Establish which current obligation it serves; historical implementation choices alone do not preserve that obligation.
+- Tie a finding to a concrete artifact, meaningful maintenance cost or violated invariant, and a smaller action with a way to verify it. An uncertain removal candidate needs a decisive next check.
+- Choose deletion, consolidation, relocation, or narrowing according to the cause of complexity. Consolidate repeated knowledge under its owner; preserve independent responsibilities even when their syntax resembles one another.
+- When retiring a path, update known callers and remove its registrations, aliases, tests, configuration, and documentation together. Check persisted formats and out-of-scope consumers separately from source removal; preserve unresolved data, security, recovery, and required-contract protections.
 
-## Maintenance Judgment
+## Test Asset Maintenance
 
-- Inspect the source of truth and actual callers, registration, and contracts; use search to locate relevant code, then read enough context to establish behavior.
-- Identify what a mechanism serves before improving or removing it; retire ended obligations without treating historical implementation choices as requirements.
-- Tie findings to a concrete artifact, meaningful cost or violated invariant, and a smaller action with a verification path; separate uncertain leads from supported findings.
-- Prefer deletion, reuse, consolidation, relocation, or narrowing; share repeated knowledge rather than merely similar syntax, and investigate established options before a custom solution when local capabilities do not suffice.
-- Default to breaking changes within authorized code scope: update known callers and remove old paths and dependent artifacts; retain compatibility only when the user explicitly requires it, resolving durable-data and out-of-scope contract impacts separately.
-- Fix the owning boundary instead of hiding legacy behavior with glue; keep adapters only for real protocol differences and defenses only for concrete failures, trust boundaries, or required outcomes.
-- Preserve required safety, privacy, authorization, integrity, audit, recovery, and public-contract outcomes while simplifying their implementation.
-- Preserve unresolved high-consequence protections while identifying the missing evidence or authority and next decisive check; neither passing tests nor hypothetical unknown consumers settle the issue alone.
-- If local inspection leaves a material ambiguity, disagreement, or blind spot affecting architecture, correctness, data, or substantial cost, delegate a focused researcher/scout investigation and verify its evidence; if unavailable, disclose that limit and investigate directly.
-- When evidence contradicts the diagnosis or repeated attempts add no information, reconsider the approach before adding patches; use independent review for consequential disputed claims, without a fixed reviewer sequence or concurrency quota.
+Judge an existing test by the active behavior and plausible fault it can detect. Remove or rewrite tests for retired behavior, tests coupled to private structure, and duplicates without independent fault coverage. Preserve unique evidence for active rules, boundary conditions, incidents, protocols, concurrency, security, and recovery; speed or test category alone does not determine value.
 
-## Verification And Completion
+Before consolidating tests, compare their setup, assertions, boundaries, and failure modes. Similar assertions can expose different faults. A smaller suite must still detect the required failures; verify any replacement before retiring unique coverage. Repair an invalid test against its authoritative contract, not against the current implementation's output.
 
-Use existing tools and the narrowest checks that cover changed behavior, including required project checks. Broaden only for failures, shared impact, or residual uncertainty. Restore temporary experiments; do not create permanent experiment infrastructure just to justify cleanup.
+## Completion
 
-Inspect the complete task diff and remove task-introduced excess and obsolete dependent tests, configuration, and documentation. Judge tests by the active behavior and faults they detect, not their count or coverage score.
-
-Explain material choices with `Decision — <principle or constraint>: <evidence or uncertainty> → <action>; <result or next check, when needed>.` Name the principle or concrete constraint before the colon. Follow an applicable global output convention when present; do not duplicate it. Emit only for choices actually affected, include a decisive next check for unresolved uncertainty, and distinguish plans from observed results.
-
-For audits, rank supported findings by consequence when useful, separate leads, and state that no files changed; zero findings is valid. For implementation, report what became simpler and what was verified. Stop when the requested outcome, dependent cleanup, and necessary checks are complete.
+Verify the maintained behavior and the closure of removed paths with existing project checks suited to the affected consumers. Inspect the full task diff for orphaned artifacts and accidental scope expansion. Report supported findings for an audit, or what became simpler and the evidence for the retained outcomes after edits.
 
 ## Optional References
 
-Read only the section needed for the current question:
+Read only the material needed for the maintenance question:
 
-- [Diagnostic catalog](references/diagnostic-catalog.md): ambiguous findings, complexity comparisons, independent review, and instruction audits.
-- [Verification matrix](references/verification-matrix.md): evidence for shared, persistent, privileged, weakly tested, or instruction-changing work.
+- [Diagnostic catalog](references/diagnostic-catalog.md): ambiguous candidates, complexity comparisons, and instruction audits.
+- [Verification matrix](references/verification-matrix.md): evidence for replacement, removal, and consolidation across affected boundaries.
