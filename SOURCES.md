@@ -2,7 +2,7 @@
 
 Browse skills by the task they serve, then select a local skill or a complete third-party suite. Categories are navigation, not installation selections. Each selectable item has one primary category; broader capabilities are described in its purpose rather than duplicating it across categories.
 
-`cleanup`, `dev`, and `ui-translate` are independent local selections. The seven optional upstream suites contain 26 skills in total. Selecting a suite includes every member listed below, with its complete resources; individual upstream skills are not separate installation choices. Instructions and MCP remain separate components.
+`cleanup`, `dev`, and `ui-translate` are independent local selections. The eight optional upstream suites contain 27 skills in total. Selecting a suite includes every member listed below, with its complete resources; individual upstream skills are not separate installation choices. Instructions and MCP remain separate components.
 
 The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP snippet](mcp/codex.toml). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
 
@@ -12,6 +12,7 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 |---|---|---|
 | [`cleanup`](skills/cleanup/SKILL.md) | Local skill | Simplify, consolidate, and retire existing code, tests, configuration, documentation, and instructions |
 | [`dev`](skills/dev/SKILL.md) | Local skill | Make engineering decisions for complex features and changes across boundaries, from acceptance to verified delivery |
+| Archify | Suite | Create and validate interactive architecture, workflow, sequence, data-flow, and lifecycle diagrams as standalone HTML |
 
 ## Interface Design and Development
 
@@ -38,11 +39,12 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 
 ## Upstream revisions
 
-Use these full commits, not current branch heads. The suite membership, paths, and license records were checked on 2026-09-27. Existing source pins are unchanged; GSAP, Motion, and LottieFiles are newly recorded.
+Use these full commits, not current branch heads. Suite membership, paths, and license records were checked on 2026-09-27 for the original seven suites and on 2026-09-30 for Archify. Archify is pinned to the `v3.0.1` release; existing source pins are unchanged.
 
 | Suite | Repository | Full commit | License |
 |---|---|---|---|
 | ARS | [Imbad0202/academic-research-skills-codex](https://github.com/Imbad0202/academic-research-skills-codex) | `3c37ef8ab480ba1e9370309c24b99977ad44091f` | CC BY-NC 4.0; non-commercial |
+| Archify | [tt-a1i/archify](https://github.com/tt-a1i/archify) | `2ab3cae7ac2c2a55d7386ca789d03c4fcd31816c` | MIT; bundled font and brand marks retain their upstream terms and notices |
 | Impeccable | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | `9d715cc4f5564a990ca8345abfdd5df6dc9b41c8` | Apache-2.0 |
 | Browser | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | `d01253d9db28d75080e36da3c1c31ef89454731e` | Apache-2.0 |
 | Emil | [emilkowalski/skills](https://github.com/emilkowalski/skills) | `d16ebe60d09a5ba2afcb7054ede9d0a10c9f6128` | MIT |
@@ -57,6 +59,7 @@ Paths are relative to each suite's repository at its recorded commit. Copy every
 | Suite | Skill | Directory |
 |---|---|---|
 | ARS | `academic-research-suite` | `skills/academic-research-suite` |
+| Archify | `archify` | `archify` |
 | Impeccable | `impeccable` | `.agents/skills/impeccable` |
 | Browser | `agent-browser` | `skills/agent-browser` |
 | Emil | `animate` | `skills/animate` |
@@ -85,8 +88,10 @@ Paths are relative to each suite's repository at its recorded commit. Copy every
 
 ## Prerequisites and attribution
 
-- Copy upstream content unchanged and preserve its invocation metadata, licenses, and notices. Keep each selected repository's root `LICENSE`; Impeccable also requires `NOTICE.md`. Motion has no standalone license file at its recorded commit: use the linked declaration record instead, retaining its explicit limitation and source evidence. [INSTALL.md](INSTALL.md) places these records under each installed skill's `provenance/` directory.
+- Copy upstream content unchanged and preserve its invocation metadata, licenses, and notices. Keep each selected repository's root `LICENSE`; Impeccable also requires `NOTICE.md`, and Archify requires `THIRD_PARTY_NOTICES.md`. Motion has no standalone license file at its recorded commit: use the linked declaration record instead, retaining its explicit limitation and source evidence. [INSTALL.md](INSTALL.md) places these records under each installed skill's `provenance/` directory.
 - ARS includes its own resources and additional license texts under the skill directory. Its non-commercial terms are not replaced by AgentPack's MIT license.
+- Copy Archify's complete `archify/` source directory, including its bundled CLI, renderers, schemas, examples, assets, and notices. The upstream `.agents/skills/archify-review` directory is a repository-maintenance helper, not a member of the published diagramming package. Rendering and validation require Node.js >=18; no `npm install` is needed for normal skill use. The normal `finalize` workflow also requires Chrome or Chromium for its browser gate; `ARCHIFY_CHROME` can select the executable. Repository-evidence verification also needs Git. Selecting this suite does not install these tools.
+- Archify's `finalize` and `deliver` commands may contact its [stable update manifest](https://tt-a1i.github.io/archify/skill-updates/archify/stable.json) and write local reminder state. The check only reports available releases; it does not install updates. Set `ARCHIFY_UPDATE_CHECK_DISABLED=1` to disable that check and its state writes. Keep updates pinned through this catalog. Preserve the bundled `assets/JetBrainsMono-OFL.txt` and brand-mark provenance under the upstream notices; Archify's MIT grant does not replace those terms.
 - At the retained Impeccable revision, `reference/degraded/asset-producer.md` has an incorrect relative link to the component review guide. The target is present at `reference/component-review.md` within the skill. This is an upstream reference defect, not a missing file in the copied suite; the payload remains unchanged.
 - The Browser skill loads workflows from the separately installed `agent-browser` executable. Verify that executable and its browser prerequisites if the user wants a working browser workflow. Follow the [upstream installation instructions](https://github.com/vercel-labs/agent-browser#installation); selecting this suite does not install the executable or Chrome.
 - GSAP and Motion skills do not install animation libraries into a project. Use the project's actual runtime and version; selecting a suite is not a request to migrate the project or add dependencies.

@@ -5,6 +5,7 @@ AgentPack does not vendor the upstream skills listed below. [SOURCES.md](SOURCES
 | Component | Source | License | Preserved text |
 |---|---|---|---|
 | ARS-Codex adapter payload and its included upstream content | https://github.com/Imbad0202/academic-research-skills-codex | CC BY-NC 4.0; non-commercial restriction applies | `third_party/licenses/academic-research-skills-CC-BY-NC-4.0.txt`; fetched source also carries its notices and embedded licenses |
+| Archify skill and bundled renderer | https://github.com/tt-a1i/archify | MIT; bundled font and brand marks retain their upstream terms | [Preserved MIT text](third_party/licenses/archify-MIT.txt) and [third-party notices](third_party/licenses/archify-THIRD_PARTY_NOTICES.md) |
 | Impeccable skill | https://github.com/pbakaus/impeccable | Apache-2.0 | `third_party/licenses/impeccable-Apache-2.0.txt` and `third_party/licenses/impeccable-NOTICE.md` |
 | agent-browser skill | https://github.com/vercel-labs/agent-browser | Apache-2.0 | `third_party/licenses/vercel-labs-agent-browser-Apache-2.0.txt` |
 | Skills for Designers and Engineers | https://github.com/emilkowalski/skills | MIT | `third_party/licenses/emilkowalski-skills-MIT.txt` |

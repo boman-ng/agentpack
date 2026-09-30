@@ -35,7 +35,7 @@ Start with the global instructions and select skills for the work you do: `clean
 
 Browse skills by task: [engineering development and maintenance](SOURCES.md#engineering-development-and-maintenance), [interface design and development](SOURCES.md#interface-design-and-development), [research and academic writing](SOURCES.md#research-and-academic-writing), or [browser and app automation](SOURCES.md#browser-and-app-automation). Categories help you find capabilities; select local skills individually and third-party suites as complete units. Opening a category does not select everything in it.
 
-Third-party skills are fetched from their recorded sources when their suite is selected; they are not bundled here. Their required tools are separate: installing the `agent-browser` skill, for example, does not install its executable or a browser. Motion's connected tools need separate MCP setup and may require account or paid access. [SOURCES.md](SOURCES.md) records prerequisites and licenses. Academic Research Suite has a non-commercial license.
+Third-party skills are fetched from their recorded sources when their suite is selected; they are not bundled here. Their required tools are separate: installing the `agent-browser` skill, for example, does not install its executable or a browser. Archify creates interactive technical diagrams; its renderer needs Node.js, and its full validation workflow needs Chrome or Chromium. Motion's connected tools need separate MCP setup and may require account or paid access. [SOURCES.md](SOURCES.md) records prerequisites and licenses. Academic Research Suite has a non-commercial license.
 
 ## Update and recover
 
