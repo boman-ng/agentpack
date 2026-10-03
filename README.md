@@ -26,7 +26,7 @@ Start with the global instructions and select skills for the work you do: `clean
 
 | Content | Purpose |
 |---|---|
-| [Global instructions](instructions/AGENTS.md) | Cross-task decision principles, evidence standards, and authorization boundaries |
+| [Global instructions](instructions/AGENTS.md) | Cross-task decision principles, clear communication, evidence standards, and authorization boundaries |
 | [cleanup](skills/cleanup/SKILL.md) | Simplify and retire existing code, tests, configuration, documentation, and instructions |
 | [dev](skills/dev/SKILL.md) | Guide complex development from acceptance and business ownership to verified delivery |
 | [ui-translate](skills/ui-translate/SKILL.md) | Turn rough UI and motion ideas into frontend terms and developer descriptions |
