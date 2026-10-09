@@ -1,5 +1,7 @@
 # Third-party content
 
+The [MIT License](LICENSE) covers AgentPack's original code and documentation. Third-party license and notice texts, and third-party content fetched or generated through AgentPack, remain under their upstream terms and are excluded from that grant.
+
 AgentPack does not vendor the upstream skills listed below. [SOURCES.md](SOURCES.md) records their repositories, full Git commits, complete suite membership, and expected licenses. Codex fetches selected suites during guided installation and records their commits and installed members in a readable installation note. The preserved license texts and explicitly identified declaration record document the expected licensing boundary; upstream's actual grant remains authoritative.
 
 | Component | Source | License | Preserved text |

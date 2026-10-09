@@ -58,4 +58,4 @@ Keep content, source revisions, and links valid. Installation changes are exerci
 
 Earlier software releases remain identifiable by their Git tags. Their installation commands, build workflows, and state formats do not apply to this content-based setup.
 
-Original material is MIT-licensed. See [third-party attribution](THIRD_PARTY_LICENSES.md) and the [security and recovery boundaries](SECURITY.md).
+AgentPack's original material is licensed under [MIT](LICENSE). Third-party material retains its [own terms](THIRD_PARTY_LICENSES.md). See [security and recovery](SECURITY.md).
