@@ -32,6 +32,10 @@ Complete coherent portions of the accepted behavior across actual callers and in
 
 Use project build, integration, release, and observation mechanisms where affected. For persistent-state changes, establish migration and recovery behavior with representative data. For operational changes, identify success and failure signals and the recovery action. Prepare the concrete deliverable before any required approval; deployment still requires authorization for its action and target.
 
+## Repository Work
+
+For Git-backed work, explicitly read [dev-git](../../dev-git/SKILL.md) before changing repository content or performing version-control delivery. It owns branch selection, commit organization, integration, workspace ownership, and remote-write authorization. Apply that workflow once per coordinated task, including directly invoked build, clean, or test work; do not make each subagent independently manage shared Git state. Audits remain read-only.
+
 ## Completion
 
 Use the [verification policy](verification-policy.md) for evidence selection and agent ownership. Stop when acceptance and evidence at the actual affected boundaries are satisfied, required project checks are complete, and no material risk remains unresolved within scope. Repeat or broaden checks only for new changes, failures, shared impact, or unresolved uncertainty.

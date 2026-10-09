@@ -18,7 +18,7 @@ installation, and verification without asking again about settled choices.
 Report the installed revisions, verification results, and backup location.
 ```
 
-Start with the global instructions and select suites for the work you do. The local Dev suite includes four independently callable skills: `dev` coordinates work, `dev-build` implements behavior, `dev-clean` maintains existing work, and `dev-test` provides independent testing. The local Design suite includes `design` for coordination and planning, `design-intent` for intent and professional terminology in any domain, `design-build` for frontend delivery, and `design-review` for evidence-based review. Install each selected suite in full. Third-party suites and AnySearch are optional. Only user-level Codex configuration is supported.
+Start with the global instructions and select suites for the work you do. The local Dev suite includes five independently callable skills: `dev` coordinates work, `dev-build` implements behavior, `dev-clean` maintains existing work, `dev-test` provides independent testing, and `dev-git` manages branches and commits. The local Design suite includes `design` for coordination and planning, `design-intent` for intent and professional terminology in any domain, `design-build` for frontend delivery, and `design-review` for evidence-based review. Install each selected suite in full. Third-party suites and AnySearch are optional. Only user-level Codex configuration is supported.
 
 Design reuses available design specialists and project capabilities. Its production source changes, including CSS and components, require the complete Dev suite; selecting Design does not automatically select Dev or upstream suites. Without Dev, intent clarification, planning, and read-only review remain available. Design turns Krug's usability and Williams's visual principles into decisions and checks, with evidence-led iteration toward applicable Awwwards, Webby Awards, and FWA-winning quality.
 
@@ -31,7 +31,7 @@ Recommend selecting the optional one-member Answer me with HTML suite alongside 
 | Content | Purpose |
 |---|---|
 | [Global instructions](instructions/AGENTS.md) | Cross-task decision principles, clear communication, evidence standards, and authorization boundaries |
-| [Dev suite](skills/dev/SKILL.md) | Coordinate [development](skills/dev-build/SKILL.md), [maintenance](skills/dev-clean/SKILL.md), and [independent testing](skills/dev-test/SKILL.md) using shared engineering rules |
+| [Dev suite](skills/dev/SKILL.md) | Coordinate [development](skills/dev-build/SKILL.md), [maintenance](skills/dev-clean/SKILL.md), [independent testing](skills/dev-test/SKILL.md), and [Git delivery](skills/dev-git/SKILL.md) using shared engineering rules |
 | [Design suite](skills/design/SKILL.md) | Coordinate [intent clarification](skills/design-intent/SKILL.md), [frontend delivery](skills/design-build/SKILL.md), and [quality review](skills/design-review/SKILL.md), reusing specialist skills |
 | [Skill catalog and sources](SOURCES.md) | Local skills and complete optional upstream suites at recorded Git commits |
 | [AnySearch configuration](mcp/codex.toml) | Optional anonymous remote search MCP |
@@ -44,13 +44,15 @@ The nine optional third-party suites contain 28 skills, fetched from their recor
 
 Ask Codex to read [INSTALL.md](INSTALL.md), inspect your installation record, and update the same components from the current `master` commit. To reproduce a previous setup, provide the recorded AgentPack commit instead. Updating AgentPack uses the upstream commits in that revision's source list; upgrading an upstream dependency means reviewing and changing that list.
 
-The former standalone `cleanup` skill is now `dev-clean` within Dev; `ui-translate` is now `design-intent` within Design. Neither old name has an alias. Older selections of `cleanup`, `dev`, or `ui-translate` require review of the corresponding complete suite and the added and removed names before migration. Design's production implementation requirement is a separate Dev selection, not an automatic addition. Updating this checkout alone does not change installed skills.
+The former standalone `cleanup` skill is now `dev-clean` within Dev; `ui-translate` is now `design-intent` within Design. Neither old name has an alias. Older selections of `cleanup`, `dev`, or `ui-translate` require review of the corresponding complete suite and the added and removed names before migration. Design's production implementation requirement is a separate Dev selection, not an automatic addition. Older four-member Dev installations also need review of the added `dev-git` member before updating the suite. Updating this checkout alone does not change installed skills.
 
-Edit personal instructions and local skills in your checkout or fork, then commit and push them. Installed files are copies; direct edits to a selected installation target will be overwritten on the next update.
+Edit personal instructions and local skills in your checkout or fork, then create local commits. Remote pushes and PR actions require explicit human authorization for the target and action. Installed files are copies; direct edits to a selected installation target will be overwritten on the next update.
 
 For recovery, ask Codex to inspect the recorded backup and restore the affected targets. There is no automatic background updater or state-driven uninstall. Existing installation backups remain available until you choose to remove them.
 
 ## Maintenance
+
+AgentPack uses `master` for the production installation source and `develop` for the next revision. Follow [Dev Git](skills/dev-git/SKILL.md) for Git Flow branches, rebase and fast-forward integration, and classified atomic Conventional Commits. Local work is autonomous within the task; remote writes require human authorization. Worktrees are reserved for parallel main-agents developing separate features or fixes.
 
 Keep content, source revisions, and links valid. Installation changes are exercised in disposable directories, never against the maintainer's real Codex configuration.
 

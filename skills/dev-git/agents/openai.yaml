@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dev Git"
+  short_description: "Manage Git Flow and atomic Conventional Commits"
+  default_prompt: "Use $dev-git to manage local branches, classify atomic Conventional Commits, and integrate verified work while requiring human authorization for remote writes."

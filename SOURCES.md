@@ -2,7 +2,7 @@
 
 Browse skills by the task they serve, then select a local skill or a complete suite. Categories are navigation, not installation selections. Each selectable item has one primary category; broader capabilities are described in its purpose rather than duplicating it across categories.
 
-The two optional local suites, Dev and Design, each contain four skills. The nine optional upstream suites contain 28 skills in total. Selecting any suite includes every member listed below, with its complete resources; suite members are independently callable but are not separate installation choices. Instructions and MCP remain separate components.
+The two optional local suites contain five Dev skills and four Design skills. The nine optional upstream suites contain 28 skills in total. Selecting any suite includes every member listed below, with its complete resources; suite members are independently callable but are not separate installation choices. Instructions and MCP remain separate components.
 
 The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP snippet](mcp/codex.toml). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
 
@@ -10,7 +10,7 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 
 | Selection | Unit | Purpose |
 |---|---|---|
-| [Dev](skills/dev/SKILL.md) | Local suite | Coordinate development, maintenance, and independent testing around business rules, necessary architecture boundaries, and valuable verification |
+| [Dev](skills/dev/SKILL.md) | Local suite | Coordinate development, maintenance, independent testing, and Git delivery around business rules, necessary architecture boundaries, and valuable verification |
 | Archify | Suite | Create and validate interactive architecture, workflow, sequence, data-flow, and lifecycle diagrams as standalone HTML |
 
 ## Interface Design and Development
@@ -39,7 +39,7 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 
 ## Local Dev suite
 
-This is the complete Dev membership at the selected AgentPack commit. Copy the four directories as siblings under the skill discovery root. Each is a real skill entrypoint; the `dev-` prefix does not provide inheritance or automatically load another skill.
+This is the complete Dev membership at the selected AgentPack commit. Copy the five directories as siblings under the skill discovery root. Each is a real skill entrypoint; the `dev-` prefix does not provide inheritance or automatically load another skill.
 
 | Skill | Directory | Responsibility |
 |---|---|---|
@@ -47,10 +47,11 @@ This is the complete Dev membership at the selected AgentPack commit. Copy the f
 | `dev-build` | [`skills/dev-build`](skills/dev-build/SKILL.md) | Implement features and fixes through affected boundaries and delivery |
 | `dev-clean` | [`skills/dev-clean`](skills/dev-clean/SKILL.md) | Simplify or retire existing work, including read-only maintenance audits |
 | `dev-test` | [`skills/dev-test`](skills/dev-test/SKILL.md) | Author and evaluate behavior tests as a separate Tester agent |
+| `dev-git` | [`skills/dev-git`](skills/dev-git/SKILL.md) | Manage Git Flow, rebase integration, classified atomic Conventional Commits, and remote-write authorization |
 
-Each entry explicitly loads the shared rules in `dev/references/`; routing loads only the relevant mode. These relative references require the complete suite. A missing member or required resource makes the selection incomplete; do not install a partial suite or duplicate shared rules into each entry. The [installation guide](INSTALL.md) permits these references only within the staged Dev suite.
+Each entry explicitly loads the shared rules in `dev/references/`; routing loads only the relevant mode. The engineering contract routes Git-backed changes and delivery to `dev-git`, the single owner of Git workflow rules. It uses native Git without an extra Git Flow CLI, wrapper, or global configuration. These relative references require the complete suite. A missing member or required resource makes the selection incomplete; do not install a partial suite or duplicate shared rules into each entry. The [installation guide](INSTALL.md) permits these references only within the staged Dev suite.
 
-`dev-clean` replaces the former `cleanup` skill without an alias. An older standalone `cleanup` or `dev` selection is migration context, not authorization to add the suite automatically. Review the expanded selection and retired names before installing.
+`dev-clean` replaces the former `cleanup` skill without an alias. An older standalone `cleanup` or `dev` selection is migration context, not authorization to add the suite automatically. Review the expanded selection and retired names before installing. An older four-member Dev installation also needs review of the added `dev-git` member; do not silently expand it.
 
 ## Local Design suite
 
