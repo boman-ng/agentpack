@@ -1,6 +1,6 @@
 # Runtime Integrations
 
-Discover external skills by name in the session catalog and read their actual paths. Use supported discovery or local search if a path is stale; do not assume a global location or cross-suite sibling directory.
+Discover external skills by name through the host's available catalog, loading mechanism, or local search, then read their actual entrypoints and resources. Do not assume a global location, invocation syntax, or cross-suite sibling directory. Explicitly reading a located skill does not establish automatic host discovery.
 
 ## Dev Owns Engineering
 

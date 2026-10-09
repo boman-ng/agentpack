@@ -1,4 +1,0 @@
-interface:
-  display_name: "Dev Test"
-  short_description: "Independently verify acceptance with useful evidence"
-  default_prompt: "Use $dev-test to independently verify the requested behavior from its requirements and author only useful validation."

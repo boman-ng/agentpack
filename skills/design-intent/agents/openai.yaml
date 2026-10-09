@@ -1,4 +1,0 @@
-interface:
-  display_name: "Design Intent"
-  short_description: "Clarify rough ideas and name accurate concepts"
-  default_prompt: "Use $design-intent to turn my rough idea into accurate terms and usable wording while preserving my intent."
