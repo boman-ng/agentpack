@@ -47,7 +47,7 @@ This is the complete Dev membership at the selected AgentPack commit. Copy the f
 | `dev-build` | [`skills/dev-build`](skills/dev-build/SKILL.md) | Implement features and fixes through affected boundaries and delivery |
 | `dev-clean` | [`skills/dev-clean`](skills/dev-clean/SKILL.md) | Simplify or retire existing work, including read-only maintenance audits |
 | `dev-test` | [`skills/dev-test`](skills/dev-test/SKILL.md) | Author and evaluate behavior tests as a separate Tester agent |
-| `dev-git` | [`skills/dev-git`](skills/dev-git/SKILL.md) | Manage Git Flow, rebase integration, classified atomic Conventional Commits, and remote-write authorization |
+| `dev-git` | [`skills/dev-git`](skills/dev-git/SKILL.md) | Manage Git Flow, classified atomic Conventional Commits, branch synchronization and protection, and authorized delivery |
 
 Entries load shared rules explicitly; Git delivery uses native Git through `dev-git`. Keep the suite complete so sibling references resolve. See [installation and migration](INSTALL.md) for selection changes.
 
