@@ -15,6 +15,6 @@ Choose evidence for the specific maintenance claim and affected consumers.
 
 For a retained contract, verify behavioral substitutability; for an authorized contract change, verify caller migration and the new behavior. Isolated replay or migration rehearsal can resolve persistent-state questions without touching live data.
 
-When test equivalence is uncertain, a temporary fault injection can show whether the proposed retained checks still detect the relevant failure. Restore the implementation afterward; the experiment need not become a permanent facility.
+When test equivalence is uncertain, a temporary fault injection can show whether retained checks still detect the relevant failure. First use existing evidence; any new executable experiment follows the [shared verification policy](../../dev/references/verification-policy.md) and is authored by an independent Tester. Keep production changes Developer-owned and restore temporary changes afterward; the experiment need not become a permanent facility.
 
 For instruction cleanup, inspect the description, default prompt, body, references, and applicable authority together. Use a few representative tasks to examine changed decisions when needed, distinguishing scenario reasoning from executed behavior. Static consistency does not establish better runtime performance.

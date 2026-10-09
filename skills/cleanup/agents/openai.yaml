@@ -1,4 +1,0 @@
-interface:
-  display_name: "Cleanup"
-  short_description: "Simplify existing code, tests, config, and instructions"
-  default_prompt: "Use $cleanup for the requested maintenance scope. Keep audits, explanations, and reviews read-only; when edits are requested, complete justified cleanup and relevant checks within that authorization."

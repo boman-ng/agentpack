@@ -1,4 +1,4 @@
 interface:
   display_name: "Dev"
-  short_description: "Guide complex development through verified delivery"
-  default_prompt: "Use $dev to deliver the requested feature or change across boundaries, establishing acceptance, ownership, behavior evidence, and verified delivery with methods proportionate to the task."
+  short_description: "Coordinate development, maintenance, and verification"
+  default_prompt: "Use $dev to coordinate the requested work through the appropriate Dev suite modes and complete it with credible acceptance evidence."
