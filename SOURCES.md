@@ -2,7 +2,7 @@
 
 Browse skills by the task they serve, then select a local skill or a complete suite. Categories are navigation, not installation selections. Each selectable item has one primary category; broader capabilities are described in its purpose rather than duplicating it across categories.
 
-The local Dev suite contains four skills and is one optional installation choice; `ui-translate` remains independently optional. The nine optional upstream suites contain 28 skills in total. Selecting any suite includes every member listed below, with its complete resources; suite members are independently callable but are not separate installation choices. Instructions and MCP remain separate components.
+The two optional local suites, Dev and Design, each contain four skills. The nine optional upstream suites contain 28 skills in total. Selecting any suite includes every member listed below, with its complete resources; suite members are independently callable but are not separate installation choices. Instructions and MCP remain separate components.
 
 The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP snippet](mcp/codex.toml). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
 
@@ -17,7 +17,7 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 
 | Selection | Unit | Purpose |
 |---|---|---|
-| [`ui-translate`](skills/ui-translate/SKILL.md) | Local skill | Translate rough UI and motion ideas into frontend concepts and usable developer descriptions |
+| [Design](skills/design/SKILL.md) | Local suite | Clarify intent and terminology across domains; coordinate frontend design, implementation, and quality review through available specialist skills |
 | Impeccable | Suite | Interface design, implementation, accessibility, motion, and refinement |
 | Emil | Suite | Design engineering and animation across web and native/mobile interfaces, including Expo and Swift |
 | GSAP | Suite | GSAP animation, timelines, scroll interactions, plugins, framework integration, and performance |
@@ -51,6 +51,25 @@ This is the complete Dev membership at the selected AgentPack commit. Copy the f
 Each entry explicitly loads the shared rules in `dev/references/`; routing loads only the relevant mode. These relative references require the complete suite. A missing member or required resource makes the selection incomplete; do not install a partial suite or duplicate shared rules into each entry. The [installation guide](INSTALL.md) permits these references only within the staged Dev suite.
 
 `dev-clean` replaces the former `cleanup` skill without an alias. An older standalone `cleanup` or `dev` selection is migration context, not authorization to add the suite automatically. Review the expanded selection and retired names before installing.
+
+## Local Design suite
+
+This is the complete Design membership at the selected AgentPack commit. Copy the four directories as siblings under the skill discovery root. Each is an independent entrypoint; the `design-` prefix does not load shared rules or other members automatically. Planning is a mode of `design`, not an additional skill.
+
+| Skill | Directory | Responsibility |
+|---|---|---|
+| `design` | [`skills/design`](skills/design/SKILL.md) | Coordinate design, planning, capability selection, and the shared quality contract |
+| `design-intent` | [`skills/design-intent`](skills/design-intent/SKILL.md) | Clarify consequential ambiguity with the user and produce accurate professional language in any domain |
+| `design-build` | [`skills/design-build`](skills/design-build/SKILL.md) | Deliver frontend work through specialist guidance, Dev implementation, and evidence-led quality iteration |
+| `design-review` | [`skills/design-review`](skills/design-review/SKILL.md) | Review actual design evidence against the task, applicable principles, and quality references |
+
+Members explicitly load the relevant shared resources in `design/references/`; terminology-only work does not require the frontend quality workflow. The [installation guide](INSTALL.md) permits ordinary relative resource references within the complete staged Design suite. Missing members or required resources make the selection incomplete.
+
+All production source changes through Design, including CSS, components, and interaction code, require the complete Dev suite. Dev owns engineering and independent test authorship; Design does not duplicate those policies. If Dev is unavailable, pause production implementation and new validation while continuing intent, planning, read-only review, and existing evidence investigation. Recommend selecting Dev alongside Design for implementation, but never add it automatically.
+
+Impeccable, Emil, and relevant motion or browser suites remain separate choices. Design discovers available skills by their runtime names and paths, reuses relevant guidance, and preserves explicit-invocation restrictions and side-effect boundaries. A missing provider does not authorize installation or a claim that its workflow ran. Project capabilities can satisfy a task when no specific provider is required. Installing Design does not install libraries, browsers, services, hooks, or accounts.
+
+`design-intent` replaces `ui-translate` without an alias. An older `ui-translate` selection does not authorize the complete Design suite, Dev, or upstream suites. Review the added and removed names before migration; terminology requests may finish in `design-intent`, including requests unrelated to frontend design.
 
 ## Upstream revisions
 

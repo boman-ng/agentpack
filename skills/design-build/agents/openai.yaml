@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Build"
+  short_description: "Build and refine interfaces with observed quality"
+  default_prompt: "Use $design-build to implement my interface and refine its design until the applicable quality standard is evidenced."

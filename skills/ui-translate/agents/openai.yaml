@@ -1,4 +1,0 @@
-interface:
-  display_name: "UI Translate"
-  short_description: "Turn rough UI and motion ideas into frontend terms"
-  default_prompt: "Use $ui-translate to turn my rough interface or motion idea into accurate frontend terms and a concise developer description, preserving constraints and marking assumptions rather than translating UI copy."
