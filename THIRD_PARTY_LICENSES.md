@@ -8,6 +8,7 @@ AgentPack does not vendor the upstream skills listed below. [SOURCES.md](SOURCES
 | Archify skill and bundled renderer | https://github.com/tt-a1i/archify | MIT; bundled font and brand marks retain their upstream terms | [Preserved MIT text](third_party/licenses/archify-MIT.txt) and [third-party notices](third_party/licenses/archify-THIRD_PARTY_NOTICES.md) |
 | Impeccable skill | https://github.com/pbakaus/impeccable | Apache-2.0 | `third_party/licenses/impeccable-Apache-2.0.txt` and `third_party/licenses/impeccable-NOTICE.md` |
 | agent-browser skill | https://github.com/vercel-labs/agent-browser | Apache-2.0 | `third_party/licenses/vercel-labs-agent-browser-Apache-2.0.txt` |
+| Agent-Reach skill | https://github.com/Panniantong/Agent-Reach | MIT | [Preserved MIT text](third_party/licenses/agent-reach-MIT.txt) |
 | Skills for Designers and Engineers | https://github.com/emilkowalski/skills | MIT | `third_party/licenses/emilkowalski-skills-MIT.txt` |
 | GSAP AI Skills | https://github.com/greensock/gsap-skills | MIT for skill content; separate from the GSAP runtime license | [Preserved MIT text](third_party/licenses/gsap-skills-MIT.txt) |
 | Motion AI Kit skill | https://github.com/motiondivision/ai-kit | MIT declared by upstream; no standalone license file at the recorded commit | [Official declaration and provenance record](third_party/licenses/motion-ai-kit-LICENSE-DECLARATION.md) |

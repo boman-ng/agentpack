@@ -2,7 +2,7 @@
 
 Browse skills by the task they serve, then select a local skill or a complete third-party suite. Categories are navigation, not installation selections. Each selectable item has one primary category; broader capabilities are described in its purpose rather than duplicating it across categories.
 
-`cleanup`, `dev`, and `ui-translate` are independent local selections. The eight optional upstream suites contain 27 skills in total. Selecting a suite includes every member listed below, with its complete resources; individual upstream skills are not separate installation choices. Instructions and MCP remain separate components.
+`cleanup`, `dev`, and `ui-translate` are independent local selections. The nine optional upstream suites contain 28 skills in total. Selecting a suite includes every member listed below, with its complete resources; individual upstream skills are not separate installation choices. Instructions and MCP remain separate components.
 
 The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP snippet](mcp/codex.toml). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
 
@@ -36,10 +36,11 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 | Selection | Unit | Purpose |
 |---|---|---|
 | Browser | Suite | Browser interaction, extraction, testing, and supported Electron app automation |
+| Agent-Reach | Suite | Search and read web pages, social platforms, videos, repositories, and RSS through platform tools and services |
 
 ## Upstream revisions
 
-Use these full commits, not current branch heads. Suite membership, paths, and license records were checked on 2026-09-27 for the original seven suites and on 2026-09-30 for Archify. Archify is pinned to the `v3.0.1` release; existing source pins are unchanged.
+Use these full commits, not current branch heads. Suite membership, paths, and license records were checked on 2026-09-27 for the original seven suites, on 2026-09-30 for Archify, and on 2026-10-09 for Agent-Reach. Archify is pinned to the `v3.0.1` release; existing source pins are unchanged.
 
 | Suite | Repository | Full commit | License |
 |---|---|---|---|
@@ -47,6 +48,7 @@ Use these full commits, not current branch heads. Suite membership, paths, and l
 | Archify | [tt-a1i/archify](https://github.com/tt-a1i/archify) | `2ab3cae7ac2c2a55d7386ca789d03c4fcd31816c` | MIT; bundled font and brand marks retain their upstream terms and notices |
 | Impeccable | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | `9d715cc4f5564a990ca8345abfdd5df6dc9b41c8` | Apache-2.0 |
 | Browser | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | `d01253d9db28d75080e36da3c1c31ef89454731e` | Apache-2.0 |
+| Agent-Reach | [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach) | `94f06c1969dfc1834001269d79d3ad0972d9dee6` | MIT |
 | Emil | [emilkowalski/skills](https://github.com/emilkowalski/skills) | `d16ebe60d09a5ba2afcb7054ede9d0a10c9f6128` | MIT |
 | GSAP | [greensock/gsap-skills](https://github.com/greensock/gsap-skills) | `aed9cfd3277740755f6bfc1155c7aa645403b760` | MIT for the skills; the GSAP runtime has its own terms |
 | Motion | [motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | `d1c5c26f424adfd47c112d894e9d424b57338c7e` | MIT declared by upstream; see the [declaration record](third_party/licenses/motion-ai-kit-LICENSE-DECLARATION.md) |
@@ -62,6 +64,7 @@ Paths are relative to each suite's repository at its recorded commit. Copy every
 | Archify | `archify` | `archify` |
 | Impeccable | `impeccable` | `.agents/skills/impeccable` |
 | Browser | `agent-browser` | `skills/agent-browser` |
+| Agent-Reach | `agent-reach` | `agent_reach/skill` |
 | Emil | `animate` | `skills/animate` |
 | Emil | `animate-expo` | `skills/animate-expo` |
 | Emil | `animation-vocabulary` | `skills/animation-vocabulary` |
@@ -94,6 +97,8 @@ Paths are relative to each suite's repository at its recorded commit. Copy every
 - Archify's `finalize` and `deliver` commands may contact its [stable update manifest](https://tt-a1i.github.io/archify/skill-updates/archify/stable.json) and write local reminder state. The check only reports available releases; it does not install updates. Set `ARCHIFY_UPDATE_CHECK_DISABLED=1` to disable that check and its state writes. Keep updates pinned through this catalog. Preserve the bundled `assets/JetBrainsMono-OFL.txt` and brand-mark provenance under the upstream notices; Archify's MIT grant does not replace those terms.
 - At the retained Impeccable revision, `reference/degraded/asset-producer.md` has an incorrect relative link to the component review guide. The target is present at `reference/component-review.md` within the skill. This is an upstream reference defect, not a missing file in the copied suite; the payload remains unchanged.
 - The Browser skill loads workflows from the separately installed `agent-browser` executable. Verify that executable and its browser prerequisites if the user wants a working browser workflow. Follow the [upstream installation instructions](https://github.com/vercel-labs/agent-browser#installation); selecting this suite does not install the executable or Chrome.
+- Copy Agent-Reach's complete `agent_reach/skill/` directory, including `SKILL_en.md` and all seven `references/` guides; keep the published `SKILL.md` unchanged. Its CLI requires Python >=3.10; workflows also need platform tools such as `mcporter`, `gh`, `yt-dlp`, or OpenCLI, and some need a browser session, cookies, proxy, or API key. Exa search and Jina Reader send queries or requested URLs to external services. Selecting the suite copies guidance only; it does not install these tools, configure services, or import credentials. For separately requested runtime setup, review the [installation guide at the recorded commit](https://github.com/Panniantong/Agent-Reach/blob/94f06c1969dfc1834001269d79d3ad0972d9dee6/docs/install.md).
+- Agent-Reach's skill uses broad search and URL triggers and asks for a network update check after substantial research. Preserve that guidance subject to explicit user requirements and applicable instructions. Its setup and skill-registration commands can replace skills in multiple clients' directories; do not run them to obtain this suite. Its live `main` installation/update links do not override AgentPack's recorded pin; review catalog changes before updating the installed skill.
 - GSAP and Motion skills do not install animation libraries into a project. Use the project's actual runtime and version; selecting a suite is not a request to migrate the project or add dependencies.
 - Motion's `best-practices/` guidance is self-contained. Documentation search and the other connected tools require Motion's hosted MCP services; some require an account or Motion+. Tool availability and access tiers are governed by the service, not by the copied skill. See the [official setup documentation](https://motion.dev/docs/ai-kit-install). AgentPack does not run `motion-ai`, configure these servers, or authenticate an account as part of skill installation.
 - LottieFiles supplies opinionated motion-design guidance, including layered motion and timing rules. Selecting it preserves those upstream instructions; it does not override explicit user requirements or applicable project instructions. It does not require installing a Lottie renderer merely to read the guidance.
