@@ -1,27 +1,23 @@
 # Quality And Completion
 
-Target Awwwards/Webby/FWA-winning quality for the applicable design task. This is a demanding craft standard, not an award guarantee or an objective proof. Apply it to the actual product, platform, audience, constraints, and affected scope. A restrained utility interface can meet an ambitious standard through exceptional clarity and execution; spectacle is not a universal requirement. Standalone terminology does not invoke this frontend workflow.
+Target Awwwards/Webby/FWA-winning quality for the actual product, platform, audience, and scope. Clarity and precise execution can meet this standard in a restrained utility interface; visual spectacle is optional. This is a craft target, not a guarantee of an award.
 
-## Choose Relevant Evidence
+## Benchmarks And Inspection
 
-Use the established project direction and existing quality evidence for small tasks. For a new design or material direction change, research and inspect relevant award-winning work. Record its official source, award/category and year where available, the part actually observed, and the specific quality applicable to this task. Other useful references may supplement these benchmarks; do not label them winners without evidence. Select for the task, medium, audience, or craft problem rather than copying an unrelated winner's appearance. A local change does not require a new benchmark search. Stored links alone do not establish a reference's current behavior; unavailable or partial references leave a named comparison gap.
+For small tasks, reuse the established direction and relevant checks. For a new design or material direction change, inspect relevant award-winning work and identify the qualities that apply. Cite the official source for a claimed award; do not require a separate benchmark record or a new search for every local edit.
 
-These official sources supply different lenses, not a universal scoring formula:
+- [Awwwards evaluation](https://www.awwwards.com/about-evaluation/): design, usability, creativity, and content.
+- [Webby criteria](https://www.webbyawards.com/judging-criteria/): category-appropriate content, visual design, structure, functionality, interaction, innovation, and overall experience.
+- [FWA's account](https://thefwa.com/FWA25/25.html): creativity, originality, and technical excellence.
 
-- [Awwwards evaluation](https://www.awwwards.com/about-evaluation/): design, usability, creativity, and content. Use relevant dimensions to examine the task's composition and execution; subjective judging cannot establish an award in advance.
-- [Webby judging criteria](https://www.webbyawards.com/judging-criteria/): audience-appropriate content and visual design, understandable structure, working functionality, interaction, innovation, and overall experience. Apply the actual category rather than forcing every criterion onto every task.
-- [FWA's official account](https://thefwa.com/FWA25/25.html): creativity, originality, and technical excellence in digital experiences. This source is not a numerical rubric; invent no FWA scores.
+Apply relevant qualities, not a fabricated score. Use the [two-book principles](design-principles.md) for concrete decisions about hierarchy, typography, grouping, alignment, color, and understandable interactions. Inspect affected content, assets, states, accessibility, responsiveness, and performance against project/platform requirements. Decoration must not impair the task.
 
-## Functional Floor And Craft
+Match checks to claims: screenshots show composition; runtime interaction checks behavior; real-user observation can reveal comprehension problems. Seek early user observation when useful and available within scope. Partial reference access or unavailable runtime checks limit what can be concluded.
 
-Use the [two-book principles](design-principles.md) to connect choices to evidence. Inspect the actual affected content, layout and typography, assets, interaction and states, accessibility, responsive behavior, and performance where relevant. Preserve user constraints, brand, and required content. Use project and platform requirements for thresholds; do not invent universal performance numbers or self-scores as substitutes for inspection. Unnecessary movement or decorative novelty must not damage the user's task.
+## Iterate And Finish
 
-Match evidence to the claim: a screenshot can establish visible composition, not navigation or persistence; an agent can exercise an interaction without proving real-user comprehension. Obtain early user observation when available and useful within authorization; do not invent participants or turn research recruitment into a universal prerequisite. Name critical missing evidence.
+Self-inspect and improve material gaps until the applicable quality standard is met. Connect each change to an observed problem and recheck the affected result. If iterations stop improving it, revisit the diagnosis. There is no fixed round cap, mandatory separate reviewer, or required user grading.
 
-## Iterate And Decide
+Finish when the requested scope and states meet the functional and craft requirements, relevant benchmark qualities are demonstrated, and the latest changes leave no important regression or unresolved material quality gap. Report the result and material limits; no separate quality dossier is required.
 
-Self-inspect and repeatedly improve until the applicable standard is met. Each improvement needs an identifiable gap, a supported cause, a scoped change, and checks of the actual affected result. Repeated changes without progress require a new diagnosis or a more decisive observation, not blind polishing. No fixed number of rounds, mandatory separate reviewer, or user grading determines completion.
-
-The agent may conclude quality is achieved only when evidence covers the requested scope/task/states, the functional and quality floor, and the relevant benchmark qualities; no material quality gap or critical unknown remains; the latest changes have been rechecked; and no important regression remains. This is a reasoned judgment from named evidence with stated limits, not a claim of guaranteed awards.
-
-Missing assets, environment, access, evidence, or exhausted budgets do not lower the standard. Report the deliverable as unfinished or quality unestablished, describe the material gap, and name the next decisive check. A plan, mockup, built app, and deployed app have different completion boundaries. A read-only review may finish with a below-standard verdict and actionable gaps; it must not claim the design achieved quality simply because the review ended.
+Missing assets, access, environment, evidence, or budget do not lower the target. Identify what remains unfinished or unestablished and the next useful action. A plan, mockup, built app, and deployed app have different completion boundaries. A read-only review can finish with a below-standard verdict and actionable findings.

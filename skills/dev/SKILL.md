@@ -5,23 +5,13 @@ description: Coordinate development, maintenance, verification, and Git delivery
 
 # Dev
 
-Deliver the requested outcome by selecting the relevant Dev suite mode. Keep coordination light: use existing requirements and evidence, and introduce planning or handoff artifacts only when they resolve a real decision.
-
-## Load And Route
-
-Read [engineering contract](references/engineering-contract.md) and [verification policy](references/verification-policy.md) before substantive work.
-
-The complete local suite contains sibling folders `dev`, `dev-build`, `dev-clean`, `dev-test`, and `dev-git`. Confirm their `SKILL.md` files and the two common references are available. If a required resource is missing, report an incomplete Dev suite and the missing path; do not silently substitute unrelated guidance or claim the suite workflow is fulfilled.
-
-Choose by the requested outcome, then explicitly read the selected entry point before using its workflow:
+Read the [engineering contract](references/engineering-contract.md) and [verification policy](references/verification-policy.md). Select and read only the modes needed for the requested outcome:
 
 | Scope | Entry point |
 |---|---|
-| Implement or fix production behavior and complete authorized delivery | [dev-build](../dev-build/SKILL.md) |
-| Simplify, consolidate, or retire existing work; read-only maintenance audit | [dev-clean](../dev-clean/SKILL.md) |
-| Independently author validation, assess acceptance, or investigate test evidence | [dev-test](../dev-test/SKILL.md) |
-| Manage Git Flow branches, atomic Conventional Commits, and authorized delivery | [dev-git](../dev-git/SKILL.md) |
+| Implement or fix production behavior | [dev-build](../dev-build/SKILL.md) |
+| Simplify, consolidate, retire, or audit existing work | [dev-clean](../dev-clean/SKILL.md) |
+| Independently author validation or assess acceptance | [dev-test](../dev-test/SKILL.md) |
+| Manage branches, atomic commits, and Git delivery | [dev-git](../dev-git/SKILL.md) |
 
-For mixed work, preserve one acceptance contract and coordinate the relevant modes. Reading a mode does not create an independent agent: apply the verification policy's Developer/Tester ownership rules whenever new or changed validation is needed. Do not make simple work pass through all modes.
-
-Track the requested scope, the owning agent for production and validation, and any unresolved requirement. Finish when the acceptance and affected-boundary evidence satisfy the common completion rules; report verified outcomes and material limits.
+For mixed work, keep one acceptance scope and coordinate production and validation ownership under the shared policy. Use existing requirements and task context; create handoff artifacts only when they resolve a real coordination need. Simple work need not pass through every mode.

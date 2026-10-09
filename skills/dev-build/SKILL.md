@@ -5,18 +5,12 @@ description: Implement or fix production behavior through verified delivery. Use
 
 # Dev Build
 
-Complete the requested production behavior and delivery within authorization. Use the depth warranted by uncertainty and affected boundaries; simple functions or modules can be sufficient.
-
-## Required Context
-
-Even when invoked directly, read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Confirm the sibling `dev`, `dev-build`, `dev-clean`, `dev-test`, and `dev-git` entry points are available. Report an incomplete Dev suite and missing paths if required resources are absent; do not silently replace them.
+Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md), including when invoked directly.
 
 ## Development
 
-Establish acceptance from the original task and project contracts. Identify the affected use cases, rule owners, invariants, and production path. Choose purposeful boundaries and the simplest complete implementation under the engineering contract.
+Establish acceptance from the task and project contracts. Identify affected use cases, rule owners, invariants, and the production path. Implement the simplest complete behavior across callers and integration points under the shared architecture rules.
 
-Implement production changes, affected callers, and integration points. Keep unrelated maintenance outside the task. If justified cleanup is part of the requested scope, explicitly read [dev-clean](../dev-clean/SKILL.md) for that work.
+Use [dev-clean](../dev-clean/SKILL.md) for maintenance included in the requested scope. Run relevant existing checks and observe the affected path. When new or semantically changed validation is needed, read [dev-test](../dev-test/SKILL.md) and arrange its independent Tester under the shared policy.
 
-Run suitable existing checks and observe the affected path. If acceptance needs new or semantically changed validation, explicitly read [dev-test](../dev-test/SKILL.md) and arrange a distinct compatible Tester under the verification policy. The Developer does not author that validation, including temporary correctness scripts. Give the Tester original requirements, contracts, environment, and scope rather than a Developer-authored oracle or full implementation transcript.
-
-Resolve production defects in the Developer role; the Tester owns validation changes. Complete authorized packaging, migration, recovery, and operational work where relevant, then report acceptance evidence, affected-boundary limits, and any remaining delivery step. Do not claim unperformed deployment or runtime observation.
+Resolve production defects in the Developer role and complete authorized packaging, migration, recovery, and delivery work. Apply the shared completion rule.
