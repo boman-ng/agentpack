@@ -2,7 +2,7 @@
 
 Browse skills by the task they serve, then select a local skill or a complete suite. Categories are navigation, not installation selections. Each selectable item has one primary category; broader capabilities are described in its purpose rather than duplicating it across categories.
 
-The two optional local suites, Dev and Design, each contain four skills. The nine optional upstream suites contain 28 skills in total. Selecting any suite includes every member listed below, with its complete resources; suite members are independently callable but are not separate installation choices. Instructions and MCP remain separate components.
+The two optional local suites, Dev and Design, each contain four skills. The ten optional upstream suites contain 29 skills in total. Selecting any suite includes every member listed below, with its complete resources; suite members are independently callable but are not separate installation choices. Instructions and MCP remain separate components.
 
 The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP snippet](mcp/codex.toml). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
 
@@ -18,6 +18,7 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 | Selection | Unit | Purpose |
 |---|---|---|
 | [Design](skills/design/SKILL.md) | Local suite | Clarify intent and terminology across domains; coordinate frontend design, implementation, and quality review through available specialist skills |
+| Answer me with HTML | Suite | Render interactive explanation and clarification pages from Markdown with a bundled CLI |
 | Impeccable | Suite | Interface design, implementation, accessibility, motion, and refinement |
 | Emil | Suite | Design engineering and animation across web and native/mobile interfaces, including Expo and Swift |
 | GSAP | Suite | GSAP animation, timelines, scroll interactions, plugins, framework integration, and performance |
@@ -67,18 +68,19 @@ Members explicitly load the relevant shared resources in `design/references/`; t
 
 All production source changes through Design, including CSS, components, and interaction code, require the complete Dev suite. Dev owns engineering and independent test authorship; Design does not duplicate those policies. If Dev is unavailable, pause production implementation and new validation while continuing intent, planning, read-only review, and existing evidence investigation. Recommend selecting Dev alongside Design for implementation, but never add it automatically.
 
-Impeccable, Emil, and relevant motion or browser suites remain separate choices. Design discovers available skills by their runtime names and paths, reuses relevant guidance, and preserves explicit-invocation restrictions and side-effect boundaries. A missing provider does not authorize installation or a claim that its workflow ran. Project capabilities can satisfy a task when no specific provider is required. Installing Design does not install libraries, browsers, services, hooks, or accounts.
+Recommend selecting Answer me with HTML alongside Design for its preferred clarification pages, but never add it automatically. It is an optional one-member upstream suite; without a usable provider or user-accessible HTML channel, Design Intent uses its native-tool/chat fallback. Precise terminology proceeds directly. Impeccable, Emil, and relevant motion or browser suites remain separate choices. Design discovers available skills by their runtime names and paths, reuses relevant guidance, and preserves explicit-invocation restrictions and side-effect boundaries. A missing provider does not authorize installation or a claim that its workflow ran. Project capabilities can satisfy a task when no specific provider is required. Installing Design does not install libraries, browsers, services, hooks, or accounts.
 
 `design-intent` replaces `ui-translate` without an alias. An older `ui-translate` selection does not authorize the complete Design suite, Dev, or upstream suites. Review the added and removed names before migration; terminology requests may finish in `design-intent`, including requests unrelated to frontend design.
 
 ## Upstream revisions
 
-Use these full commits, not current branch heads. Suite membership, paths, and license records were checked on 2026-09-27 for the original seven suites, on 2026-09-30 for Archify, and on 2026-10-09 for Agent-Reach. Archify is pinned to the `v3.0.1` release; existing source pins are unchanged.
+Use these full commits, not current branch heads. Suite membership, paths, and license records were checked on 2026-09-27 for the original seven suites, on 2026-09-30 for Archify, and on 2026-10-09 for Agent-Reach and Answer me with HTML. Archify is pinned to `v3.0.1` and Answer me with HTML to `v0.4.15`; existing source pins are unchanged.
 
 | Suite | Repository | Full commit | License |
 |---|---|---|---|
 | ARS | [Imbad0202/academic-research-skills-codex](https://github.com/Imbad0202/academic-research-skills-codex) | `3c37ef8ab480ba1e9370309c24b99977ad44091f` | CC BY-NC 4.0; non-commercial |
 | Archify | [tt-a1i/archify](https://github.com/tt-a1i/archify) | `2ab3cae7ac2c2a55d7386ca789d03c4fcd31816c` | MIT; bundled font and brand marks retain their upstream terms and notices |
+| Answer me with HTML | [QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html) | `0449a8961a6329360babe6a1cb20d0d6d3d04de5` | MIT; bundled dependencies retain their licenses and notices, including marked's historical Markdown terms |
 | Impeccable | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | `9d715cc4f5564a990ca8345abfdd5df6dc9b41c8` | Apache-2.0 |
 | Browser | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | `d01253d9db28d75080e36da3c1c31ef89454731e` | Apache-2.0 |
 | Agent-Reach | [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach) | `94f06c1969dfc1834001269d79d3ad0972d9dee6` | MIT |
@@ -95,6 +97,7 @@ Paths are relative to each suite's repository at its recorded commit. Copy every
 |---|---|---|
 | ARS | `academic-research-suite` | `skills/academic-research-suite` |
 | Archify | `archify` | `archify` |
+| Answer me with HTML | `answer-me-with-html` | `skills/answer-me-with-html` |
 | Impeccable | `impeccable` | `.agents/skills/impeccable` |
 | Browser | `agent-browser` | `skills/agent-browser` |
 | Agent-Reach | `agent-reach` | `agent_reach/skill` |
@@ -125,6 +128,8 @@ Paths are relative to each suite's repository at its recorded commit. Copy every
 ## Prerequisites and attribution
 
 - Copy upstream content unchanged and preserve its invocation metadata, licenses, and notices. Keep each selected repository's root `LICENSE`; Impeccable also requires `NOTICE.md`, and Archify requires `THIRD_PARTY_NOTICES.md`. Motion has no standalone license file at its recorded commit: use the linked declaration record instead, retaining its explicit limitation and source evidence. [INSTALL.md](INSTALL.md) places these records under each installed skill's `provenance/` directory.
+- Copy Answer me with HTML's complete `skills/answer-me-with-html/` directory unchanged: `SKILL.md`, `scripts/am.mjs`, `references/settings.md`, and `references/video.md`. Its bundled CLI needs Node.js >=20; no `npm install`, global CLI install, or rebuild is needed. Copy all contents of the preserved [license and provenance directory](third_party/licenses/answer-me-with-html/README.md) into the installed skill's `provenance/`, after comparing its root `LICENSE` with the pinned upstream root license. Retain `LICENSE`, `README.md`, and the complete `dependencies/` tree. It includes exact marked 18.0.14, dagre 3.1.1, and graphlib 4.0.5 texts and the dagre legal notice named but absent from the upstream skill payload.
+- Answer me with HTML normally uses home-directory state and may open a browser or check for updates. Design's [runtime integration](skills/design/references/integrations.md#answer-me-with-html) defaults to task-owned output/state, `--no-open`, and `AM_NO_UPDATE_CHECK=1`, while preserving explicit user settings and host link formats. These are invocation defaults, not global configuration. Upstream broad triggers, panel suggestions, settings/update commands, and links do not override explicit requirements, host constraints, or the catalog pin. Do not auto-start its server, publish pages, enable always-on rules, or install dependencies. Its Reply button produces text for manual copy into chat; no return bridge is installed. Videos and optional external-service workflows are separate from ordinary clarification.
 - ARS includes its own resources and additional license texts under the skill directory. Its non-commercial terms are not replaced by AgentPack's MIT license.
 - Copy Archify's complete `archify/` source directory, including its bundled CLI, renderers, schemas, examples, assets, and notices. The upstream `.agents/skills/archify-review` directory is a repository-maintenance helper, not a member of the published diagramming package. Rendering and validation require Node.js >=18; no `npm install` is needed for normal skill use. The normal `finalize` workflow also requires Chrome or Chromium for its browser gate; `ARCHIFY_CHROME` can select the executable. Repository-evidence verification also needs Git. Selecting this suite does not install these tools.
 - Archify's `finalize` and `deliver` commands may contact its [stable update manifest](https://tt-a1i.github.io/archify/skill-updates/archify/stable.json) and write local reminder state. The check only reports available releases; it does not install updates. Set `ARCHIFY_UPDATE_CHECK_DISABLED=1` to disable that check and its state writes. Keep updates pinned through this catalog. Preserve the bundled `assets/JetBrainsMono-OFL.txt` and brand-mark provenance under the upstream notices; Archify's MIT grant does not replace those terms.
