@@ -9,19 +9,19 @@ Read the shared [engineering contract](../dev/references/engineering-contract.md
 
 ## Ownership And Local Work
 
-Inspect project instructions, branch/HEAD, worktrees, staged and unstaged changes, and any operation in progress. Establish the task's base, destination, changes, and main-agent owner in task context. Resolve ownership or project workflow conflicts before the affected operation.
+Inspect project instructions, branch/HEAD, worktrees, staged and unstaged changes, and any operation in progress. Establish the task's base, destination, changes, and coordinating agent in task context. Resolve ownership or project workflow conflicts before the affected operation.
 
 Local branch creation, switching, commits, private-history organization, integration, and cleanup are autonomous within an implementation or Git task. Audits, plans, and explanations remain read-only. Reuse the task's branch; preserve unrelated work without automatically stashing, discarding, or committing it. Resolve blocking conflicts while continuing independent work.
 
-The main-agent coordinates the shared index, commits, branch switches, rebases, and integration. Developer/Tester subagents work on assigned files or in sequence; they do not independently change shared Git state.
+One coordinating agent owns the task's shared index, commits, branch switches, rebases, and integration. Developer/Tester collaborators, whether subagents or separate sessions, work on assigned files or in sequence; they do not independently change shared Git state. This is a task responsibility, not a required host-specific agent role.
 
-## Worktrees Only For Parallel Main-Agents
+## Worktrees Only For Concurrent Independent Tasks
 
-A single main-agent uses the ordinary checkout. Developer/Tester subagents or a dirty checkout alone do not warrant worktrees.
+A single coordinated task uses the ordinary checkout. Developer/Tester collaboration, a separate Tester session, or a dirty checkout alone does not warrant worktrees.
 
-Use separate branches and worktrees when multiple main-agents develop independent features or fixes concurrently. Locate the main working directory with `git worktree list`, then use its `.worktree/<task-slug>/`, never a nested linked worktree. Confirm the path and branch are unused. If not ignored, add `/.worktree/` to the local exclude file located by `git rev-parse --git-path info/exclude`.
+Use separate branches and worktrees when different agents coordinate independent features or fixes concurrently. Locate the main working directory with `git worktree list`, then use its `.worktree/<task-slug>/`, never a nested linked worktree. Confirm the path and branch are unused. If not ignored, add `/.worktree/` to the local exclude file located by `git rev-parse --git-path info/exclude`.
 
-Each task owns its workspace and branch. Assign one main-agent to serialize integration into a shared destination; do not switch branches in another agent's active checkout. Coordinate through task communication. `git worktree lock` protects against removal, not concurrent integration.
+Each task owns its workspace and branch. Assign one coordinating agent to serialize integration into a shared destination; do not switch branches in another agent's active checkout. Coordinate through available task communication. `git worktree lock` protects against removal, not concurrent integration.
 
 ## Classify Atomic Conventional Commit
 

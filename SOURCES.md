@@ -4,7 +4,7 @@ Browse skills by the task they serve, then select a local skill or a complete su
 
 The two optional local suites contain five Dev skills and four Design skills. The nine optional upstream suites contain 28 skills in total. Selecting any suite includes every member listed below, with its complete resources; suite members are independently callable but are not separate installation choices. Instructions and MCP remain separate components.
 
-The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP snippet](mcp/codex.toml). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
+The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP connection settings](mcp/anysearch.md). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
 
 ## Engineering Development and Maintenance
 
@@ -124,6 +124,7 @@ Install skill payloads unchanged with the attribution listed in [THIRD_PARTY_LIC
 | Suite | Runtime or access requirement |
 |---|---|
 | Dev | Native Git for repository work; no Git Flow extension |
+| ARS | The pinned source is the ARS-Codex adapter. Check its host-specific tool and workflow requirements on other hosts; copying its skill does not establish runtime compatibility. |
 | Answer me with HTML | Node.js >=20; bundled CLI, no `npm install` or rebuild. Copy the complete four-file skill directory. Design's [runtime integration](skills/design/references/integrations.md#answer-me-with-html) defines task-local invocation defaults and delivery. |
 | Archify | Node.js >=18; bundled renderer, no `npm install`. `finalize` needs Chrome/Chromium (`ARCHIFY_CHROME` selects it); repository-evidence verification also needs Git. Copy complete `archify/`, not the upstream maintenance helper `.agents/skills/archify-review`. |
 | Browser | Separate `agent-browser` executable and browser prerequisites; see [upstream installation](https://github.com/vercel-labs/agent-browser#installation). |
@@ -131,7 +132,7 @@ Install skill payloads unchanged with the attribution listed in [THIRD_PARTY_LIC
 | Motion connected tools | Hosted MCP setup; some services require an account or Motion+. The `best-practices/` guidance is self-contained. See [official setup](https://motion.dev/docs/ai-kit-install). |
 | LottieFiles | Guidance can be used without a Lottie renderer. |
 
-Other suites may require a project toolchain or platform SDK. Report missing prerequisites separately.
+Other suites may require a project toolchain or platform SDK. Report missing prerequisites separately. Preserve upstream client-specific names and metadata; verify required capabilities on the target host rather than treating this catalog as a universal runtime compatibility claim.
 
 Known behavior at the recorded revisions:
 
@@ -142,6 +143,4 @@ For source upgrades, review the new revision's complete published membership, pa
 
 ## Optional MCP: AnySearch
 
-[mcp/codex.toml](mcp/codex.toml) configures `https://api.anysearch.com/mcp` with the non-secret `X-Anysearch-Client` header. It uses anonymous access; it does not register an account or store an API key. Queries and requested URLs go to the external service, and availability and anonymous rate limits depend on that service.
-
-The configuration's provenance is [anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server/tree/f4ca4d4941e4c122be6522c1afc76012f1669654), commit `f4ca4d4941e4c122be6522c1afc76012f1669654`, Apache-2.0. This identifies the configuration reference, not the remotely deployed service version. See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for preserved texts.
+[AnySearch connection settings](mcp/anysearch.md) owns the endpoint, anonymous-access header, service boundary, and pinned configuration provenance. Map those settings into the discovered host format through [INSTALL.md](INSTALL.md); no client-specific configuration is distributed.

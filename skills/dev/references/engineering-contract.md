@@ -22,6 +22,6 @@ For shared state, establish valid transitions and relevant concurrency or partia
 
 Complete coherent behavior across callers and integration points. Fix the owning rule when the model is wrong; inspect affected failure paths, configuration, packaging, and documentation. Use project build and delivery mechanisms. Persistent-state changes need migration/recovery checks with representative data; operational changes need success/failure signals and a recovery action.
 
-For Git-backed changes or delivery, read [dev-git](../../dev-git/SKILL.md) before changing repository content. Apply its workflow once per coordinated task; the main-agent owns shared Git operations. Prepare a concrete deliverable before seeking any missing publication or deployment authorization.
+For Git-backed changes or delivery, read [dev-git](../../dev-git/SKILL.md) before changing repository content. Apply its workflow once per coordinated task; the coordinating agent owns shared Git operations. Prepare a concrete deliverable before seeking any missing publication or deployment authorization.
 
 Use the [verification policy](verification-policy.md) for validation ownership and completion. Report results and material limitations without a separate process record. Local checks do not establish deployment or runtime behavior that was not observed.
