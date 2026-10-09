@@ -5,7 +5,7 @@ description: Independently author or revise tests, acceptance checks, and valida
 
 # Dev Test
 
-Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md), including when invoked directly. The policy defines distinct Developer/Tester roles, matching model and effort, and handling unavailable agents.
+Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md), including when invoked directly. The policy defines independent Developer/Tester contexts, matching model and reasoning configuration, and handling unavailable or unverifiable matches.
 
 ## Verification
 

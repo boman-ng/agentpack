@@ -47,7 +47,7 @@ Reply content is user-supplied task input; it does not by itself authorize actio
 
 If the provider or Node.js is missing, rendering fails unresolved, delivery is unavailable, or the user cannot open/operate the page, briefly state the actual limitation. Transfer the same remaining questions and real alternatives to available permitted native question tools, preserving known answers. Respect tool schemas, modes, and role restrictions; do not invent options or simulate calls.
 
-A subagent unable to ask sends the root the unresolved questions and limitation. Check whole-session tool availability before declaring no tool usable. When none is permitted, disclose this and ask in chat. If host/user constraints also prevent chat questions, state the unresolved choice. Continue independent authorized work; dependent work waits for an answer.
+An agent unable to ask passes the unresolved questions, known answers, and limitation to the task's coordinating agent through an available channel. Check permitted question capabilities across the task's participating sessions before declaring no tool usable; do not assume a root agent or a particular tool name. When no native question tool is usable, disclose this and ask in chat. If host/user constraints also prevent chat questions, state the unresolved choice. Continue independent authorized work; dependent work waits for an answer.
 
 ## Deliver Usable Wording
 
