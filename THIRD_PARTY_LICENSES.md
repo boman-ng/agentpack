@@ -9,7 +9,6 @@ AgentPack does not vendor the upstream skills listed below. [SOURCES.md](SOURCES
 | Answer me with HTML skill and bundled CLI | https://github.com/QingYunA/answer-me-with-html | MIT; marked, dagre, and graphlib retain their licenses and notices, including marked's historical Markdown terms | [Complete preserved license and provenance directory](third_party/licenses/answer-me-with-html/README.md) |
 | Impeccable skill | https://github.com/pbakaus/impeccable | Apache-2.0 | `third_party/licenses/impeccable-Apache-2.0.txt` and `third_party/licenses/impeccable-NOTICE.md` |
 | agent-browser skill | https://github.com/vercel-labs/agent-browser | Apache-2.0 | `third_party/licenses/vercel-labs-agent-browser-Apache-2.0.txt` |
-| Agent-Reach skill | https://github.com/Panniantong/Agent-Reach | MIT | [Preserved MIT text](third_party/licenses/agent-reach-MIT.txt) |
 | Skills for Designers and Engineers | https://github.com/emilkowalski/skills | MIT | `third_party/licenses/emilkowalski-skills-MIT.txt` |
 | GSAP AI Skills | https://github.com/greensock/gsap-skills | MIT for skill content; separate from the GSAP runtime license | [Preserved MIT text](third_party/licenses/gsap-skills-MIT.txt) |
 | Motion AI Kit skill | https://github.com/motiondivision/ai-kit | MIT declared by upstream; no standalone license file at the recorded commit | [Official declaration and provenance record](third_party/licenses/motion-ai-kit-LICENSE-DECLARATION.md) |
