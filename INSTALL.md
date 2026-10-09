@@ -69,7 +69,7 @@ For recovery, agree on the backup, target host, and concrete targets, then resto
 
 ## Suite manifest
 
-Select complete suites; members remain independently callable. Instructions and MCP are separate choices. Local content follows the selected AgentPack commit; upstream skills are fetched only when selected. License summaries are in the [README](README.md#referenced-repositories), and required attribution is in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+Select complete suites; members remain independently callable. Instructions and MCP are separate choices. Local content follows the selected AgentPack commit; upstream skills are fetched only when selected. License summaries are in the [README](README.md#referenced-repositories), and required attribution is in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md). README reference material is not an installation choice.
 
 ### Local suites
 
@@ -95,6 +95,7 @@ Fetch these full commits, not branch heads. Archify is pinned to `v3.0.1` and An
 |---|---|---|
 | ARS | [Imbad0202/academic-research-skills-codex](https://github.com/Imbad0202/academic-research-skills-codex) | `3c37ef8ab480ba1e9370309c24b99977ad44091f` |
 | Archify | [tt-a1i/archify](https://github.com/tt-a1i/archify) | `2ab3cae7ac2c2a55d7386ca789d03c4fcd31816c` |
+| Lieflat Charts | [larashero3-dotcom/lieflat-charts](https://github.com/larashero3-dotcom/lieflat-charts) | `eace082a317b696c5570c25826a53a7fa113e984` |
 | Answer me with HTML | [QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html) | `0449a8961a6329360babe6a1cb20d0d6d3d04de5` |
 | Impeccable | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | `9d715cc4f5564a990ca8345abfdd5df6dc9b41c8` |
 | Browser | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | `d01253d9db28d75080e36da3c1c31ef89454731e` |
@@ -107,10 +108,13 @@ Fetch these full commits, not branch heads. Archify is pinned to `v3.0.1` and An
 
 Paths are relative to the corresponding repository at its pinned commit. Copy complete listed directories, including hidden resources and embedded notices. Alternate-client/plugin copies, test fixtures, and tool-served workflows are not additional members.
 
+Lieflat Charts uses the repository root (`.`). Copy all tracked files into the installed `lieflat-charts/` directory, including its templates, catalogs, tokens, scripts, examples, preview assets, and metadata; exclude `.git`.
+
 | Suite | Skill | Directory |
 |---|---|---|
 | ARS | `academic-research-suite` | `skills/academic-research-suite` |
 | Archify | `archify` | `archify` |
+| Lieflat Charts | `lieflat-charts` | `.` |
 | Answer me with HTML | `answer-me-with-html` | `skills/answer-me-with-html` |
 | Impeccable | `impeccable` | `.agents/skills/impeccable` |
 | Browser | `agent-browser` | `skills/agent-browser` |
@@ -148,6 +152,7 @@ Suite selection does not install runtimes, libraries, services, or accounts. Pre
 | ARS | The pinned source is the ARS-Codex adapter. Check its host-specific tool and workflow requirements on other hosts; copying its skill does not establish runtime compatibility. |
 | Answer me with HTML | Node.js >=20; bundled CLI, no `npm install` or rebuild. Copy the complete four-file skill directory. Design's [runtime integration](skills/design/references/integrations.md#answer-me-with-html) defines task-local invocation defaults and delivery. |
 | Archify | Node.js >=18; bundled renderer, no `npm install`. `finalize` needs Chrome/Chromium (`ARCHIFY_CHROME` selects it); repository-evidence verification also needs Git. Copy complete `archify/`, not the upstream maintenance helper `.agents/skills/archify-review`. |
+| Lieflat Charts | HTML needs no build. SVG charts can run offline; Chart.js, ECharts, online fonts, and GeoJSON need network access unless inlined. Node.js runs the bundled static checks; the optional browser smoke script additionally expects global Playwright and Chromium. Skill selection does not install them. |
 | Browser | Separate `agent-browser` executable and browser prerequisites; see [upstream installation](https://github.com/vercel-labs/agent-browser#installation). |
 | GSAP / Motion | The project's actual animation runtime and version; skill installation does not add or migrate libraries. |
 | Motion connected tools | Hosted MCP setup; some services require an account or Motion+. The `best-practices/` guidance is self-contained. See [official setup](https://motion.dev/docs/ai-kit-install). |
