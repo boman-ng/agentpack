@@ -1,4 +1,0 @@
-interface:
-  display_name: "Dev Build"
-  short_description: "Implement production behavior through verified delivery"
-  default_prompt: "Use $dev-build to complete the requested production change and authorized delivery with independent validation where needed."

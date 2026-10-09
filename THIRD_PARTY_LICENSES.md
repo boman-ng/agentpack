@@ -15,7 +15,7 @@ Upstream skills are fetched only when selected. [SOURCES.md](SOURCES.md) records
 | GSAP AI Skills | https://github.com/greensock/gsap-skills | MIT for skill content; separate from the GSAP runtime license | [Preserved MIT text](third_party/licenses/gsap-skills-MIT.txt) |
 | Motion AI Kit skill | https://github.com/motiondivision/ai-kit | MIT declared by upstream; no standalone license file at the recorded commit | [Official declaration and provenance record](third_party/licenses/motion-ai-kit-LICENSE-DECLARATION.md) |
 | LottieFiles Motion Design Skill | https://github.com/LottieFiles/motion-design-skill | MIT | [Preserved MIT text](third_party/licenses/lottiefiles-motion-design-MIT.txt) |
-| AnySearch MCP documentation/configuration basis | https://github.com/anysearch-ai/anysearch-mcp-server | Apache-2.0 | `third_party/licenses/anysearch-mcp-server-Apache-2.0.txt` and `anysearch-mcp-server-NOTICE.txt` |
+| [AnySearch MCP connection settings](mcp/anysearch.md) and their documentation basis | https://github.com/anysearch-ai/anysearch-mcp-server | Apache-2.0 | `third_party/licenses/anysearch-mcp-server-Apache-2.0.txt` and `anysearch-mcp-server-NOTICE.txt` |
 
 Preserve each selected source's root license and embedded notices, plus the supplementary records linked above. Impeccable requires `NOTICE.md`; Archify requires `THIRD_PARTY_NOTICES.md`, its bundled font license, and brand-mark notices. ARS retains its non-commercial terms and included license texts. Skill licenses do not grant access to separately licensed runtimes or hosted services.
 

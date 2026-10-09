@@ -16,15 +16,15 @@ Report material substitutions and unverified boundaries: a component test does n
 
 ## Independent Developer And Tester
 
-The **Developer** owns production changes; a **Tester** with a distinct agent ID owns new or semantically changed validation for the coherent change. They must use the same actual model and reasoning effort. Do not hardcode a model or silently downgrade. Standalone verification does not require matching an unknown historical or human author.
+The **Developer** owns production changes; a **Tester** in a separate agent instance with independent task context owns new or semantically changed validation for the coherent change. The Tester may be a subagent or another independent agent session. They must use the same actual model and reasoning configuration, including effort where applicable. Use the host's actual configuration or documented inheritance to establish the match; an unavailable setting is not proof of equality. Do not hardcode a model or silently downgrade. Standalone verification does not require matching an unknown historical or human author.
 
 Tester ownership covers tests, assertions, snapshots, fixtures, mocks, helpers, pass-condition configuration, and temporary executable correctness checks. Running existing tests, observation-only diagnostics, and semantically neutral path/format edits do not require a new Tester.
 
-When validation authorship is needed, spawn one compatible Tester with fresh context or reuse one with a clean task context. Supply the original request, requirements, contracts, environment, authorization, and scope, rather than the Developer's full transcript or implementation-derived expected answers. The Tester may inspect production wiring while deriving expectations independently.
+When validation authorship is needed, delegate to one compatible Tester through the host's supported mechanism or hand off to an independent session. Reuse a Tester only with a clean task context. Supply the original request, requirements, contracts, environment, authorization, and scope, rather than the Developer's full transcript or implementation-derived expected answers. The Tester may inspect production wiring while deriving expectations independently. Coordinate through available task communication; no particular agent ID field, tool name, or agent tree is required.
 
 A direct `dev-test` agent can fill this role if it did not author production. A Developer cannot switch roles by reading the Tester skill. Test-specific fixes stay with the Tester; production fixes go to the Developer. No nested Tester is needed merely for ceremony.
 
-If a compatible distinct agent is unavailable, continue implementation and existing checks; report the missing independent validation without claiming it complete.
+If an independent Tester is unavailable or matching configuration cannot be established, continue implementation and existing checks; report the missing independent validation without claiming it complete. Do not install an orchestrator or change host settings merely to supply the role.
 
 ## Maintenance Exception For Test Deletion
 

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Dev Clean"
-  short_description: "Simplify existing code, tests, config, and instructions"
-  default_prompt: "Use $dev-clean for the requested maintenance scope. Keep audits read-only; when edits are requested, complete justified cleanup and verify retained outcomes."
