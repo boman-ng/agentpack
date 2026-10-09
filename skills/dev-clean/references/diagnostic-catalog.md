@@ -35,13 +35,13 @@ For a disputed mechanism, identify the protected outcome, the condition in which
 
 Use existing seams and isolated comparisons when live removal could harm data, security, recovery, or required contracts. Account for material workload, version, persisted-state, and failure-condition differences. Passing ordinary cases does not establish correctness in failure-only duties; label unobserved counterfactuals as hypotheses.
 
-Preserve only the unresolved affected protection and name the missing evidence or authority and next check. Restore temporary comparison changes when the question is resolved.
+Preserve only the unresolved affected protection and name the missing evidence or authority and next check. New executable correctness comparisons follow the [shared verification policy](../../dev/references/verification-policy.md); the independent Tester owns their validation. Restore temporary comparison changes when the question is resolved.
 
 ## Agent Instructions And Skills
 
 Inspect what is actually loaded: scopes, overrides, descriptions, default prompts, bodies, references, and managed or generated sources. Files on disk may differ from active session content.
 
-Look for conflicts in authority, scope, completion, or verification, and unconditional procedures that do not change useful decisions. Keep shared rules at their authoritative source, discovery descriptions precise, and conditional details in references. Each skill needs a clear scope without depending on another optional skill.
+Look for conflicts in authority, scope, completion, or verification, and unconditional procedures that do not change useful decisions. Keep shared rules at their authoritative source, discovery descriptions precise, and conditional details in references. Each skill needs a clear scope; a required local suite must make its dependencies discoverable and report missing resources rather than treating them as optional.
 
 Check whether the instructions or observed behavior:
 

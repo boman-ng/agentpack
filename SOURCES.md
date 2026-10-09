@@ -1,8 +1,8 @@
 # Components and sources
 
-Browse skills by the task they serve, then select a local skill or a complete third-party suite. Categories are navigation, not installation selections. Each selectable item has one primary category; broader capabilities are described in its purpose rather than duplicating it across categories.
+Browse skills by the task they serve, then select a local skill or a complete suite. Categories are navigation, not installation selections. Each selectable item has one primary category; broader capabilities are described in its purpose rather than duplicating it across categories.
 
-`cleanup`, `dev`, and `ui-translate` are independent local selections. The nine optional upstream suites contain 28 skills in total. Selecting a suite includes every member listed below, with its complete resources; individual upstream skills are not separate installation choices. Instructions and MCP remain separate components.
+The local Dev suite contains four skills and is one optional installation choice; `ui-translate` remains independently optional. The nine optional upstream suites contain 28 skills in total. Selecting any suite includes every member listed below, with its complete resources; suite members are independently callable but are not separate installation choices. Instructions and MCP remain separate components.
 
 The AgentPack commit identifies [the global instructions](instructions/AGENTS.md), the local skills, and [the MCP snippet](mcp/codex.toml). Upstream suites are fetched only when selected, at the full commits below. No bundled snapshots or separate content lock are required.
 
@@ -10,8 +10,7 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 
 | Selection | Unit | Purpose |
 |---|---|---|
-| [`cleanup`](skills/cleanup/SKILL.md) | Local skill | Simplify, consolidate, and retire existing code, tests, configuration, documentation, and instructions |
-| [`dev`](skills/dev/SKILL.md) | Local skill | Make engineering decisions for complex features and changes across boundaries, from acceptance to verified delivery |
+| [Dev](skills/dev/SKILL.md) | Local suite | Coordinate development, maintenance, and independent testing around business rules, necessary architecture boundaries, and valuable verification |
 | Archify | Suite | Create and validate interactive architecture, workflow, sequence, data-flow, and lifecycle diagrams as standalone HTML |
 
 ## Interface Design and Development
@@ -38,6 +37,21 @@ The AgentPack commit identifies [the global instructions](instructions/AGENTS.md
 | Browser | Suite | Browser interaction, extraction, testing, and supported Electron app automation |
 | Agent-Reach | Suite | Search and read web pages, social platforms, videos, repositories, and RSS through platform tools and services |
 
+## Local Dev suite
+
+This is the complete Dev membership at the selected AgentPack commit. Copy the four directories as siblings under the skill discovery root. Each is a real skill entrypoint; the `dev-` prefix does not provide inheritance or automatically load another skill.
+
+| Skill | Directory | Responsibility |
+|---|---|---|
+| `dev` | [`skills/dev`](skills/dev/SKILL.md) | Route and coordinate work; own the shared engineering and verification references |
+| `dev-build` | [`skills/dev-build`](skills/dev-build/SKILL.md) | Implement features and fixes through affected boundaries and delivery |
+| `dev-clean` | [`skills/dev-clean`](skills/dev-clean/SKILL.md) | Simplify or retire existing work, including read-only maintenance audits |
+| `dev-test` | [`skills/dev-test`](skills/dev-test/SKILL.md) | Author and evaluate behavior tests as a separate Tester agent |
+
+Each entry explicitly loads the shared rules in `dev/references/`; routing loads only the relevant mode. These relative references require the complete suite. A missing member or required resource makes the selection incomplete; do not install a partial suite or duplicate shared rules into each entry. The [installation guide](INSTALL.md) permits these references only within the staged Dev suite.
+
+`dev-clean` replaces the former `cleanup` skill without an alias. An older standalone `cleanup` or `dev` selection is migration context, not authorization to add the suite automatically. Review the expanded selection and retired names before installing.
+
 ## Upstream revisions
 
 Use these full commits, not current branch heads. Suite membership, paths, and license records were checked on 2026-09-27 for the original seven suites, on 2026-09-30 for Archify, and on 2026-10-09 for Agent-Reach. Archify is pinned to the `v3.0.1` release; existing source pins are unchanged.
@@ -54,7 +68,7 @@ Use these full commits, not current branch heads. Suite membership, paths, and l
 | Motion | [motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | `d1c5c26f424adfd47c112d894e9d424b57338c7e` | MIT declared by upstream; see the [declaration record](third_party/licenses/motion-ai-kit-LICENSE-DECLARATION.md) |
 | LottieFiles | [LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill) | `f9a8a041b85185ee4881b3471d3415e939aac772` | MIT |
 
-## Suite contents
+## Upstream suite contents
 
 Paths are relative to each suite's repository at its recorded commit. Copy every listed member of a selected suite, including its references, scripts, metadata, hidden resources, and embedded notices. These are the published skill directories, not every file named SKILL.md in a repository: alternate-client/plugin copies, test fixtures, and tool-served workflows are not extra installable members.
 
