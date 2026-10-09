@@ -16,7 +16,7 @@ Invoke `node "<discovered-directory>/scripts/am.mjs"` using the actual skill dir
 
 For ordinary clarification, use per-invocation `AM_NO_UPDATE_CHECK=1`, task-owned `AM_HOME`, and `render - -o "<task-output>/clarification.html" --no-open` with the draft on standard input. Preserve explicit user settings and host attachment/link formats. Keep output and state in writable task-owned directories.
 
-Do not automatically install dependencies, change the pin or global settings, publish, start `am serve`, or create a server/tunnel. Use an existing service only through a confirmed authorized delivery channel. Provider settings, cleanup, updates, video, and external-service workflows need their own requested scope.
+Do not automatically install dependencies, change global settings, publish, start `am serve`, or create a server/tunnel. Use an existing service only through a confirmed authorized delivery channel. Provider settings, cleanup, updates, video, and external-service workflows need their own requested scope.
 
 ## Reuse Relevant Guidance
 
@@ -26,6 +26,7 @@ Do not automatically install dependencies, change the pin or global settings, pu
 | Motion purpose, continuity, timing, interruption | `animate`, `motion-design`, `motion`; GSAP guidance for the actual stack |
 | Name a visible motion effect | `animation-vocabulary`; primary documentation for consequential technical claims |
 | Interactive clarification | `answer-me-with-html` |
+| Data visualization and explicitly requested reports | `lieflat-charts` |
 | Inspect rendered states and interactions | Available browser tools; `agent-browser` when its CLI applies |
 
 Read only relevant guidance; invoking a full upstream workflow also requires its setup and side-effect boundaries. `prototype` and `pick-ui-library` require explicit user invocation. Reuse project capabilities first; skill text, runnable tools, accounts, and publication authority are separate resources, and missing tools do not authorize setup.
