@@ -8,4 +8,4 @@ AgentPack distributes instructions, skills, and optional MCP configuration. Foll
 - The optional AnySearch service receives queries and requested URLs. Its anonymous configuration contains no credentials; availability and usage limits depend on the service.
 - Source pins identify content. Review selected skill code and resources before executing them, and preserve [third-party terms](THIRD_PARTY_LICENSES.md).
 
-Exercise installation changes in disposable directories, never against the maintainer's real Codex home.
+Exercise installation changes in disposable directories, never against real user instruction, skill, or host configuration locations.

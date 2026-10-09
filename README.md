@@ -1,21 +1,24 @@
 # AgentPack
 
-My personal Codex instructions, skills, and optional MCP configuration, kept in Git for review and reuse across machines. Use the collection as-is or fork it for your preferences. Codex performs the setup from the guide; there is no AgentPack CLI or installer.
+My personal instructions, skills, and optional MCP connection settings for agent CLIs, kept in Git for review and reuse across hosts and machines. Use the collection as-is or fork it for your preferences. An agent performs setup from the guide; there is no AgentPack CLI or installer.
 
-## Install with Codex
+## Install with your agent
 
-You need Codex CLI and Git. Paste this into Codex:
+Use an agent with Git and filesystem access. Paste this request into your agent, naming the target CLI if it is not already clear:
 
 ```text
 Install https://github.com/boman-ng/agentpack from its master branch.
-Read README.md and INSTALL.md, then inspect my Codex setup.
+Read README.md and INSTALL.md, identify the target agent CLI,
+then inspect its setup and current official configuration guidance.
 Ask which complete skill suites, instructions, and optional MCP I want.
 Show the exact replacements and removals. Once that scope is confirmed,
 back up, install, and verify it without asking again about settled choices.
 Report the result, installed revisions, backup location, and any limits.
 ```
 
-Only user-level Codex installation is supported. Selected skill and MCP collections are replaced with the confirmed selection, including removal of unselected entries. Skipped components stay unchanged. The shared `~/.agents/skills` directory can serve other clients; review its replacements before installation. [INSTALL.md](INSTALL.md) defines targets, backups, updates, and recovery.
+Installation is user-level. Discover the target host's instruction entrypoint, skill locations, and MCP configuration instead of assuming one client's layout. Within the confirmed targets, selected skill and MCP collections are replaced with the confirmed selection, including removal of unselected entries. Skipped components stay unchanged. Shared locations can affect other clients; review that impact before installation. [INSTALL.md](INSTALL.md) defines discovery, scope, backups, updates, and recovery.
+
+Local skills use the [Agent Skills format](https://agentskills.io/specification). Hosts such as Codex CLI, Claude Code, and OpenCode have their own discovery and invocation mechanisms. Automatic skill loading, delegation, question tools, HTML delivery, and MCP access depend on the actual host; reusable instructions do not establish those capabilities.
 
 ## Contents
 
@@ -25,7 +28,7 @@ Only user-level Codex installation is supported. Selected skill and MCP collecti
 | [Dev suite](skills/dev/SKILL.md) | Coordinate development, maintenance, independent testing, and Git delivery |
 | [Design suite](skills/design/SKILL.md) | Clarify intent and terminology, shape interfaces, build, and review quality using specialist skills |
 | [Skill catalog and sources](SOURCES.md) | Complete local and upstream suite selections, pinned revisions, prerequisites, and licenses |
-| [AnySearch configuration](mcp/codex.toml) | Optional anonymous remote search MCP |
+| [AnySearch connection settings](mcp/anysearch.md) | Optional anonymous remote search MCP, mapped to the target host's format |
 
 Install selected suites in full. Dev has five callable skills; Design has four. Design applies Krug's usability and Williams's visual principles, with self-review toward applicable Awwwards, Webby Awards, and FWA-winning quality. Its production implementation requires a separately selected Dev suite; intent, planning, and read-only review remain available without it.
 
@@ -35,7 +38,7 @@ Browse [engineering](SOURCES.md#engineering-development-and-maintenance), [desig
 
 ## Update and maintain
 
-Ask Codex to follow [INSTALL.md](INSTALL.md) using your installation record and the current `master` commit, or a recorded commit for reproduction. Review membership changes before updating older selections. Installed files are copies: keep lasting edits in your checkout or fork. Repository edits alone do not update the installation.
+Ask your agent to follow [INSTALL.md](INSTALL.md) for the target host using its installation record and the current `master` commit, or a recorded commit for reproduction. Review membership changes before updating older selections. Installed files are copies: keep lasting edits in your checkout or fork. Repository edits alone do not update the installation.
 
 AgentPack uses `master` for the production installation source and `develop` for the next revision. Follow [Dev Git](skills/dev-git/SKILL.md) for Git Flow, rebase and fast-forward integration, classified atomic Conventional Commits, and workspace ownership. Local work is autonomous within scope; remote writes require human authorization.
 
