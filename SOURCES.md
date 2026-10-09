@@ -49,9 +49,7 @@ This is the complete Dev membership at the selected AgentPack commit. Copy the f
 | `dev-test` | [`skills/dev-test`](skills/dev-test/SKILL.md) | Author and evaluate behavior tests as a separate Tester agent |
 | `dev-git` | [`skills/dev-git`](skills/dev-git/SKILL.md) | Manage Git Flow, rebase integration, classified atomic Conventional Commits, and remote-write authorization |
 
-Each entry explicitly loads the shared rules in `dev/references/`; routing loads only the relevant mode. The engineering contract routes Git-backed changes and delivery to `dev-git`, the single owner of Git workflow rules. It uses native Git without an extra Git Flow CLI, wrapper, or global configuration. These relative references require the complete suite. A missing member or required resource makes the selection incomplete; do not install a partial suite or duplicate shared rules into each entry. The [installation guide](INSTALL.md) permits these references only within the staged Dev suite.
-
-`dev-clean` replaces the former `cleanup` skill without an alias. An older standalone `cleanup` or `dev` selection is migration context, not authorization to add the suite automatically. Review the expanded selection and retired names before installing. An older four-member Dev installation also needs review of the added `dev-git` member; do not silently expand it.
+Entries load shared rules explicitly; Git delivery uses native Git through `dev-git`. Keep the suite complete so sibling references resolve. See [installation and migration](INSTALL.md) for selection changes.
 
 ## Local Design suite
 
@@ -64,17 +62,13 @@ This is the complete Design membership at the selected AgentPack commit. Copy th
 | `design-build` | [`skills/design-build`](skills/design-build/SKILL.md) | Deliver frontend work through specialist guidance, Dev implementation, and evidence-led quality iteration |
 | `design-review` | [`skills/design-review`](skills/design-review/SKILL.md) | Review actual design evidence against the task, applicable principles, and quality references |
 
-Members explicitly load the relevant shared resources in `design/references/`; terminology-only work does not require the frontend quality workflow. The [installation guide](INSTALL.md) permits ordinary relative resource references within the complete staged Design suite. Missing members or required resources make the selection incomplete.
+Keep members as siblings so shared resources resolve. Production source changes and new validation require the separately selected complete Dev suite. Without Dev, Design supports intent, planning, and read-only review.
 
-All production source changes through Design, including CSS, components, and interaction code, require the complete Dev suite. Dev owns engineering and independent test authorship; Design does not duplicate those policies. If Dev is unavailable, pause production implementation and new validation while continuing intent, planning, read-only review, and existing evidence investigation. Recommend selecting Dev alongside Design for implementation, but never add it automatically.
-
-Recommend selecting Answer me with HTML alongside Design for its preferred clarification pages, but never add it automatically. It is an optional one-member upstream suite; without a usable provider or user-accessible HTML channel, Design Intent uses its native-tool/chat fallback. Precise terminology proceeds directly. Impeccable, Emil, and relevant motion or browser suites remain separate choices. Design discovers available skills by their runtime names and paths, reuses relevant guidance, and preserves explicit-invocation restrictions and side-effect boundaries. A missing provider does not authorize installation or a claim that its workflow ran. Project capabilities can satisfy a task when no specific provider is required. Installing Design does not install libraries, browsers, services, hooks, or accounts.
-
-`design-intent` replaces `ui-translate` without an alias. An older `ui-translate` selection does not authorize the complete Design suite, Dev, or upstream suites. Review the added and removed names before migration; terminology requests may finish in `design-intent`, including requests unrelated to frontend design.
+Recommend the optional Answer me with HTML suite for clarification pages. Design discovers external skills by runtime name and path; its [integration guide](skills/design/references/integrations.md) owns provider use and [Design Intent](skills/design-intent/SKILL.md) owns questioning and fallback. Other specialist suites remain separate choices.
 
 ## Upstream revisions
 
-Use these full commits, not current branch heads. Suite membership, paths, and license records were checked on 2026-09-27 for the original seven suites, on 2026-09-30 for Archify, and on 2026-10-09 for Answer me with HTML. Archify is pinned to `v3.0.1` and Answer me with HTML to `v0.4.15`; existing source pins are unchanged.
+Use these full commits, not branch heads. Archify is pinned to `v3.0.1` and Answer me with HTML to `v0.4.15`.
 
 | Suite | Repository | Full commit | License |
 |---|---|---|---|
@@ -125,21 +119,26 @@ Paths are relative to each suite's repository at its recorded commit. Copy every
 
 ## Prerequisites and attribution
 
-- Copy upstream content unchanged and preserve its invocation metadata, licenses, and notices. Keep each selected repository's root `LICENSE`; Impeccable also requires `NOTICE.md`, and Archify requires `THIRD_PARTY_NOTICES.md`. Motion has no standalone license file at its recorded commit: use the linked declaration record instead, retaining its explicit limitation and source evidence. [INSTALL.md](INSTALL.md) places these records under each installed skill's `provenance/` directory.
-- Copy Answer me with HTML's complete `skills/answer-me-with-html/` directory unchanged: `SKILL.md`, `scripts/am.mjs`, `references/settings.md`, and `references/video.md`. Its bundled CLI needs Node.js >=20; no `npm install`, global CLI install, or rebuild is needed. Copy all contents of the preserved [license and provenance directory](third_party/licenses/answer-me-with-html/README.md) into the installed skill's `provenance/`, after comparing its root `LICENSE` with the pinned upstream root license. Retain `LICENSE`, `README.md`, and the complete `dependencies/` tree. It includes exact marked 18.0.14, dagre 3.1.1, and graphlib 4.0.5 texts and the dagre legal notice named but absent from the upstream skill payload.
-- Answer me with HTML normally uses home-directory state and may open a browser or check for updates. Design's [runtime integration](skills/design/references/integrations.md#answer-me-with-html) defaults to task-owned output/state, `--no-open`, and `AM_NO_UPDATE_CHECK=1`, while preserving explicit user settings and host link formats. These are invocation defaults, not global configuration. Upstream broad triggers, panel suggestions, settings/update commands, and links do not override explicit requirements, host constraints, or the catalog pin. Do not auto-start its server, publish pages, enable always-on rules, or install dependencies. Its Reply button produces text for manual copy into chat; no return bridge is installed. Videos and optional external-service workflows are separate from ordinary clarification.
-- ARS includes its own resources and additional license texts under the skill directory. Its non-commercial terms are not replaced by AgentPack's MIT license.
-- Copy Archify's complete `archify/` source directory, including its bundled CLI, renderers, schemas, examples, assets, and notices. The upstream `.agents/skills/archify-review` directory is a repository-maintenance helper, not a member of the published diagramming package. Rendering and validation require Node.js >=18; no `npm install` is needed for normal skill use. The normal `finalize` workflow also requires Chrome or Chromium for its browser gate; `ARCHIFY_CHROME` can select the executable. Repository-evidence verification also needs Git. Selecting this suite does not install these tools.
-- Archify's `finalize` and `deliver` commands may contact its [stable update manifest](https://tt-a1i.github.io/archify/skill-updates/archify/stable.json) and write local reminder state. The check only reports available releases; it does not install updates. Set `ARCHIFY_UPDATE_CHECK_DISABLED=1` to disable that check and its state writes. Keep updates pinned through this catalog. Preserve the bundled `assets/JetBrainsMono-OFL.txt` and brand-mark provenance under the upstream notices; Archify's MIT grant does not replace those terms.
-- At the retained Impeccable revision, `reference/degraded/asset-producer.md` has an incorrect relative link to the component review guide. The target is present at `reference/component-review.md` within the skill. This is an upstream reference defect, not a missing file in the copied suite; the payload remains unchanged.
-- The Browser skill loads workflows from the separately installed `agent-browser` executable. Verify that executable and its browser prerequisites if the user wants a working browser workflow. Follow the [upstream installation instructions](https://github.com/vercel-labs/agent-browser#installation); selecting this suite does not install the executable or Chrome.
-- GSAP and Motion skills do not install animation libraries into a project. Use the project's actual runtime and version; selecting a suite is not a request to migrate the project or add dependencies.
-- Motion's `best-practices/` guidance is self-contained. Documentation search and the other connected tools require Motion's hosted MCP services; some require an account or Motion+. Tool availability and access tiers are governed by the service, not by the copied skill. See the [official setup documentation](https://motion.dev/docs/ai-kit-install). AgentPack does not run `motion-ai`, configure these servers, or authenticate an account as part of skill installation.
-- LottieFiles supplies opinionated motion-design guidance, including layered motion and timing rules. Selecting it preserves those upstream instructions; it does not override explicit user requirements or applicable project instructions. It does not require installing a Lottie renderer merely to read the guidance.
-- Other suites may need the project's toolchain, browser, or platform SDK. Report missing prerequisites separately; installing skills does not authorize unrelated runtime setup.
-- To upgrade a source, inspect the proposed revision, reconcile its complete published suite membership, verify paths, metadata, resources, and licensing, then update the pin and member list together. Preserve a reviewable commit so another machine can restore the selection. Do not silently omit members or follow a branch head.
+Install skill payloads unchanged with the attribution listed in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md). [INSTALL.md](INSTALL.md) owns preparation and copying rules. Selecting skills does not install runtimes, project libraries, services, or accounts.
 
-See [third-party attribution](THIRD_PARTY_LICENSES.md) for preserved license texts and the Motion declaration record.
+| Suite | Runtime or access requirement |
+|---|---|
+| Dev | Native Git for repository work; no Git Flow extension |
+| Answer me with HTML | Node.js >=20; bundled CLI, no `npm install` or rebuild. Copy the complete four-file skill directory. Design's [runtime integration](skills/design/references/integrations.md#answer-me-with-html) defines task-local invocation defaults and delivery. |
+| Archify | Node.js >=18; bundled renderer, no `npm install`. `finalize` needs Chrome/Chromium (`ARCHIFY_CHROME` selects it); repository-evidence verification also needs Git. Copy complete `archify/`, not the upstream maintenance helper `.agents/skills/archify-review`. |
+| Browser | Separate `agent-browser` executable and browser prerequisites; see [upstream installation](https://github.com/vercel-labs/agent-browser#installation). |
+| GSAP / Motion | The project's actual animation runtime and version; skill installation does not add or migrate libraries. |
+| Motion connected tools | Hosted MCP setup; some services require an account or Motion+. The `best-practices/` guidance is self-contained. See [official setup](https://motion.dev/docs/ai-kit-install). |
+| LottieFiles | Guidance can be used without a Lottie renderer. |
+
+Other suites may require a project toolchain or platform SDK. Report missing prerequisites separately.
+
+Known behavior at the recorded revisions:
+
+- Archify's `finalize` and `deliver` may read the [stable update manifest](https://tt-a1i.github.io/archify/skill-updates/archify/stable.json) and write reminder state. `ARCHIFY_UPDATE_CHECK_DISABLED=1` disables both. Updates still use this catalog's pin.
+- Impeccable's `reference/degraded/asset-producer.md` contains an incorrect relative link to the component review guide. The target exists at `reference/component-review.md`; keep the upstream payload unchanged.
+
+For source upgrades, review the new revision's complete published membership, paths, metadata, resources, and licensing, then update the pin and member list together.
 
 ## Optional MCP: AnySearch
 

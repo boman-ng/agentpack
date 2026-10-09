@@ -1,6 +1,6 @@
 # Answer me with HTML attribution and provenance
 
-This directory preserves the root license and dependency notices for the optional Answer me with HTML suite. It contains attribution material, not a vendored provider or replacement license. Keep the upstream skill payload unchanged and copy **all contents** directly into the installed skill's `provenance/`: `LICENSE`, `README.md`, and the complete `dependencies/` tree. First compare `LICENSE` here with the pinned repository's root `LICENSE`.
+This directory preserves the root license and dependency notices for the optional Answer me with HTML suite. Keep the upstream skill payload unchanged and copy **all contents** directly into the installed skill's `provenance/`: `LICENSE`, `README.md`, and the complete `dependencies/` tree. First compare `LICENSE` here with the pinned repository's root `LICENSE`.
 
 ## Pinned source and payload
 
@@ -10,13 +10,13 @@ This directory preserves the root license and dependency notices for the optiona
 - Dependency versions, official archive URLs, and integrity values: [package-lock.json at the pinned commit](https://github.com/QingYunA/answer-me-with-html/blob/0449a8961a6329360babe6a1cb20d0d6d3d04de5/package-lock.json), lockfile version 3, `packages["node_modules/<package>"]` records below.
 - Published skill directory: [`skills/answer-me-with-html`](https://github.com/QingYunA/answer-me-with-html/tree/0449a8961a6329360babe6a1cb20d0d6d3d04de5/skills/answer-me-with-html). Its complete payload consists of `SKILL.md`, `scripts/am.mjs`, `references/settings.md`, and `references/video.md`.
 
-The four-file payload includes a bundled CLI with marked 18.0.14, dagre 3.1.1, and graphlib 4.0.5. The bundle retains a comment directing readers to `dagre.esm.js.LEGAL.txt`, but that file is absent from the published skill directory at this commit. This directory supplements that missing notice with the exact official dagre package text. It also retains each dependency's complete license and marked's version/copyright source banner. No package code was executed, no package was installed, and the CLI was not rebuilt to obtain these texts.
+The four-file payload includes a bundled CLI with marked 18.0.14, dagre 3.1.1, and graphlib 4.0.5. The bundle retains a comment directing readers to `dagre.esm.js.LEGAL.txt`, but that file is absent from the published skill directory at this commit. This directory supplements that missing notice with the exact official dagre package text. It also retains each dependency's complete license and marked's version/copyright source banner.
 
 The marked `LICENSE` includes its contribution statement, the MarkedJS and Christopher Jeffrey MIT grant, and the historical John Gruber Markdown copyright, redistribution conditions, and disclaimer. Preserve the **entire** file; a current MIT excerpt alone omits those terms. The dagre and graphlib MIT texts credit Chris Pettitt. The root MIT grant does not replace these dependency notices or terms.
 
 ## Official package archives and integrity
 
-Retrieved on 2026-10-09. Each archive's bytes were checked against the SHA-512 SRI value in the pinned lockfile **before extraction**. Only the mapped license/notice members below were copied. No package-manager install, lifecycle script, global cache, or third-party mirror was used.
+The official archives below match the SHA-512 integrity values in the pinned lockfile. The file map identifies the preserved license and notice members.
 
 | Package and lockfile record | Official archive | Pinned integrity |
 |---|---|---|
@@ -37,4 +37,4 @@ Paths below are relative to this directory. Each package member was copied byte-
 | `dependencies/dagre-3.1.1/dagre.esm.js.LEGAL.txt` | dagre archive: `package/dist/dagre.esm.js.LEGAL.txt` | `9148bffb1e84382a8b6668eeb2b53c6a554341d714fba129856ea5eb350d35f3` |
 | `dependencies/graphlib-4.0.5/LICENSE` | graphlib archive: `package/LICENSE` | `6a349742a6cb219d5a2fc8d0844f6d89a6efc62e20c664450d884fc7ff2d6015` |
 
-When upgrading the provider, review the proposed pin, bundled dependencies, lockfile integrity values, and notice sources together. Do not reuse this record as proof for a different build or replace exact upstream terms with a paraphrase.
+When upgrading the provider, review the proposed pin, bundled dependencies, lockfile integrity values, and notice sources together. Update this record for the new build and preserve exact upstream terms.

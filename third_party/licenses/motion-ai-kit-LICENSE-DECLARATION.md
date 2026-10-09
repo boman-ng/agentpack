@@ -5,7 +5,6 @@ This is an AgentPack provenance record, not an upstream LICENSE file or a substi
 - Source: [motiondivision/ai-kit](https://github.com/motiondivision/ai-kit/tree/d1c5c26f424adfd47c112d894e9d424b57338c7e)
 - Recorded commit: `d1c5c26f424adfd47c112d894e9d424b57338c7e`
 - Skill directory: `plugins/motion/skills/motion`
-- Declaration checked: 2026-09-27
 
 The [official installation documentation](https://motion.dev/docs/ai-kit-install) states:
 
@@ -26,6 +25,6 @@ The [package metadata at the recorded commit](https://github.com/motiondivision/
 }
 ```
 
-No standalone LICENSE, COPYING, or NOTICE file was found in that Git tree. The documentation explicitly includes the skill in its MIT declaration; the package metadata corroborates the declaration. This record does not invent an upstream copyright notice or supply missing license text. Keep upstream attribution and embedded notices, retain this record when installing the skill, and recheck the declaration when upgrading the source.
+The pinned tree has no standalone LICENSE, COPYING, or NOTICE file. Retain this declaration with the skill and its embedded notices; recheck it when upgrading the source.
 
 The declaration does not grant access to Motion's hosted services, Motion+ features, or separately distributed software. Their access requirements and terms remain separate from copying this skill.

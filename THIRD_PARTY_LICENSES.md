@@ -2,7 +2,7 @@
 
 The [MIT License](LICENSE) covers AgentPack's original code and documentation. Third-party license and notice texts, and third-party content fetched or generated through AgentPack, remain under their upstream terms and are excluded from that grant.
 
-AgentPack does not vendor the upstream skills listed below. [SOURCES.md](SOURCES.md) records their repositories, full Git commits, complete suite membership, and expected licenses. Codex fetches selected suites during guided installation and records their commits and installed members in a readable installation note. The preserved license texts and explicitly identified declaration record document the expected licensing boundary; upstream's actual grant remains authoritative.
+Upstream skills are fetched only when selected. [SOURCES.md](SOURCES.md) records their commits and members; this index identifies attribution to preserve under each installed skill's `provenance/`. Upstream terms remain authoritative.
 
 | Component | Source | License | Preserved text |
 |---|---|---|---|
@@ -17,8 +17,10 @@ AgentPack does not vendor the upstream skills listed below. [SOURCES.md](SOURCES
 | LottieFiles Motion Design Skill | https://github.com/LottieFiles/motion-design-skill | MIT | [Preserved MIT text](third_party/licenses/lottiefiles-motion-design-MIT.txt) |
 | AnySearch MCP documentation/configuration basis | https://github.com/anysearch-ai/anysearch-mcp-server | Apache-2.0 | `third_party/licenses/anysearch-mcp-server-Apache-2.0.txt` and `anysearch-mcp-server-NOTICE.txt` |
 
-Content fetched from the Academic Research Skills source is not covered by AgentPack's MIT grant. Its CC BY-NC 4.0 terms, including attribution and non-commercial use, govern that content. If an upstream source changes its license, installation must be stopped and the source declaration reviewed; AgentPack does not convert or override upstream terms.
+Preserve each selected source's root license and embedded notices, plus the supplementary records linked above. Impeccable requires `NOTICE.md`; Archify requires `THIRD_PARTY_NOTICES.md`, its bundled font license, and brand-mark notices. ARS retains its non-commercial terms and included license texts. Skill licenses do not grant access to separately licensed runtimes or hosted services.
 
-Motion's record preserves the official MIT statement and its package metadata, not an upstream LICENSE file or an AgentPack-authored substitute license. Copy that record with the installed Motion skill. Skill installation does not grant access to hosted services, paid tools, or separately licensed runtimes.
+Motion has no standalone license file at its pin. Check its MIT package declaration and copy the linked declaration record; do not fabricate an upstream license.
 
-Answer me with HTML is pinned to `0449a8961a6329360babe6a1cb20d0d6d3d04de5` (`v0.4.15`). Its bundled CLI embeds marked 18.0.14, dagre 3.1.1, and graphlib 4.0.5. The [provenance record](third_party/licenses/answer-me-with-html/README.md) maps exact preserved texts to the pinned root license and integrity-checked official npm packages. The marked license includes both current MIT grants and historical John Gruber Markdown terms; retain the full file. The bundle references `dagre.esm.js.LEGAL.txt`, absent from the upstream skill payload; its exact official notice is supplied in the preserved directory. Copy all its contents directly into the installed skill's `provenance/`, after checking the root license against upstream, while keeping the four-file payload unchanged.
+For Answer me with HTML, compare the preserved root license with the pinned source, then copy **all contents** of its linked attribution directory into the installed skill's `provenance/`, including `README.md` and `dependencies/`. Its source record maps the dependency notices and supplies the `dagre.esm.js.LEGAL.txt` referenced but absent from the upstream payload. Keep the payload unchanged and retain marked's full historical Markdown terms.
+
+Resolve any source/license mismatch before installation. Review attribution with each upstream upgrade.
