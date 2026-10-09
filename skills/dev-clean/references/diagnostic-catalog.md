@@ -22,37 +22,23 @@ Size, unfamiliarity, authorship, static metrics, or passing tests alone do not j
 | Defensive layering | Layers repeat one duty or address hypothetical failures | Consolidate enforcement at its actual boundary | Distinct threats, trust boundaries, and recovery obligations |
 | Change amplification | Small changes repeatedly cross unrelated owners | Correct the boundary causing extra touch points | A real cross-cutting requirement |
 
-## Targeted Judgment Methods
+## Consequential Removals
 
-- **Least power:** When selecting a configuration or representation, prefer an existing declarative format that meets the requirement over executable configuration or a custom DSL; do not force computation into a more complex configuration language merely to avoid code.
-- **Independent counterevidence:** For a consequential disputed candidate, give a separate reviewer the raw artifacts, scope, and question without the desired verdict; ask for counterexamples or missed contracts, then verify the claims yourself, with zero findings an acceptable result.
+For disputed complexity, identify the protected outcome, when it matters, and a simpler replacement. Compare actual contracts and failure modes; ordinary success cannot settle a failure-only duty. Use an independent reviewer for consequential uncertainty when permitted, giving raw artifacts and the question without a desired verdict.
 
-Use these methods only when they resolve the maintenance question.
+Choose checks for the affected boundary:
 
-## Consequential Complexity Comparisons
+- **Removal or replacement:** trace callers, registrations, error behavior, and external contracts; verify retained guarantees or authorized caller migration.
+- **Shared dependencies/configuration:** check affected consumers, manifests, and independent deployment boundaries.
+- **Persistent state/security/recovery:** use representative historical data and relevant failure conditions in isolation when live experiments could cause harm. Preserve unresolved protections until the requirement or replacement is established.
+- **Tests:** inspect existing fault coverage first. A new equivalence or fault-injection experiment follows the [verification policy](../../dev/references/verification-policy.md); the independent Tester authors it. Restore temporary changes afterward.
 
-For a disputed mechanism, identify the protected outcome, the condition in which it matters, its owner, and a simpler valid baseline. Choose evidence that distinguishes explanations; generic robustness claims do not establish a requirement. Treat a failed check as evidence to investigate, including whether the check itself is sound.
-
-Use existing seams and isolated comparisons when live removal could harm data, security, recovery, or required contracts. Account for material workload, version, persisted-state, and failure-condition differences. Passing ordinary cases does not establish correctness in failure-only duties; label unobserved counterfactuals as hypotheses.
-
-Preserve only the unresolved affected protection and name the missing evidence or authority and next check. New executable correctness comparisons follow the [shared verification policy](../../dev/references/verification-policy.md); the independent Tester owns their validation. Restore temporary comparison changes when the question is resolved.
+Prefer existing declarative configuration over executable configuration when it meets the actual need; do not replace simple code with a custom DSL.
 
 ## Agent Instructions And Skills
 
-Inspect what is actually loaded: scopes, overrides, descriptions, default prompts, bodies, references, and managed or generated sources. Files on disk may differ from active session content.
+Inspect loaded scopes, overrides, descriptions, prompts, bodies, references, and generated sources together. On-disk content may differ from active session instructions.
 
-Look for conflicts in authority, scope, completion, or verification, and unconditional procedures that do not change useful decisions. Keep shared rules at their authoritative source, discovery descriptions precise, and conditional details in references. Each skill needs a clear scope; a required local suite must make its dependencies discoverable and report missing resources rather than treating them as optional.
+Remove conflicting scope/completion rules, duplicate owners, unconditional ceremonies, and task-specific history from durable instructions. Preserve direct entrypoints and discoverable required resources. Keep optional detail in references.
 
-Check whether the instructions or observed behavior:
-
-- Treat the user's diagnosis, or the agent's preferred interpretation, as established fact.
-- Use inferred intent or a proxy metric to override an explicit goal, method, read-only limit, or authorization boundary.
-- Invoke engineering principles to create abstractions, preserve retired interfaces, erase preferences, or demand unjustified changes.
-- Substitute expert names, confidence, or agreement between agents for evidence.
-- Produce decision reports that repeat compliance, conceal uncertainty, or disagree with actual actions and verification.
-
-Preserve meaningful preferences and required protections while removing redundant prescriptions. Keep task context and execution-specific recommendations out of durable rules.
-
-## Reporting Findings
-
-Rank supported findings by consequence when useful, giving evidence, owner, smallest action, and verification. Separate uncertain leads and meaningful counterevidence. State the scope actually inspected without claiming exhaustive coverage. Use prose when a table adds little; do not assign scalar slop scores or invent findings to fill a report.
+Check whether the resulting guidance changes useful decisions: respects explicit goals instead of inferred intent, distinguishes observations from claims, and preserves necessary protections without speculative procedures. For consequential instruction changes, use a few representative tasks and distinguish rule reasoning from executed behavior; static consistency alone does not prove runtime improvement.

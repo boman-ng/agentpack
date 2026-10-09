@@ -1,6 +1,6 @@
 # Two-Book Decision Matrix
 
-Use these lenses where they change a decision. The summaries are original applications of accessible excerpts/previews from Steve Krug's *Don't Make Me Think, Revisited* and Robin Williams's *The Non-Designer's Design Book*, not a claim to have read either full book. A principle's name is not evidence that a design works. The decision and evidence columns are Design's application to the current task.
+Apply the relevant lenses to concrete design choices. These frontend applications draw on the linked excerpts and previews of Steve Krug's *Don't Make Me Think, Revisited* and Robin Williams's *The Non-Designer's Design Book*.
 
 | Lens and source | Decision it can change | Evidence to inspect |
 |---|---|---|
@@ -15,4 +15,4 @@ Use these lenses where they change a decision. The summaries are original applic
 | Williams: type relationships ([type preview](https://www.oreilly.com/library/view/the-non-designers-design/9780133966350/ch10.html), [type contrast preview](https://www.oreilly.com/library/view/the-non-designers-design/9780133966350/ch12.html)) | Choose coherent or clearly contrasting type roles that explain organization; avoid unintentional near-matches. | Inspect actual copy, hierarchy, readability, wrapping, and available font rendering. A specimen or chosen font name does not prove the result. |
 | Williams: deliberate color ([preview](https://www.oreilly.com/library/view/the-non-designers-design/9780133966350/ch07.html)) | Choose purposeful color relationships suited to the brand and output medium; connect palette decisions to emphasis and organization. | Inspect the actual output and adjacent colors. Verify relevant legibility and state communication rather than assigning unsupported emotional meanings. |
 
-For a material decision, name the observed gap and the relevant lens, explain the chosen change, and identify the affected evidence. For example: two unrelated settings groups appear connected because their internal and external spacing match → separate groups through proximity while retaining all settings → inspect the revised form with long labels and a narrow viewport. Do not manufacture a finding for every row.
+Example: unrelated settings groups appear connected because internal and external spacing match. Apply proximity by separating the groups, retaining all settings, then inspect the form with long labels and a narrow viewport.

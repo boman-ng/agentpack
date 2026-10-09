@@ -5,22 +5,14 @@ description: Independently author or revise tests, acceptance checks, and valida
 
 # Dev Test
 
-Establish credible evidence for the requested acceptance claims with the smallest useful checks. Keep expected results grounded in original requirements and authoritative contracts.
-
-## Required Context And Role
-
-Even when invoked directly, read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Confirm the sibling `dev`, `dev-build`, `dev-clean`, `dev-test`, and `dev-git` entry points are available. Report an incomplete Dev suite and missing paths if required resources are absent; do not silently replace them.
-
-A directly invoked agent can act as Tester if it did not author the production change. Confirm distinct agent identity and the same actual model and reasoning effort as the current implementation Developer when that change is part of the task; a standalone task does not require matching an unknown historical or human author. If the current agent authored production, arrange a distinct compatible Tester; do not switch roles. Follow the common policy when no compatible agent is available.
+Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md), including when invoked directly. The policy defines distinct Developer/Tester roles, matching model and effort, and handling unavailable agents.
 
 ## Verification
 
-Read the original task, acceptance requirements, relevant contracts, environment, authorization, and change scope. Inspect production code as needed to locate entry points and dependencies, while deriving expected results independently from the contracts. Record unresolved requirement ambiguity instead of treating the current output as correct by definition.
+Read the original requirements, contracts, environment, authorization, and scope. Inspect production code for entry points and dependencies, while deriving expectations independently. Resolve consequential requirement ambiguity before asserting expected behavior.
 
-Review existing evidence before adding tests. Separate evidence needed now, evidence worth retaining, and execution. Select checks that distinguish plausible faults at the actual affected boundaries. Prioritize relevant integrations and critical journeys, retain valuable isolated rule or algorithm checks, and state limits from substituted dependencies.
+Review existing checks, then choose the smallest useful validation at affected boundaries. Author necessary tests or temporary experiments under the shared policy. Check that failures expose the intended fault rather than fixture or environment errors.
 
-Author necessary tests and validation experiments, including assertions, fixtures, snapshots, mocks, helpers, and validation configuration. Avoid redundant cases and implementation mirrors. Verify that the check can expose the intended fault when needed; a failure caused by the environment or fixture is not defect evidence.
+Run the selected checks and report outcomes and material limits. Send reproducible production defects to the Developer; keep test-specific fixes in the Tester role.
 
-Execute suitable checks and report observable outcomes, the oracle, exercised boundaries, and material limits. Send production defects to the Developer with the contract and reproducible evidence; do not fix production code in the Tester role. Keep test-specific fixes within this role.
-
-For authorized test-suite retirement or consolidation, explicitly read [dev-clean](../dev-clean/SKILL.md). The common deletion exception permits supported removals; any new equivalence experiments or semantic validation changes remain Tester-owned. Complete one coherent validation package without nested Tester ceremony, and stop under the common completion rules.
+For test retirement or consolidation, read [dev-clean](../dev-clean/SKILL.md). Apply the shared completion rule without adding nested Tester handoffs.

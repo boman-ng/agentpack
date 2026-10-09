@@ -1,46 +1,33 @@
 # Verification Policy
 
-This is the common verification and validation-ownership policy for the Dev suite.
+## Test Value And Completion
 
-## Evidence And Test Value
+Express expected behavior through business state, action, and observable outcome. Derive expectations from requirements, authoritative contracts, or independent examples; implementation output is not the sole oracle.
 
-Describe behavior through business state, action, and observable outcome. Derive expected results from original requirements, authoritative contracts, or independently reasoned examples; the implementation cannot be the sole oracle. No particular example syntax or framework is required.
+Prioritize integration checks and critical business journeys from production entry points to observable outcomes. Choose the boundary that exposes the fault and use real dependencies when the claim requires them. Isolated tests remain useful for rules, algorithms, and boundary conditions; do not turn every check into an end-to-end test.
 
-Prioritize relevant integration checks and critical business journeys from their production entry points to observable results, using real dependencies where the claim needs them and the environment permits. Choose the smallest boundary that exposes the actual fault: isolated tests are valuable for rules, algorithms, and boundary conditions; integration faults need evidence across the relevant integration. Do not turn every check into an end-to-end test.
+Reject redundant unit tests, implementation mirrors, private-structure assertions, and speculative defensive cases without a credible failure or contract. No coverage quota, per-method test requirement, or test-first sequence applies. Changed code alone does not require new tests. Preserve unique checks for active rules, realistic failures, incidents, security, concurrency, and recovery.
 
-Default against redundant unit tests, implementation mirrors, private-structure assertions, and hypothetical defensive cases without a credible failure or contract. Do not require test counts, coverage thresholds, a case for every method or layer, or new tests merely because code changed. Preserve valuable evidence for active rules, algorithms, realistic failures, incidents, security, concurrency, and recovery even when it adds no line coverage.
+Reuse relevant existing checks. Add a temporary experiment to resolve current uncertainty; retain a regression test only when it protects stable behavior against a plausible recurring fault at reasonable cost. A temporary check need not become infrastructure.
 
-| Evidence | Establishes | Limit |
-|---|---|---|
-| Component | A rule or component under controlled inputs | Does not establish production wiring or external compatibility |
-| Contract | Agreement with authoritative interface expectations and relevant errors | Does not establish a complete journey |
-| System end-to-end | An assembled path from entry point to observable result | Substitutions and test configuration limit the claim |
-| Real environment | Actual configuration, permissions, dependencies, and observed outcome | Covers only exercised conditions in that environment |
+Run the affected checks and required project checks. Confirm failures come from the behavior rather than invalid fixtures or missing prerequisites. Do not hide failures, weaken assertions, or retry without a supported cause. Reuse results while their code, dependencies, configuration, and environment assumptions remain valid.
 
-State what substitutes replace and what remains unverified. A stubbed success does not prove that a real dependency or deployment works. Meaningful before-and-after defect evidence remains useful; first confirm that a failure exposes the defect rather than an invalid fixture or missing environment. There is no mandated test-first sequence or development ceremony.
-
-Decide separately:
-
-- **Evidence needed now:** Which acceptance claim or uncertainty remains, and what existing check or focused experiment resolves it?
-- **Evidence worth retaining:** Does a regression test protect stable behavior against a plausible recurring fault at reasonable maintenance cost? A temporary experiment need not become permanent infrastructure.
-- **Execution:** Run focused checks for uncertain decisions, then required project checks and checks selected by affected dependencies and risk. Reuse results only while relevant code, configuration, dependencies, and environment assumptions remain valid.
-
-Investigate failures without hiding errors, weakening checks to obtain success, or retrying without a supported cause. Stop when acceptance, affected-boundary evidence, and required checks are satisfied with no unresolved material risk. Do not repeat or broaden checks without new evidence.
+Report material substitutions and unverified boundaries: a component test does not establish production wiring, a contract test does not cover a whole journey, and a stubbed success does not prove real integration. Stop when acceptance and required checks are satisfied with no unresolved material risk in scope. Broaden or repeat verification only for changed assumptions, failures, or remaining uncertainty.
 
 ## Independent Developer And Tester
 
-The **Developer** owns production changes. The **Tester** owns new or semantically changed validation. These must be distinct agent IDs for the coherent change package, using the same actual model and reasoning effort as the current implementation Developer. Do not hardcode a model name or silently downgrade. A standalone verification task does not require matching an unknown historical or human author's model.
+The **Developer** owns production changes; a **Tester** with a distinct agent ID owns new or semantically changed validation for the coherent change. They must use the same actual model and reasoning effort. Do not hardcode a model or silently downgrade. Standalone verification does not require matching an unknown historical or human author.
 
-The Developer must not author new or semantically changed tests, assertions, snapshots, fixtures, mocks, helpers, or configuration that affects pass conditions. This also covers temporary executable correctness checks and behavioral validation scripts. Running existing tests, observation-only diagnostics, and semantically neutral path or formatting changes do not trigger a new Tester.
+Tester ownership covers tests, assertions, snapshots, fixtures, mocks, helpers, pass-condition configuration, and temporary executable correctness checks. Running existing tests, observation-only diagnostics, and semantically neutral path/format edits do not require a new Tester.
 
-When validation authorship is needed, spawn a distinct Tester with fresh context, or reuse a distinct compatible Tester with a clean task context. Give the original task and requirements, relevant contracts, environment, authorization, and change scope. Include required business outcomes; do not give the full Developer transcript or treat implementation-derived values as authoritative expectations. The Tester may inspect production code for wiring and reachability, but derives the acceptance oracle from the independent contracts; do not claim physical blindness.
+When validation authorship is needed, spawn one compatible Tester with fresh context or reuse one with a clean task context. Supply the original request, requirements, contracts, environment, authorization, and scope, rather than the Developer's full transcript or implementation-derived expected answers. The Tester may inspect production wiring while deriving expectations independently.
 
-Use one Tester per coherent package, not one per test. The Tester owns test-specific code; production fixes go to the Developer. A directly invoked `dev-test` agent may be the Tester if it did not author the production change; it does not need to spawn another Tester merely for ceremony. If the current agent already authored production, reading `dev-test` does not let it switch roles.
+A direct `dev-test` agent can fill this role if it did not author production. A Developer cannot switch roles by reading the Tester skill. Test-specific fixes stay with the Tester; production fixes go to the Developer. No nested Tester is needed merely for ceremony.
 
-If no distinct compatible agent is available, report the unmet independence condition and affected evidence. Continue independent implementation and existing checks within scope; do not switch roles or claim the missing validation was completed.
+If a compatible distinct agent is unavailable, continue implementation and existing checks; report the missing independent validation without claiming it complete.
 
 ## Maintenance Exception For Test Deletion
 
-Within authorized `dev-clean` scope, the maintenance agent may itself delete a proven obsolete or redundant test when its contract was withdrawn, or retained checks still detect the same relevant faults. Name, syntax, speed, a green suite, or coverage alone is insufficient. Never delete a test to hide a failure.
+Within authorized `dev-clean` work, the maintenance agent may delete a test whose contract was withdrawn or whose relevant faults remain covered. Names, speed, coverage, or a green suite alone do not establish redundancy. Never remove a test to hide failure or erase unique protection.
 
-Inspect existing contract and fault-coverage evidence first. Preserve unique evidence for active obligations. If a new equivalence experiment is necessary, the independent Tester authors it. New assertions, merged tests, or replacements that change validation remain Tester-owned; the deletion exception does not transfer their authorship. Broad suite cleanup still requires that maintenance scope from the user.
+New equivalence experiments, assertions, and semantic replacements or merged tests remain Tester-owned. Broad test-suite cleanup still needs the user's maintenance scope.

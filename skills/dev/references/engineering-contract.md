@@ -1,43 +1,27 @@
 # Engineering Contract
 
-This is the common engineering contract for the Dev suite. Apply its obligations to the affected scope; the size of the project does not determine the amount of structure required.
+Apply this contract to the affected scope. The complete Dev suite consists of sibling `dev`, `dev-build`, `dev-clean`, `dev-test`, and `dev-git` skills and their resources. Confirm the entrypoints and required references once per task; report missing resources rather than substituting another workflow. Already-read resources need not be reloaded.
 
 ## Scope And Acceptance
 
-Establish the requested observable outcome, users or callers, constraints, authorization, and evidence that distinguishes acceptance from plausible failure. Reuse existing requirements and contracts. Resolve ambiguity that changes behavior or scope before the dependent action; continue independent work.
+Establish the observable outcome, callers, constraints, and acceptance from the task and existing contracts. Resolve consequential ambiguity before dependent actions while continuing independent work. Use the task discussion or existing project artifacts; no separate specification is required.
 
-Keep the contract in the task discussion, existing specification, or other project-owned artifact as appropriate. A separate specification is optional. Audit requests remain read-only. Skill selection does not authorize unrelated maintenance, deployment, publication, destructive data operations, or changes to release metadata.
+Audits remain read-only. Skill selection does not authorize unrelated maintenance, publication, deployment, destructive data operations, or release metadata changes.
 
-## Business Ownership
+## Business Ownership And Architecture
 
-Use the project's business language. Identify the use cases, the owner of each affected rule, its invariants, and the consistency boundary. Separate the rule's meaning from presentation, transport, storage, and framework mechanics. Functions, modules, and transaction scripts are legitimate implementations of business policy; domain-driven design does not require a class hierarchy.
+Use domain-driven design: express use cases, rule owners, invariants, and consistency boundaries in the project's business language. Separate business meaning from presentation, transport, storage, and framework mechanics. Functions, modules, and transaction scripts can own domain policy.
 
-For shared state or lifecycles, establish valid transitions and the concurrency or partial-failure conditions that can break an invariant. Keep database constraints and atomic transactional enforcement where they protect the rule. An application precheck alone does not establish a concurrency guarantee. Check relevant entry points for ways to bypass the invariant.
+Apply Clean Architecture's inward source dependencies and Hexagonal Architecture's boundaries with external actors. Use cases coordinate work, domain owners make business decisions, and adapters translate real external protocols. Ports can be existing functions or modules; wire implementations through project composition mechanisms.
 
-For external effects, establish what a caller can conclude after a timeout, failure, or repeated delivery, including an unknown outcome when relevant. Model distinctions required by the current behavior.
+Trace the affected path from entry point through rules and external effects to results. Reuse existing boundaries; add one when actual isolation, verification, or variation warrants it. Do not require class hierarchies, an interface per class, repository per table, DTO per layer, or a legacy rewrite just to fit an architecture diagram.
 
-## Dependencies And Boundaries
-
-Apply Clean Architecture's inward source dependencies and Hexagonal Architecture's purposeful boundaries with external actors. Business policy must not acquire unnecessary dependencies on transport, persistence, or framework representations. Runtime calls can reach an external adapter while source dependencies point toward an application-owned contract.
-
-Use cases coordinate behavior; rule owners define business decisions; adapters translate actual external protocols and data. An inbound port exposes an application operation, and an outbound port expresses a real need from an external collaborator. An existing function or module can provide either contract without a separate interface declaration. Wire concrete implementations with the project's composition mechanisms.
-
-Trace the affected production path from entry point through rules, storage and external effects to the observable result. Reuse existing seams first. Add a boundary when current isolation, verification, or actual variation justifies its cost, even with one implementation. Hypothetical replacement alone does not justify it. Do not require an interface per class, repository per table, DTO per layer, or directory template.
-
-For existing ORM or framework coupling, avoid a whole legacy rewrite solely to obtain an ideal diagram. Keep the scoped change coherent, avoid adding unnecessary coupling, and record relevant isolation or verification limits. Preserve atomic storage enforcement when separating responsibilities.
+For shared state, establish valid transitions and relevant concurrency or partial-failure behavior. Preserve database constraints and atomic enforcement; a precheck alone does not prevent races. Check entry points that can bypass rules. For external effects, define outcomes after timeout, failure, or repeated delivery, including unknown outcomes where needed.
 
 ## Implementation And Delivery
 
-Complete coherent portions of the accepted behavior across actual callers and integration points. Revisit an owning rule or contract when evidence contradicts the design; do not mask an obsolete path with a parallel implementation. Inspect the full change for missed callers, required failure behavior, configuration, packaging, and documentation within scope.
+Complete coherent behavior across callers and integration points. Fix the owning rule when the model is wrong; inspect affected failure paths, configuration, packaging, and documentation. Use project build and delivery mechanisms. Persistent-state changes need migration/recovery checks with representative data; operational changes need success/failure signals and a recovery action.
 
-Use project build, integration, release, and observation mechanisms where affected. For persistent-state changes, establish migration and recovery behavior with representative data. For operational changes, identify success and failure signals and the recovery action. Prepare the concrete deliverable before any required approval; deployment still requires authorization for its action and target.
+For Git-backed changes or delivery, read [dev-git](../../dev-git/SKILL.md) before changing repository content. Apply its workflow once per coordinated task; the main-agent owns shared Git operations. Prepare a concrete deliverable before seeking any missing publication or deployment authorization.
 
-## Repository Work
-
-For Git-backed work, explicitly read [dev-git](../../dev-git/SKILL.md) before changing repository content or performing version-control delivery. It owns branch selection, commit organization, integration, workspace ownership, and remote-write authorization. Apply that workflow once per coordinated task, including directly invoked build, clean, or test work; do not make each subagent independently manage shared Git state. Audits remain read-only.
-
-## Completion
-
-Use the [verification policy](verification-policy.md) for evidence selection and agent ownership. Stop when acceptance and evidence at the actual affected boundaries are satisfied, required project checks are complete, and no material risk remains unresolved within scope. Repeat or broaden checks only for new changes, failures, shared impact, or unresolved uncertainty.
-
-Distinguish locally checked, built, deployed, and observed working states. Report what changed, the evidence and its boundary, and material limits. Missing access or authorization leaves a named delivery step outstanding; local or simulated evidence does not prove an unperformed deployment.
+Use the [verification policy](verification-policy.md) for validation ownership and completion. Report results and material limitations without a separate process record. Local checks do not establish deployment or runtime behavior that was not observed.
