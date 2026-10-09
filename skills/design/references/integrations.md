@@ -16,7 +16,7 @@ Invoke `node "<discovered-directory>/scripts/am.mjs"` using the actual skill dir
 
 For ordinary clarification, use per-invocation `AM_NO_UPDATE_CHECK=1`, task-owned `AM_HOME`, and `render - -o "<task-output>/clarification.html" --no-open` with the draft on standard input. Preserve explicit user settings and host attachment/link formats. Keep output and state in writable task-owned directories.
 
-Do not automatically install dependencies, change the pin or global settings, publish, start `am serve`, or create a server/tunnel. Use an existing service only through a confirmed authorized delivery channel. Provider settings, cleanup, updates, video, and external-service workflows need their own requested scope.
+Do not automatically install dependencies, change global settings, publish, start `am serve`, or create a server/tunnel. Use an existing service only through a confirmed authorized delivery channel. Provider settings, cleanup, updates, video, and external-service workflows need their own requested scope.
 
 ## Reuse Relevant Guidance
 
