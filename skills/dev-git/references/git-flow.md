@@ -1,54 +1,75 @@
-# Git Flow With Linear Integration
+# Git Flow And Shared History
 
-Read this for branch selection, integration, release preparation, or hotfix propagation. [Dev Git](../SKILL.md) owns commit style, workspace ownership, cleanup, and human authorization. This is a deliberate variant of [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/): retain its branch responsibilities and use rebase plus fast-forward instead of new merge commits. Preserve existing history, including old merge commits.
+Read this for branch selection, integration, releases, hotfixes, or protection setup. [Dev Git](../SKILL.md) owns commit style, workspace ownership, and human authorization. Retain Git Flow's branch responsibilities: organize independent task commits with rebase, and preserve shared history when publishing releases or synchronizing long-lived branches.
 
 ## Branch Roles
 
-Use the project's established production branch name (`master`, `main`, or another explicit name), without renaming it. Below, `production` is a role, not a branch to create. Establish the actual destination from project instructions and the task; do not guess among ambiguous candidates. Preserve explicit user constraints and resolve incompatible project workflows before changing them.
+Use the project's established production branch name, such as `master` or `main`. Below, `production` names a role, not a new branch. Establish destinations from the request and project rules; resolve incompatible workflows before the affected operation.
 
 | Branch | Start | Responsibility and destination |
 |---|---|---|
-| Production branch | Existing production history | Receive completed releases and production hotfixes |
-| `develop` | Established production base when first adopting this workflow | Integrate development for the next release |
-| `feature/<slug>` | `develop` | New behavior; integrate into `develop` |
-| `fix/<slug>`, `chore/<slug>`, `docs/<slug>` | `develop` | Ordinary fixes or maintenance; integrate into `develop` |
-| `release/<release-id>` | Explicit cut from `develop` | Stabilize a selected release; promote it to production and return necessary corrections to `develop` |
-| `hotfix/<slug>` | Affected production version | Urgent production fix; propagate to production, `develop`, and active releases that need it |
+| Production | Existing production history | Receive completed releases and production hotfixes |
+| `develop` | Production when first adopting the workflow | Integrate work for the next release |
+| `feature/<slug>` | Current development line | New behavior, delivered to `develop` |
+| `fix/<slug>`, `chore/<slug>`, `docs/<slug>` | Current development line | Fixes or maintenance, delivered to `develop` |
+| `release/<release-id>` | An explicit development cut | Stabilize that release, publish to production, and return applicable corrections to development |
+| `hotfix/<slug>` | Affected production version | Repair production and propagate the correction to development and affected active releases |
 
-Reuse existing project naming conventions for these roles. Create short-lived branches only for actual work. When adopting Git Flow locally, initialize missing `develop` from the agreed production base; do not change the remote default branch. Do not create release branches merely because ordinary development finished. Release identifiers, version changes, tags, publication, and deployment need their own authorized scope.
+Reuse established naming conventions. Create short-lived branches for actual tasks, not merely because development finished. Release versions, tags, publication, and deployment require their own authorized scope; a release branch alone does not request them. Do not rename the production branch or change the remote default branch as part of adopting this workflow.
 
-## One Destination, Linear Integration
+## Diagnose Before Synchronizing
 
-Identify the task's starting base and selected commits before replay. Use the original requirement and diff to establish what belongs; ancestry alone is not sufficient after a previous replay or backport. Exclude changes already present and retain required dependencies. Pause for clarification if the intended range cannot be established.
+Distinguish three questions:
 
-For a private task branch with no downstream users, rebase its commits onto the current destination. For a branch that has been shared or is a base for other work, retain that branch and construct a task-owned integration branch on the destination, replaying only the selected commits in order. Never rebase a shared long-lived branch to make an integration possible.
+- **Local versus remote:** ahead/behind compares a local branch with its configured upstream, not with the production branch. Inspect fetched remote state and unpublished local work.
+- **Content:** tree differences show current files; patch comparison such as `git cherry` can identify changes copied by rebase or cherry-pick. Equivalent patches alone do not prove current behavior or delivery to every destination.
+- **Ancestry:** `git merge-base --is-ancestor` determines whether one history contains another. Equal trees or equivalent patches do not join two histories.
 
-Use `git rebase` or an explicit `--onto` range for an appropriate contiguous history. Use `git cherry-pick` to construct a selective integration or backport branch when the required commits are non-contiguous or the source must be preserved. For backports between shared branches, retain source commit IDs with `-x`; verify the provenance survives conflict resolution. These are ways to prepare a linear branch, not permission to copy an entire development line into a release.
+Never reset, delete, or rebase a shared long-lived branch merely to remove an ahead/behind indication or make tips equal. If local work has been published elsewhere but is missing from the development remote, complete the authorized synchronization there. Preserve work and state the pending destination when authorization is absent.
 
-Resolve conflicts according to both branches' required behavior; do not accept one side wholesale without that check. Recheck affected behavior after replay, conflict resolution, or changed integration dependencies. The independent Tester still owns any new or semantically changed validation. Existing relevant evidence remains reusable where its assumptions still hold.
+With a shared remote, treat its long-lived branches as the integration record. Keep pending task commits on short-lived branches, then refresh matching local branches by fast-forward after remote integration. If local-only commits already exist, inspect their ownership and destinations before proposing how to retain or integrate them. For a local-only repository, use its established local destinations without inventing a remote or PR requirement.
 
-At the destination's owning checkout, ensure its owner permits the update and no pending operation or local changes would be disturbed. Recheck its current tip, then use `git merge --ff-only <prepared-branch>` to advance it. This creates no merge commit. If the destination advanced, refresh the prepared branch and relevant evidence; do not fall back to a merge commit or force a shared ref backwards. Coordinate with the owner instead of repeatedly racing another writer.
+## Task Branches
 
-## Release Stabilization And Promotion
+Rebase a private task branch onto the current destination when no other work depends on its old commits. Preserve classified atomic commits; do not squash the whole task by default. Rewriting a published task branch still requires explicit force-push authorization and coordination with its users.
 
-Record the release cut in the task context or existing release record. After that cut, new features continue on `develop`; the release accepts only changes needed for the selected release. Keep stabilization corrections identifiable separately from unrelated future work and from version metadata with different branch requirements.
+Do not rebase a branch that others use as a base. Preserve it and, when integration needs preparation, use a task-owned branch based on the destination to merge the shared source. Reserve `cherry-pick -x` for an intentional selective backport whose scope differs from the full source; copying commits is not a replacement for routine shared-branch synchronization.
 
-Prepare production integration from the release's selected content, excluding changes already in production. If production advanced with a hotfix, retain that correction while rebasing the release or constructing its integration branch on the new production tip. Check the selected release behavior before fast-forwarding production. Do not pull the current `develop` into the release to resolve divergence.
+Submit ordinary task work through the project's PR process. Rebase-and-merge is suitable for an independent short-lived branch. GitHub always assigns new SHAs with that method, even when the branch could otherwise fast-forward: fetch the actual destination afterward, and do not treat the old local source as the canonical merged history. Retain it if another task still depends on it.
 
-Return only release corrections still needed on `develop`, along with necessary dependencies and project-required metadata, through a separate backport branch based on current `develop`. Already-present corrections need no second application. Validate the release and development outcomes separately; a successful production integration does not prove the backport. Keep the source until all required destinations and retained-work checks are complete.
+Where the project uses native local integration, `git merge --ff-only` advances a destination only when ancestry allows it. A refusal calls for inspecting divergence, not an automatic reset or force-push.
 
-## Production Hotfix
+## Releases And Long-Lived Synchronization
 
-Start from the affected production version. If production has since advanced, establish which production line should receive the fix; do not move a production branch backwards. Keep the correction separate from release-specific version metadata so it can be carried to other lines without a version rollback.
+Record the release cut in task context. New features can continue on `develop`; the release accepts only corrections needed for its selected scope. Keep release-specific metadata separate from changes that must return to development.
 
-Integrate the verified fix into its production destination through the linear procedure. Independently check `develop` and each active release in scope for the same fault. Replay only the correction and necessary dependencies where absent, preserving next-release features on `develop` and the release cut on each release branch. An active release does not remove the obligation to correct `develop`. Do not copy an entire branch or apply an already-present correction twice.
+Promote releases using merge commits, preserving source commits and both histories. Do not use squash or hosting-provider rebase-and-merge to transfer the development line repeatedly into production. If production advances with a hotfix during stabilization, merge the applicable production history into the release and recheck the affected behavior; do not pull newer, unreleased development features into it.
 
-For both release and hotfix propagation, identify any outstanding destination explicitly. Retain the relevant branch if another task still relies on it or preservation is uncertain. A local branch operation does not establish that a remote branch or deployed system has changed.
+After publication, synchronize production back into development. When preparation is needed, create a temporary integration branch from the current destination, merge the production source into it, resolve conflicts, and submit it to the destination with a merge commit. This retains concurrent development work and lets checks run against the intended combined result. If a hosting rule requires an up-to-date PR head, refresh this temporary branch against the destination; never update the production source with unreleased development work to satisfy that rule.
+
+Inspect both sides when resolving conflicts. Preserve applicable fixes and intentional branch-specific metadata; do not accept one side wholesale without establishing what the other contains. A merge after earlier replays can also restore obsolete files without reporting a conflict, so review the complete resulting diff and relevant behavior.
+
+Release completion includes production integration and the required development synchronization. Normally production is then an ancestor of development; development may still contain future work, so identical trees or tip SHAs are not universal requirements. Verify the applicable corrections separately when the project intentionally backports selected changes between version lines. Keep a source until all required destinations and downstream dependencies are accounted for.
+
+## Production Hotfixes
+
+Start from the affected production version and keep the correction separate from next-release features. Integrate the verified fix into the intended production line with a merge commit, then synchronize it into `develop` and every affected active release. An active release does not remove the obligation to update development.
+
+Prepare each destination from its own current tip and check its retained behavior. Preserve newer features and its version policy; copying the whole development line into an older release is not a hotfix. Use a selective backport only when that version line needs a different scope, retaining source attribution with `-x`.
+
+## Hosting Protection
+
+Inspect effective hosting rules before publishing; use the platform's supported tools without assuming a vendor or installing a wrapper. When protection setup is requested, protect production and development from deletion and force-push, require PRs, and require relevant checks that actually exist. Establish the successful check name and provider before making it mandatory; do not use coverage quotas or text-matching tests as substitutes for useful validation.
+
+Allow merge commits for releases and synchronization; do not enable a linear-history-only rule on branches that need them. Restrict production PRs to merge commits where supported. Development can accept rebase-and-merge for independent task branches and merge commits for shared history. If the host cannot distinguish source roles, the coordinating agent must select the correct method for each PR.
+
+Choose reviewer requirements for the actual maintainers; a single-maintainer repository need not require an unavailable second reviewer. Independent Agent testing is not a hosting-account approval. Keep remote human authorization and verification duties even when formal approval count is zero. Do not add routine bypass access or weaken protections to complete delivery.
 
 ## Primary References
 
-- [Original Git Flow roles](https://nvie.com/posts/a-successful-git-branching-model/): source of the role separation, not the merge policy of this variant.
-- [Git rebase](https://git-scm.com/docs/git-rebase): explicit commit ranges and consequences of rewriting a base others use.
-- [Git merge](https://git-scm.com/docs/git-merge): `--ff-only` refuses a non-fast-forward update.
-- [Git cherry-pick](https://git-scm.com/docs/git-cherry-pick): selected commit replay and source attribution.
-- [Git worktree](https://git-scm.com/docs/git-worktree): linked checkout lifecycle and branch ownership constraints.
+- [Original Git Flow](https://nvie.com/posts/a-successful-git-branching-model/): branch roles and release/hotfix propagation.
+- [Git rebase](https://git-scm.com/docs/git-rebase): replay and the consequences of rewriting shared history.
+- [Git merge](https://git-scm.com/docs/git-merge): fast-forward and merge-commit behavior.
+- [Git cherry](https://git-scm.com/docs/git-cherry): patch equivalence after replay.
+- [GitHub PR merges](https://docs.github.com/en/pull-requests/reference/pull-request-merges): rebase-and-merge creates new commit identities.
+- [GitHub rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets): available protection and merge-method controls; other hosts need their native equivalents.

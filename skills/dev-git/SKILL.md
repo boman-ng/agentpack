@@ -1,17 +1,19 @@
 ---
 name: dev-git
-description: Manage Git Flow branches, classify and create atomic Conventional Commits, and integrate changes with rebase and fast-forward. Use for repository development or Git-only delivery; remote writes require human authorization and audits remain read-only.
+description: Manage Git Flow branches, classify atomic Conventional Commits, and coordinate releases, synchronization, and branch protection. Use for repository development or Git-only delivery; remote writes require human authorization and audits remain read-only.
 ---
 
 # Dev Git
 
-Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Before branch selection or integration, read [Git Flow and linear integration](references/git-flow.md). Use native Git; no extra CLI, hooks, wrapper, or global configuration is needed.
+Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Before branch selection or integration, read [Git Flow and shared history](references/git-flow.md). Use native Git and the hosting platform's supported capabilities; no Git Flow extension or global configuration is needed.
 
 ## Ownership And Local Work
 
 Inspect project instructions, branch/HEAD, worktrees, staged and unstaged changes, and any operation in progress. Establish the task's base, destination, changes, and coordinating agent in task context. Resolve ownership or project workflow conflicts before the affected operation.
 
 Local branch creation, switching, commits, private-history organization, integration, and cleanup are autonomous within an implementation or Git task. Audits, plans, and explanations remain read-only. Reuse the task's branch; preserve unrelated work without automatically stashing, discarding, or committing it. Resolve blocking conflicts while continuing independent work.
+
+With a shared remote, keep ordinary task commits on short-lived branches and integrate through the project's PR process. Refresh local long-lived branches from their matching remote branches by fast-forward. Inspect existing local-only work before synchronization; a clean worktree or an ahead/behind count does not authorize dropping commits.
 
 One coordinating agent owns the task's shared index, commits, branch switches, rebases, and integration. Developer/Tester collaborators, whether subagents or separate sessions, work on assigned files or in sequence; they do not independently change shared Git state. This is a task responsibility, not a required host-specific agent role.
 
@@ -32,14 +34,18 @@ Each task owns its workspace and branch. Assign one coordinating agent to serial
 
 For example, `fix(checkout): prevent duplicate payment capture` can include its regression test and contract docs; unrelated setup documentation belongs in a separate commit.
 
+Integration commits use a Conventional Commit title describing the merge's purpose while retaining the underlying atomic commits. Rebase is for organizing independent task history; releases and long-lived synchronization preserve ancestry with merge commits as defined in the Git Flow reference.
+
 ## Human Authorization For Remote Writes
 
-Push, force-push, remote ref deletion, and PR creation/update/merge/closure require human authorization covering the repository, target, and action. Local implementation authority, passing checks, and automatic tool approval do not supply it. Ordinary push permission does not cover force-push or deletion.
+Push, force-push, remote ref deletion, PR creation/update/merge/closure, and hosting protection changes require human authorization covering the repository, target, and action. Local implementation authority, passing checks, and automatic tool approval do not supply it. Ordinary push permission does not cover force-push or deletion.
 
 Prepare local commits and proposed PR text before asking for missing authorization through a supported human interaction channel. Pause only the unauthorized action. Existing authorization carries forward within scope; a changed target or expanded action needs new authorization. Read-only inspection and fetch do not require remote-write authorization, but remain subject to task and host constraints.
 
-## Finish Locally
+Include required development-line synchronization in the delivery scope. If existing authorization does not cover a destination, preserve its pending work and report the outstanding step; do not reset a local branch to make delivery appear complete. Apply protection settings only when requested; never weaken checks or use an administrative bypass to finish a merge.
 
-Integrate verified work into its established local destination using the linked Git Flow procedure. Remove only owned temporary branches/worktrees whose results are preserved and which have no pending changes, unique commits, downstream dependencies, or valuable files (including ignored files).
+## Finish And Clean Up
 
-Use normal branch deletion and `git worktree remove`, without force. If replay makes ancestry insufficient to establish preservation, retain the source until resolved. Report destination and commit IDs, retained work, and any authorized delivery step still outstanding; local integration is distinct from remote delivery.
+Confirm every required destination independently, including the actual remote result when delivery was authorized. Refresh the matching local branches without discarding independent work. A successful production merge does not establish development-line synchronization.
+
+Remove only owned temporary branches/worktrees whose work is preserved in every required destination and which have no pending changes, downstream dependencies, or valuable files (including ignored files). Use normal branch deletion and `git worktree remove`, without force; remote deletion needs its own authorized scope. If replay makes ancestry insufficient to establish preservation, inspect equivalent patches and final behavior before cleanup. Report destination commits and any unfinished synchronization; local completion and remote delivery are distinct.
