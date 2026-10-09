@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design"
+  short_description: "Coordinate intent, direction, build, and design review"
+  default_prompt: "Use $design to shape and deliver my interface through the relevant Design suite modes."

@@ -9,15 +9,11 @@ Describe what changes, when it changes, and what must remain continuous before s
 | "The small card grows into the details" | Shared-element transition, visual continuity | Perceived object identity differs from crossfading two views; navigation and modality remain separate choices. |
 | "Scrolling advances it; scrolling back reverses it" | Scroll-driven animation | Binding progress to scroll differs from entering the viewport and starting an independent clock. |
 | "Play once it appears, then keep going" | Viewport-triggered playback | Visibility triggers playback; replay, reversal, and interruption are separate requirements. |
-| "One column starts after another" | Stagger, sequencing | Stable relative start times differ from choosing new random delays each frame. |
 | "It speeds up and settles gently" | Easing, spring response | An easing curve controls progress; a dynamic spring model can carry velocity. A spring is not required just because the motion feels soft. |
-| "Hover makes the image slightly larger" | Hover scale transition | Scaling on hover is not scroll parallax; do not add scrolling or depth motion. |
 | "A magnetic button" | Pointer-following offset, cursor treatment, snapping | Determine which object moves and under what input; no electromagnetic simulation is implied. |
 | "Snap nearby, but don't flicker in and out" | Snapping, hysteresis | Capture and release conditions differ from a time-based debounce. |
 
 [MDN's scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations) describe progress timelines; [Intersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) observes intersection changes. The [View Transition API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API) is one mechanism for continuity, not the definition or only implementation of a shared-element effect.
-
-**Example:** "Scroll down to advance, up to reverse, and stop to hold" becomes "Bind animation progress to scroll progress so an unchanged scroll position holds the corresponding state." Do not substitute a one-time reveal animation.
 
 ## Particles and visible effects
 

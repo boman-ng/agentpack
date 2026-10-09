@@ -15,8 +15,6 @@ Use these examples to distinguish observable behavior, not as a one-to-one dicti
 
 [MDN Grid layout](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout) describes layout mechanisms. [Container queries](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment/Container_queries) distinguish conditions on a container from viewport or device conditions; neither dictates the intended design.
 
-**Example:** "Make the settings less cramped, but keep every setting" can become "Retain every setting while improving grouping, label alignment, and spacing between related groups." Collapsing advanced controls is a separate proposal, not a translation of the original constraint.
-
 ## Components and interaction
 
 | Everyday description | Useful concepts | Distinction to preserve |
@@ -45,8 +43,6 @@ The generic word "popover" does not identify an API or interaction contract. Spe
 | "The page should not jump when results arrive" | Layout stability, reserved space | Geometry shifts differ from slow input or animation stutter. |
 
 [React's optimistic-state documentation](https://react.dev/reference/react/useOptimistic) illustrates temporary state and reconciliation; the concept does not require React or this hook.
-
-**Example:** "The like button responds immediately without pretending a failed request succeeded" becomes "Show the intended change provisionally, reconcile it with the server result, and visibly recover on failure." A decorative animation alone would not express that behavior.
 
 ## Quality without expanding the brief
 

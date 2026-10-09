@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Review"
+  short_description: "Review interface usability and craft from evidence"
+  default_prompt: "Use $design-review to inspect my interface without changing source and report material usability and design gaps."
