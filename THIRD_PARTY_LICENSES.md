@@ -2,7 +2,7 @@
 
 The [MIT License](LICENSE) covers AgentPack's original code and documentation. Third-party license and notice texts, and third-party content fetched or generated through AgentPack, remain under their upstream terms and are excluded from that grant.
 
-Upstream skills are fetched only when selected. [SOURCES.md](SOURCES.md) records their commits and members; this index identifies attribution to preserve under each installed skill's `provenance/`. Upstream terms remain authoritative.
+Upstream skills are fetched only when selected. The [installation manifest](INSTALL.md#suite-manifest) records their commits and members; this index identifies attribution to preserve under each installed skill's `provenance/`. Upstream terms remain authoritative.
 
 | Component | Source | License | Preserved text |
 |---|---|---|---|
