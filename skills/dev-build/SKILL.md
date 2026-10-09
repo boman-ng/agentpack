@@ -9,7 +9,7 @@ Complete the requested production behavior and delivery within authorization. Us
 
 ## Required Context
 
-Even when invoked directly, read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Confirm the sibling `dev`, `dev-build`, `dev-clean`, and `dev-test` entry points are available. Report an incomplete Dev suite and missing paths if required resources are absent; do not silently replace them.
+Even when invoked directly, read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Confirm the sibling `dev`, `dev-build`, `dev-clean`, `dev-test`, and `dev-git` entry points are available. Report an incomplete Dev suite and missing paths if required resources are absent; do not silently replace them.
 
 ## Development
 

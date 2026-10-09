@@ -1,4 +1,4 @@
 interface:
   display_name: "Dev"
-  short_description: "Coordinate development, maintenance, and verification"
+  short_description: "Coordinate development, testing, maintenance, and Git"
   default_prompt: "Use $dev to coordinate the requested work through the appropriate Dev suite modes and complete it with credible acceptance evidence."

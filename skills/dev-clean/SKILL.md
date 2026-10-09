@@ -9,7 +9,7 @@ Reduce the cost of understanding and changing existing work by removing unnecess
 
 ## Required Context
 
-Even when invoked directly, read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Confirm the sibling `dev`, `dev-build`, `dev-clean`, and `dev-test` entry points are available. Report an incomplete Dev suite and missing paths if required resources are absent; do not silently replace them.
+Even when invoked directly, read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Confirm the sibling `dev`, `dev-build`, `dev-clean`, `dev-test`, and `dev-git` entry points are available. Report an incomplete Dev suite and missing paths if required resources are absent; do not silently replace them.
 
 Audits and explanations remain read-only. Apply edits only within the requested maintenance scope; skill selection does not expand authorization. Use [dev-build](../dev-build/SKILL.md) for requested production development, explicitly reading that entry point when the scope includes it.
 

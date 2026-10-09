@@ -4,7 +4,7 @@ Discover external skills by name from the current session catalog and read their
 
 ## Dev Owns Engineering
 
-Before all production source edits, including markup, CSS, and motion code, discover the complete Dev suite (`dev`, `dev-build`, `dev-clean`, `dev-test`), confirm its entry points/common references, and explicitly read `dev-build` and its required contracts. New or semantically changed validation uses `dev-test` and its independent same-model/same-effort Tester policy. Do not duplicate that policy in Design or pretend reading the Tester entry changes the Developer's identity.
+Before all production source edits, including markup, CSS, and motion code, discover the complete Dev suite (`dev`, `dev-build`, `dev-clean`, `dev-test`, `dev-git`), confirm its entry points/common references, and explicitly read `dev-build` and its required contracts. New or semantically changed validation uses `dev-test` and its independent same-model/same-effort Tester policy. Do not duplicate that policy in Design or pretend reading the Tester entry changes the Developer's identity.
 
 If the required Dev suite is unavailable or incomplete, pause production implementation and new validation. Continue intent, shaping, or read-only review and name the missing resource and next step. Do not automatically install Dev, invent a replacement policy, or silently substitute another engineering skill. Running suitable existing checks and observation does not require authoring new tests or a new Tester.
 
