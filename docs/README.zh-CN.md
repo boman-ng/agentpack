@@ -2,7 +2,7 @@
 
 [English](../README.md) | [简体中文](README.zh-CN.md)
 
-AgentPack 是一套面向 AI Agent 的可复用指令、技能和可选工具连接。它为 Agent 提供一致的工作方式，帮助你澄清需求、开发软件、设计界面和评审结果。
+AgentPack 是一套面向 AI Agent 的可复用指令、技能、参考资料和可选工具连接。它为 Agent 提供一致的工作方式，帮助你澄清需求、开发软件、设计界面和评审结果。
 
 ## 可以做什么
 
@@ -42,6 +42,7 @@ AgentPack 是一套面向 AI Agent 的可复用指令、技能和可选工具连
 |---|---|---|
 | [ARS — Imbad0202/academic-research-skills-codex](https://github.com/Imbad0202/academic-research-skills-codex) | 调研、文献综述、实验规划、学术写作与稿件评审 | CC BY-NC 4.0 |
 | [Archify — tt-a1i/archify](https://github.com/tt-a1i/archify) | 生成独立 HTML 架构图、流程图和数据流图，支持交互浏览 | MIT |
+| [Lieflat Charts — larashero3-dotcom/lieflat-charts](https://github.com/larashero3-dotcom/lieflat-charts) | 基于模板生成 HTML 数据图表和报告 | [PolyForm Noncommercial 1.0.0](../third_party/licenses/lieflat-charts/LICENSE) |
 | [Answer me with HTML — QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html) | 生成交互式解释与澄清页面，将页面中的回复复制回聊天 | MIT |
 | [Impeccable — pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 界面设计、实现、无障碍与细节优化 | Apache-2.0 |
 | [Browser — vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | 浏览器交互、内容提取、测试，以及受支持的 Electron 应用自动化 | Apache-2.0 |
@@ -55,6 +56,14 @@ AgentPack 是一套面向 AI Agent 的可复用指令、技能和可选工具连
 | 仓库 | 用途 | License |
 |---|---|---|
 | [AnySearch — anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server) | 通过 [AnySearch MCP 连接](../mcp/anysearch.md)提供可选的网络搜索 | Apache-2.0 |
+
+### 参考资料
+
+这些资源用于阅读和参考，不作为技能安装。
+
+| 仓库 | 用途 | License |
+|---|---|---|
+| [System Design 101 — ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | 用图解介绍系统架构、数据库、分布式系统与工程取舍 | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
 
 ## 许可
 

@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](docs/README.zh-CN.md)
 
-AgentPack is a reusable collection of instructions, skills, and optional tool connections for AI agents. It gives your agent consistent workflows for clarifying requirements, developing software, designing interfaces, and reviewing results.
+AgentPack is a reusable collection of instructions, skills, reference material, and optional tool connections for AI agents. It gives your agent consistent workflows for clarifying requirements, developing software, designing interfaces, and reviewing results.
 
 ## What you can do
 
@@ -42,6 +42,7 @@ Each row is an optional suite. Select the capabilities you need; installation in
 |---|---|---|
 | [ARS — Imbad0202/academic-research-skills-codex](https://github.com/Imbad0202/academic-research-skills-codex) | Research, literature reviews, experiments, academic writing, and manuscript review | CC BY-NC 4.0 |
 | [Archify — tt-a1i/archify](https://github.com/tt-a1i/archify) | Interactive architecture, workflow, and data-flow diagrams in standalone HTML | MIT |
+| [Lieflat Charts — larashero3-dotcom/lieflat-charts](https://github.com/larashero3-dotcom/lieflat-charts) | Template-based HTML data visualizations and reports | [PolyForm Noncommercial 1.0.0](third_party/licenses/lieflat-charts/LICENSE) |
 | [Answer me with HTML — QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html) | Interactive explanation and clarification pages with replies copied back to chat | MIT |
 | [Impeccable — pbakaus/impeccable](https://github.com/pbakaus/impeccable) | Interface design, implementation, accessibility, and refinement | Apache-2.0 |
 | [Browser — vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | Browser interaction, extraction, testing, and supported Electron app automation | Apache-2.0 |
@@ -55,6 +56,14 @@ Each row is an optional suite. Select the capabilities you need; installation in
 | Repository | Use it for | License |
 |---|---|---|
 | [AnySearch — anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server) | Optional web search through the [AnySearch MCP connection](mcp/anysearch.md) | Apache-2.0 |
+
+### Reference material
+
+These resources are for reading and reference; they are not installed as skills.
+
+| Repository | Use it for | License |
+|---|---|---|
+| [System Design 101 — ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | Visual explanations of system architecture, databases, distributed systems, and engineering tradeoffs | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
 
 ## License
 

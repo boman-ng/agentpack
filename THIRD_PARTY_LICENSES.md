@@ -8,6 +8,7 @@ Upstream skills are fetched only when selected. The [installation manifest](INST
 |---|---|---|---|
 | ARS-Codex adapter payload and its included upstream content | https://github.com/Imbad0202/academic-research-skills-codex | CC BY-NC 4.0; non-commercial restriction applies | `third_party/licenses/academic-research-skills-CC-BY-NC-4.0.txt`; fetched source also carries its notices and embedded licenses |
 | Archify skill and bundled renderer | https://github.com/tt-a1i/archify | MIT; bundled font and brand marks retain their upstream terms | [Preserved MIT text](third_party/licenses/archify-MIT.txt) and [third-party notices](third_party/licenses/archify-THIRD_PARTY_NOTICES.md) |
+| Lieflat Charts skill, templates, and resources | https://github.com/larashero3-dotcom/lieflat-charts | PolyForm Noncommercial 1.0.0; third-party chart libraries and fonts retain their own terms | [Preserved license](third_party/licenses/lieflat-charts/LICENSE) and [third-party notices](third_party/licenses/lieflat-charts/THIRD_PARTY_NOTICES.md) |
 | Answer me with HTML skill and bundled CLI | https://github.com/QingYunA/answer-me-with-html | MIT; marked, dagre, and graphlib retain their licenses and notices, including marked's historical Markdown terms | [Complete preserved license and provenance directory](third_party/licenses/answer-me-with-html/README.md) |
 | Impeccable skill | https://github.com/pbakaus/impeccable | Apache-2.0 | `third_party/licenses/impeccable-Apache-2.0.txt` and `third_party/licenses/impeccable-NOTICE.md` |
 | agent-browser skill | https://github.com/vercel-labs/agent-browser | Apache-2.0 | `third_party/licenses/vercel-labs-agent-browser-Apache-2.0.txt` |
@@ -20,6 +21,8 @@ Upstream skills are fetched only when selected. The [installation manifest](INST
 Preserve each selected source's root license and embedded notices, plus the supplementary records linked above. Impeccable requires `NOTICE.md`; Archify requires `THIRD_PARTY_NOTICES.md`, its bundled font license, and brand-mark notices. ARS retains its non-commercial terms and included license texts. Skill licenses do not grant access to separately licensed runtimes or hosted services.
 
 Motion has no standalone license file at its pin. Check its MIT package declaration and copy the linked declaration record; do not fabricate an upstream license.
+
+For Lieflat Charts, compare both preserved files with the pinned source and copy them into the installed skill's `provenance/`. Keep the payload's own license and notices in place. Its templates load third-party libraries and fonts externally; any separately bundled copies need their corresponding licenses and notices.
 
 For Answer me with HTML, compare the preserved root license with the pinned source, then copy **all contents** of its linked attribution directory into the installed skill's `provenance/`, including `README.md` and `dependencies/`. Its source record maps the dependency notices and supplies the `dagre.esm.js.LEGAL.txt` referenced but absent from the upstream payload. Keep the payload unchanged and retain marked's full historical Markdown terms.
 

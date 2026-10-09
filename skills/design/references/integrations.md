@@ -26,6 +26,7 @@ Do not automatically install dependencies, change the pin or global settings, pu
 | Motion purpose, continuity, timing, interruption | `animate`, `motion-design`, `motion`; GSAP guidance for the actual stack |
 | Name a visible motion effect | `animation-vocabulary`; primary documentation for consequential technical claims |
 | Interactive clarification | `answer-me-with-html` |
+| Data visualization and explicitly requested reports | `lieflat-charts` |
 | Inspect rendered states and interactions | Available browser tools; `agent-browser` when its CLI applies |
 
 Read only relevant guidance; invoking a full upstream workflow also requires its setup and side-effect boundaries. `prototype` and `pick-ui-library` require explicit user invocation. Reuse project capabilities first; skill text, runnable tools, accounts, and publication authority are separate resources, and missing tools do not authorize setup.
