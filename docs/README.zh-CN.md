@@ -48,7 +48,7 @@ AgentPack 是一套面向 AI Agent 的可复用指令、技能、参考资料和
 | [Browser — vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | 浏览器交互、内容提取、测试，以及受支持的 Electron 应用自动化 | Apache-2.0 |
 | [Emil — emilkowalski/skills](https://github.com/emilkowalski/skills) | Web 与原生界面的设计工程和动画 | MIT |
 | [GSAP — greensock/gsap-skills](https://github.com/greensock/gsap-skills) | 动画、时间线、滚动交互、框架集成与性能优化 | 技能采用 MIT；运行库条款独立 |
-| [Motion — motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | Motion 与 CSS 动画指导，以及可选的连接工具 | 上游声明为 MIT |
+| [Motion — motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | Motion 与 CSS 动画指导，以及免费 Motion MCP | 上游声明为 MIT |
 | [LottieFiles — LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill) | 跨动画系统的动效方向、时序、缓动与编排 | MIT |
 
 ### 工具连接

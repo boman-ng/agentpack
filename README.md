@@ -48,7 +48,7 @@ Each row is an optional suite. Select the capabilities you need and install the 
 | [Browser — vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | Browser interaction, extraction, testing, and supported Electron app automation | Apache-2.0 |
 | [Emil — emilkowalski/skills](https://github.com/emilkowalski/skills) | Design engineering and animation for web and native interfaces | MIT |
 | [GSAP — greensock/gsap-skills](https://github.com/greensock/gsap-skills) | Animation, timelines, scroll interactions, framework integration, and performance | MIT for skills; runtime terms are separate |
-| [Motion — motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | Motion and CSS animation guidance, with optional connected tools | MIT, declared by upstream |
+| [Motion — motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | Motion and CSS animation guidance, with the free Motion MCP | MIT, declared by upstream |
 | [LottieFiles — LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill) | Motion direction, timing, easing, and choreography across animation systems | MIT |
 
 ### Tool connections
