@@ -1,6 +1,6 @@
 # Git Flow And Shared History
 
-Read this for branch selection, integration, synchronization, or protection setup. Use [original Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) as the primary model for branch responsibilities and release/hotfix propagation. The deliberate adjustments are rebase for independent task commits and stable delivery without versioning when no release is requested. [Dev Git](../SKILL.md) owns commits, workspaces, and authorization; [Release strategy](release-strategy.md) owns publication and supported version lines.
+Read this for branch selection, integration, synchronization, cleanup, or protection setup. Use [original Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) as the primary model for branch responsibilities and release/hotfix propagation. The deliberate adjustments are rebase for independent task commits and stable delivery without versioning when no release is requested. [Dev Git](../SKILL.md) owns commits, workspaces, and authorization; [Release strategy](release-strategy.md) owns publication and supported version lines.
 
 ## Branch Roles
 
@@ -41,6 +41,18 @@ Submit ordinary task work through the project's PR process, using rebase-and-mer
 
 Where the project uses native local integration, `git merge --ff-only` advances a destination only when ancestry allows it. A refusal calls for inspecting divergence, not an automatic reset or force-push.
 
+## Branch Lifecycle And Cleanup
+
+Keep temporary branches tied to an active task and, on a shared remote, an owner and PR or task reference. Start subsequent work from the current destination on a new branch after the previous task ends. Retain long-lived branches and explicitly supported maintenance lines. During delivery or a requested review, resolve stalled work as continuing, paused, or explicitly abandoned; age alone never authorizes deletion. For abandoned work, preserve any requested results before cleanup within the user's abandonment scope.
+
+Completion follows the branch's purpose: ordinary tasks finish at their designated integration target; temporary synchronization branches finish at their synchronization target. Neither requires an extra merge into `master`. Release and hotfix branches finish only after all applicable destinations receive their corrections. Do not delete a branch still needed by a release or recovery workflow. Merged history and PRs preserve completed work; no archival branch or tag is needed merely for cleanup.
+
+Before deletion, refresh the relevant remote state and inspect the current local and remote tips, required destinations, and associated PRs. Check for commits added after the merge and confirm that all work to retain is preserved and no open PR or downstream task still depends on the branch. A merged PR, equal trees, or `git branch --merged` alone is insufficient. With replayed commits, use the merged PR where applicable, patch comparison, and final content to establish preservation; retain the branch when unique work or its disposition remains unresolved.
+
+Check worktree occupancy before local branch deletion. Switch the task's own checkout to a preserved destination when safe; never switch another task's checkout. Remove only completed task-owned worktrees without pending changes or valuable files, including ignored files, using non-forced `git worktree remove`. Prefer `git branch -d` after establishing preservation. If it refuses solely because delivered commits were rewritten, `git branch -D` is allowed for that verified local temporary branch only when all required work is preserved and no unique work, dependent task, or worktree occupancy remains. Retain the branch for other refusal reasons; do not force worktree removal or rewrite shared history to make cleanup pass.
+
+Remote deletion, remote-tracking pruning, and local branch deletion are separate operations. Use [Dev Git's authorization rules](../SKILL.md#human-authorization-for-remote-writes) for remote deletion. Afterward, `git fetch --prune origin` removes stale remote-tracking refs under the usual branch refspec; it deletes neither server branches nor local working branches. Use the actual remote, inspect nonstandard refspecs, and leave tags and global Git configuration alone. Independently confirm the requested remote and local cleanup results.
+
 ## Stable Delivery And Long-Lived Synchronization
 
 Keep the selected delivery cut in task context. For a formal release, follow the stabilization and publication rules in [Release strategy](release-strategy.md).
@@ -67,10 +79,14 @@ Allow merge commits on both long-lived branches; do not enable linear-history-on
 
 Choose reviewer requirements for the actual maintainers; a single-maintainer repository need not require an unavailable second reviewer. Independent Agent testing is not a hosting-account approval. Keep remote human authorization and verification duties even when formal approval count is zero. Do not add routine bypass access or weaken protections to complete delivery.
 
+When automatic cleanup setup is authorized, prefer the host's native deletion of merged PR head branches. On GitHub, use [Automatically delete head branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-the-automatic-deletion-of-branches). Protect long-lived branches from deletion, including when they are PR sources. Before merging, ensure deletion protection covers any temporary source still needed for other destinations or downstream work; add or remove that temporary protection only within authorized scope as its obligations change. If the host cannot reliably exclude such branches, use explicit cleanup after completion instead of blanket automatic deletion. Inspect existing automation for these effects before delivery.
+
 ## Primary References
 
 - [Git rebase](https://git-scm.com/docs/git-rebase): replay and the consequences of rewriting shared history.
 - [Git merge](https://git-scm.com/docs/git-merge): fast-forward and merge-commit behavior.
 - [Git cherry](https://git-scm.com/docs/git-cherry): patch equivalence after replay.
+- [Git branch](https://git-scm.com/docs/git-branch): local deletion and ancestry checks.
+- [Git fetch pruning](https://git-scm.com/docs/git-fetch#_PRUNING): removal of stale remote-tracking refs.
 - [GitHub PR merges](https://docs.github.com/en/pull-requests/reference/pull-request-merges): rebase-and-merge creates new commit identities.
 - [GitHub rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets): available protection and merge-method controls; other hosts need their native equivalents.

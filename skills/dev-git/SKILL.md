@@ -1,20 +1,20 @@
 ---
 name: dev-git
-description: Manage Git Flow branches, classify atomic Conventional Commits, and coordinate releases, synchronization, and branch protection. Use for repository development or Git-only delivery; remote writes require human authorization and audits remain read-only.
+description: Manage Git Flow branches, classify atomic Conventional Commits, and coordinate releases, synchronization, protection, and cleanup. Use for repository development or Git-only delivery; remote writes require human authorization and audits remain read-only.
 ---
 
 # Dev Git
 
 Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Use native Git and the hosting platform's supported capabilities; no Git Flow extension or global configuration is needed.
 
-- Before branch selection, integration, or protection setup, read [Git Flow and shared history](references/git-flow.md). The default is `master` for stable delivery and `develop` for ongoing integration.
+- Before branch selection, integration, cleanup, or protection setup, read [Git Flow and shared history](references/git-flow.md). The default is `master` for stable delivery and `develop` for ongoing integration.
 - For versioning, publication, deployment, or supported release lines, also read [Release strategy](references/release-strategy.md). Integrating code does not by itself request a release.
 
 ## Ownership And Local Work
 
 Inspect project instructions, branch/HEAD, worktrees, staged and unstaged changes, and any operation in progress. Establish the task's base, destination, changes, and coordinating agent in task context. Resolve ownership or project workflow conflicts before the affected operation.
 
-Local branch creation, switching, commits, private-history organization, integration, and cleanup are autonomous within an implementation or Git task. Audits, plans, and explanations remain read-only. Reuse the task's branch; preserve unrelated work without automatically stashing, discarding, or committing it. Resolve blocking conflicts while continuing independent work.
+Local branch creation, switching, commits, private-history organization, integration, and cleanup are autonomous within an implementation or Git task. Audits, plans, and explanations remain read-only. Reuse the task's active branch; preserve unrelated work without automatically stashing, discarding, or committing it. Resolve blocking conflicts while continuing independent work.
 
 With a shared remote, keep ordinary task commits on short-lived branches and integrate through the project's PR process. Refresh local long-lived branches from their matching remote branches by fast-forward. Inspect existing local-only work before synchronization; a clean worktree or an ahead/behind count does not authorize dropping commits.
 
@@ -41,9 +41,11 @@ Integration commits use a Conventional Commit title describing the merge's purpo
 
 ## Human Authorization For Remote Writes
 
-Push, force-push, remote ref deletion, PR creation/update/merge/closure, hosting protection changes, release metadata changes, publication, and deployment require human authorization covering the target and action. Local implementation authority, passing checks, and automatic tool approval do not supply it. Ordinary push permission does not cover force-push or deletion.
+Push, force-push, remote ref deletion, PR creation/update/merge/closure, hosting protection changes, release metadata changes, publication, and deployment require human authorization covering the target and action. Local implementation authority, passing checks, and automatic tool approval do not supply it. Ordinary push or merge permission does not cover force-push or deletion.
 
-Inspect relevant automation before an authorized push or merge. If it will publish a release or deploy, the authorization must cover that result; a configured workflow alone does not supply permission. Carry forward authorization that already covers those consequences without asking again.
+A user may grant standing remote-cleanup authorization for a named repository, branch scope, and cleanup conditions. Reuse that grant from existing project instructions or conversation context until revoked or changed; do not ask again for covered branches or create a separate authorization file. The skill itself grants no repository permission, and the grant does not extend to other branches, force-pushes, or hosting settings.
+
+Inspect relevant automation before an authorized push or merge. If it will delete a branch, publish a release, or deploy, authorization must cover that result; an enabled setting alone does not supply permission. Explicit authorization to enable automatic branch deletion covers its agreed scope. Carry forward authorization that already covers those consequences without asking again.
 
 Prepare local commits and proposed PR text before asking for missing authorization through a supported human interaction channel. Pause only the unauthorized action. Existing authorization carries forward within scope; a changed target or expanded action needs new authorization. Read-only inspection and fetch do not require remote-write authorization, but remain subject to task and host constraints.
 
@@ -51,6 +53,6 @@ Include required development-line synchronization in the delivery scope. If exis
 
 ## Finish And Clean Up
 
-Confirm every required destination independently, including the actual remote result when delivery was authorized. Refresh the matching local branches without discarding independent work. A successful production merge does not establish development-line synchronization.
+Confirm every required destination independently, including the actual remote result when delivery was authorized. Refresh the matching local branches without discarding independent work. A successful production merge does not establish development-line synchronization. Include eligible branch cleanup in the same delivery.
 
-Remove only owned temporary branches/worktrees whose work is preserved in every required destination and which have no pending changes, downstream dependencies, or valuable files (including ignored files). Use normal branch deletion and `git worktree remove`, without force; remote deletion needs its own authorized scope. If replay makes ancestry insufficient to establish preservation, inspect equivalent patches and final behavior before cleanup. If normal deletion still refuses, retain the branch and report why. Report destination commits and any unfinished synchronization; local completion and remote delivery are distinct.
+Apply [branch lifecycle and cleanup](references/git-flow.md#branch-lifecycle-and-cleanup) to owned temporary branches/worktrees and legacy branches explicitly included in the cleanup scope. Remote cleanup must fall within the authorization above. Report actual destination commits and any retained branches with unfinished work, dependencies, or missing authorization; local completion and remote delivery are distinct.
