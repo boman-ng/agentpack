@@ -5,7 +5,10 @@ description: Manage Git Flow branches, classify atomic Conventional Commits, and
 
 # Dev Git
 
-Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Before branch selection or integration, read [Git Flow and shared history](references/git-flow.md). Use native Git and the hosting platform's supported capabilities; no Git Flow extension or global configuration is needed.
+Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Use native Git and the hosting platform's supported capabilities; no Git Flow extension or global configuration is needed.
+
+- Before branch selection, integration, or protection setup, read [Git Flow and shared history](references/git-flow.md). The default is `master` for stable delivery and `develop` for ongoing integration.
+- For versioning, publication, deployment, or supported release lines, also read [Release strategy](references/release-strategy.md). Integrating code does not by itself request a release.
 
 ## Ownership And Local Work
 
@@ -38,7 +41,9 @@ Integration commits use a Conventional Commit title describing the merge's purpo
 
 ## Human Authorization For Remote Writes
 
-Push, force-push, remote ref deletion, PR creation/update/merge/closure, and hosting protection changes require human authorization covering the repository, target, and action. Local implementation authority, passing checks, and automatic tool approval do not supply it. Ordinary push permission does not cover force-push or deletion.
+Push, force-push, remote ref deletion, PR creation/update/merge/closure, hosting protection changes, release metadata changes, publication, and deployment require human authorization covering the target and action. Local implementation authority, passing checks, and automatic tool approval do not supply it. Ordinary push permission does not cover force-push or deletion.
+
+Inspect relevant automation before an authorized push or merge. If it will publish a release or deploy, the authorization must cover that result; a configured workflow alone does not supply permission. Carry forward authorization that already covers those consequences without asking again.
 
 Prepare local commits and proposed PR text before asking for missing authorization through a supported human interaction channel. Pause only the unauthorized action. Existing authorization carries forward within scope; a changed target or expanded action needs new authorization. Read-only inspection and fetch do not require remote-write authorization, but remain subject to task and host constraints.
 
