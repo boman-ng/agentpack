@@ -15,3 +15,5 @@ Read the [engineering contract](references/engineering-contract.md) and [verific
 | Manage branches, atomic commits, and Git delivery | [dev-git](../dev-git/SKILL.md) |
 
 For mixed work, keep one acceptance scope and coordinate production and validation ownership under the shared policy. Use existing requirements and task context; create handoff artifacts only when they resolve a real coordination need. Simple work need not pass through every mode.
+
+For work spanning iterations, use current project decisions and unfinished migration obligations to coordinate coherent increments, dependencies, and ownership. At handoff, distinguish completed work from remaining obligations and the actual delivery state. The shared contract governs evolution and retirement across modes.
