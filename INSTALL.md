@@ -17,6 +17,6 @@ Install selected components in the target agent's supported user-level locations
 | Browser | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | `agent-browser` |
 | Emil | [emilkowalski/skills](https://github.com/emilkowalski/skills) | All published skills in the suite |
 | GSAP | [greensock/gsap-skills](https://github.com/greensock/gsap-skills) | All published GSAP skills |
-| Motion | [motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | `motion` |
+| Motion | [motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | `motion` skill and free Motion MCP only; exclude `motion-plus` |
 | LottieFiles | [LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill) | `motion-design` |
 | AnySearch MCP | [anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server) | Follow upstream setup for the target agent's MCP support |
