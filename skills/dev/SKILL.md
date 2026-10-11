@@ -16,4 +16,6 @@ Read the [engineering contract](references/engineering-contract.md) and [verific
 
 For mixed work, keep one acceptance scope and coordinate production and validation ownership under the shared policy. Use existing requirements and task context; create handoff artifacts only when they resolve a real coordination need. Simple work need not pass through every mode.
 
-For work spanning iterations, use current project decisions and unfinished migration obligations to coordinate coherent increments, dependencies, and ownership. At handoff, distinguish completed work from remaining obligations and the actual delivery state. The shared contract governs evolution and retirement across modes.
+Use the shared [engineering dimensions and user alignment](references/engineering-contract.md#engineering-dimensions-and-user-alignment) to recognize affected concerns and tradeoffs across modes. Bring unresolved consequential choices to the user before dependent implementation, and carry agreed decisions across agents and stages.
+
+For work spanning iterations, use current project decisions and unfinished migration obligations to coordinate coherent increments, dependencies, and ownership. Revisit affected dimensions as requirements, implementation findings, or user feedback change the tradeoffs. At handoff, distinguish completed work from remaining obligations and the actual delivery state, including material consequences for later work. The shared contract governs evolution and retirement across modes.
