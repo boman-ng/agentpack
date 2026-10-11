@@ -4,9 +4,32 @@ Apply this contract to the affected scope. The complete Dev suite consists of si
 
 ## Scope And Acceptance
 
-Establish the observable outcome, callers, constraints, and acceptance from the task and existing contracts. Choose the simplest complete solution for current requirements, considering the affected scope's cost to understand, change, verify, and operate. Use actual operating constraints; project size and hypothetical future needs do not justify extra mechanisms. Resolve consequential ambiguity before dependent actions while continuing independent work. Use the task discussion or existing project artifacts; no separate specification is required.
+Establish the observable outcome, callers, constraints, and acceptance from the task and existing contracts. Choose the simplest complete solution for current requirements, considering the affected scope's cost to understand, change, verify, and operate. Use actual operating constraints; project size and hypothetical future needs do not justify extra mechanisms. Use the task discussion or existing project artifacts; no separate specification is required.
 
 Audits remain read-only. Skill selection does not authorize unrelated maintenance, publication, deployment, destructive data operations, or release metadata changes.
+
+## Engineering Dimensions And User Alignment
+
+Keep these eight dimensions in view throughout development and subsequent iterations. Focus discussion and investigation on those affected by the task or new evidence. They guide contextual judgment rather than prescribe authoritative standards, fixed solutions, quality targets, or a checklist to complete for every task. Retain established project decisions and the architecture rules below.
+
+| Dimension | Consider where affected |
+|---|---|
+| Business and domain design | Intended user outcomes, business meaning, rule ownership, invariants, and acceptance. |
+| Architecture and code organization | Responsibilities, dependencies, and module boundaries; the benefits and maintenance costs of abstractions and structural choices. |
+| Data, state, and lifecycle | Ownership, valid transitions, persistence, concurrency, retention, deletion, and recovery obligations. |
+| Interfaces and system integration | The meaning of inputs, results, errors, and side effects; agreements between callers, providers, and external consumers. |
+| System quality and runtime guarantees | Correctness, reliability, security, privacy, performance, capacity, and cost; which guarantees matter and where they conflict. |
+| Testability and correctness verification | Observable guarantees, relevant evidence, realistic validation boundaries, and the value and cost of checks. |
+| Deployment, operations, and observability | Startup, operation, interruption, and recovery; signals that explain business outcomes and failures. |
+| Evolution and long-term maintenance | Coherent increments, migration obligations, retirement of old paths, and knowledge needed for later changes. |
+
+Investigate discoverable facts and existing decisions before asking the user. Align before implementing an unresolved choice that materially affects business behavior, public contracts, data obligations, security or privacy, cost, operation, or long-term maintenance. Explain the issue, relevant evidence and uncertainty, genuine alternatives, and their consequences in the user's language. Recommend an option when supported; ask an open question when the goal or acceptable tradeoff is unclear. Do not manufacture choices, thresholds, or consensus.
+
+Use the host's available native question tools, respecting their mode and role restrictions; use ordinary conversation when those tools are unavailable or unsuitable. An agent unable to reach the user passes the unresolved choice and known answers to the coordinating agent. Continue independent authorized work while an unanswered material choice holds only its dependent work. Routine, recoverable implementation details consistent with agreed direction remain autonomous.
+
+Carry explicit answers and established decisions forward. Revisit an affected choice when new evidence changes its assumptions or the user corrects the direction; explain the consequence and update the affected implementation and acceptance. Partial replies settle only what they answer; ask only about the remaining material choices. Silence and preselected options do not confirm intent. A recommendation is not a user decision.
+
+Use the simplest complete approach for the actual obligations and reuse existing capabilities. Attention to a dimension does not by itself justify a new mechanism, review, document, or question. Preserve necessary security and integrity controls under the rules below. Feed back material results, tradeoffs, and remaining effects; record significant decisions under the existing evolution rules rather than creating another decision log.
 
 ## Business Ownership And Architecture
 
