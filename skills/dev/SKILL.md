@@ -1,6 +1,6 @@
 ---
 name: dev
-description: Coordinate development, maintenance, verification, and Git delivery through the Dev suite. Use for work that spans these concerns or needs routing; dev-build, dev-clean, dev-test, and dev-git are independently callable for a settled scope.
+description: Coordinate development, maintenance, verification, and Git delivery through the Dev suite. Use for work that spans these concerns or needs routing; modes are independently callable for settled scope, and dev-issue handles explicitly requested issue work.
 ---
 
 # Dev
@@ -13,8 +13,11 @@ Read the [engineering contract](references/engineering-contract.md) and [verific
 | Simplify, consolidate, retire, or audit existing work | [dev-clean](../dev-clean/SKILL.md) |
 | Independently author validation or assess acceptance | [dev-test](../dev-test/SKILL.md) |
 | Manage branches, atomic commits, and Git delivery | [dev-git](../dev-git/SKILL.md) |
+| Assess, draft, or submit project issues when the user requests it | [dev-issue](../dev-issue/SKILL.md) |
 
 For mixed work, keep one acceptance scope and coordinate production and validation ownership under the shared policy. Use existing requirements and task context; create handoff artifacts only when they resolve a real coordination need. Simple work need not pass through every mode.
+
+Read `dev-issue` only for a user request to work on issues. Ordinary development does not automatically collect or file findings, and missing `dev-issue` does not block unrelated work. An issue does not replace a required in-scope fix.
 
 Use the shared [engineering dimensions and user alignment](references/engineering-contract.md#engineering-dimensions-and-user-alignment) to recognize affected concerns and tradeoffs across modes. Bring unresolved consequential choices to the user before dependent implementation, and carry agreed decisions across agents and stages.
 
