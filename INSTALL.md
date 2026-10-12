@@ -7,7 +7,7 @@ Install selected components in the target agent's supported user-level locations
 | Component / suite | Source | Install / entrypoint |
 |---|---|---|
 | Global instructions | [AgentPack](instructions/AGENTS.md) | The target agent's user instruction entrypoint |
-| Dev | [AgentPack](skills/dev/SKILL.md) | `dev`, `dev-build`, `dev-clean`, `dev-test`, `dev-git` as sibling directories |
+| Dev | [AgentPack](skills/dev/SKILL.md) | `dev`, `dev-build`, `dev-clean`, `dev-test`, `dev-git`, `dev-issue` as sibling directories; issue work is user-requested |
 | Design | [AgentPack](skills/design/SKILL.md) | `design`, `design-intent`, `design-build`, `design-review` as sibling directories; add Dev for implementation |
 | ARS | [Imbad0202/academic-research-skills-codex](https://github.com/Imbad0202/academic-research-skills-codex) | `academic-research-suite` |
 | Archify | [tt-a1i/archify](https://github.com/tt-a1i/archify) | `archify` |

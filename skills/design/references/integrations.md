@@ -4,9 +4,9 @@ Discover external skills by name through the host's available catalog, loading m
 
 ## Dev Owns Engineering
 
-Before production source edits, including HTML, CSS, components, and motion, discover the complete Dev suite (`dev`, `dev-build`, `dev-clean`, `dev-test`, `dev-git`) and read `dev-build` with its shared contracts. New or semantically changed validation uses `dev-test` under Dev's independent Tester policy.
+Before production source edits, including HTML, CSS, components, and motion, discover Dev's engineering skills (`dev`, `dev-build`, `dev-clean`, `dev-test`, `dev-git`) and read `dev-build` with its shared contracts. `dev-issue` is used only for user-requested issue work and is not a prerequisite for interface implementation. New or semantically changed validation uses `dev-test` under Dev's independent Tester policy.
 
-If Dev is incomplete, pause production edits and new validation, name the missing resource, and continue intent, planning, or read-only review. Observation and existing checks remain available. Generating a disposable explanation through an existing provider does not require Dev.
+If these engineering resources are incomplete, pause production edits and new validation, name the missing resource, and continue intent, planning, or read-only review. Observation and existing checks remain available. Generating a disposable explanation through an existing provider does not require Dev.
 
 ## Answer me with HTML
 

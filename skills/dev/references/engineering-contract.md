@@ -1,6 +1,6 @@
 # Engineering Contract
 
-Apply this contract to the affected scope. The complete Dev suite consists of sibling `dev`, `dev-build`, `dev-clean`, `dev-test`, and `dev-git` skills and their resources. Confirm the entrypoints and required references once per task; report missing resources rather than substituting another workflow. Already-read resources need not be reloaded.
+Apply this contract to the affected scope. The Dev suite consists of sibling `dev`, `dev-build`, `dev-clean`, `dev-test`, `dev-git`, and `dev-issue` skills and their resources. The first five provide the engineering workflow; `dev-issue` is needed only for user-requested issue work. Confirm the relevant entrypoints and required references once per task; report missing resources rather than substituting another workflow. Missing `dev-issue` does not block ordinary development or design implementation. Already-read resources need not be reloaded.
 
 ## Scope And Acceptance
 
