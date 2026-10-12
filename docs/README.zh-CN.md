@@ -9,7 +9,7 @@ AgentPack 是一套面向 AI Agent 的可复用指令、技能、参考资料和
 | 组件 | 用途 |
 |---|---|
 | [全局指令](../instructions/AGENTS.md) | 用共同的工作原则指导工程决策、沟通和任务交付 |
-| [Dev 套件](../skills/dev/SKILL.md) | 开发功能、修复问题、清理已有内容，分离开发与测试角色，并管理分支和提交 |
+| [Dev 套件](../skills/dev/SKILL.md) | 开发功能、修复问题、清理已有内容，分离开发与测试角色，管理 Git 交付，并按用户要求整理或提交有价值的项目 Issue |
 | [Design 套件](../skills/design/SKILL.md) | 将模糊想法转化为明确需求，规划和构建界面，评审可用性与视觉质量 |
 | [上游技能](#上游技能) | 按需增加界面设计、动效、研究、图表和浏览器自动化等专业技能 |
 | [AnySearch MCP](https://github.com/anysearch-ai/anysearch-mcp-server) | 为 Agent 提供可选的网络搜索连接 |
@@ -64,6 +64,10 @@ AgentPack 是一套面向 AI Agent 的可复用指令、技能、参考资料和
 | 仓库 | 用途 | License |
 |---|---|---|
 | [System Design 101 — ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | 用图解介绍系统架构、数据库、分布式系统与工程取舍 | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
+
+## 反馈
+
+向 AgentPack 报告问题或提出改进建议，请阅读 [ISSUE.md](../ISSUE.md)，无需安装 AgentPack。在开发其它项目时发现的问题，可要求使用 [dev-issue](../skills/dev-issue/SKILL.md)，并说明目标项目。
 
 ## 许可
 

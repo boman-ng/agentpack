@@ -9,7 +9,7 @@ AgentPack is a reusable collection of instructions, skills, reference material, 
 | Component | Use it to |
 |---|---|
 | [Global instructions](instructions/AGENTS.md) | Guide engineering decisions, communication, and task completion with shared working principles |
-| [Dev suite](skills/dev/SKILL.md) | Develop features, fix bugs, simplify existing work, separate development from testing, and manage branches and commits |
+| [Dev suite](skills/dev/SKILL.md) | Develop features, fix bugs, simplify existing work, separate development from testing, manage Git delivery, and prepare or submit valuable project issues on request |
 | [Design suite](skills/design/SKILL.md) | Turn rough ideas into clear requirements, shape and build interfaces, and review usability and visual quality |
 | [Upstream skills](#upstream-skills) | Add specialist skills for interface design, animation, research, diagrams, and browser automation |
 | [AnySearch MCP](https://github.com/anysearch-ai/anysearch-mcp-server) | Give your agent an optional connection to web search |
@@ -64,6 +64,10 @@ These resources are for reading and reference; they are not installed as skills.
 | Repository | Use it for | License |
 |---|---|---|
 | [System Design 101 — ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | Visual explanations of system architecture, databases, distributed systems, and engineering tradeoffs | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
+
+## Feedback
+
+To report a problem or suggest an improvement to AgentPack, follow [ISSUE.md](ISSUE.md). It works without installing AgentPack. For issues found while developing another project, ask for [dev-issue](skills/dev-issue/SKILL.md) and identify the target project.
 
 ## License
 
