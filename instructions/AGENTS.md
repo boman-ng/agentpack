@@ -33,7 +33,7 @@ Apply these durable defaults where relevant. They guide decisions, not checklist
 - **DIP:** Isolate policy from implementation details at real dependency boundaries; interfaces are not required everywhere.
 - **ISP:** Expose the narrow contract actual callers need, without ceremonial fragmentation.
 - **LoD:** Use direct collaborators' contracts instead of reaching through their internals.
-- **Information hiding:** Keep changeable implementation decisions inside their owning module.
+- **Information hiding:** Keep changeable implementation decisions inside their owning module; reduce what callers must understand to use it correctly.
 - **Composition over inheritance:** Use inheritance only for a genuine subtype that satisfies LSP.
 - **Breaking changes by default:** Retain compatibility only when explicitly required within authorized code scope; resolve durable-data and out-of-scope impacts separately.
 - **Proportionate defense:** Remove speculative retries, fallbacks, swallowed errors, and duplicate checks. Keep controls justified by concrete failures, trust boundaries, or required protection and recovery outcomes.

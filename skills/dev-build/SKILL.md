@@ -15,7 +15,9 @@ Use the shared [engineering dimensions and user alignment](../dev/references/eng
 
 ## Implement A Complete Increment
 
-Choose a coherent business capability or migration step with a verifiable result. Implement the simplest complete behavior under the shared architecture and evolution rules: correct the owning model or contract, update affected callers and integration points, and preserve the required invariants.
+Choose a coherent business capability or migration step whose contracts, dependencies, and verification can be understood together. Split larger work at independently verifiable boundaries to obtain useful feedback before dependent work accumulates; use findings to shape subsequent increments. Cross only the layers needed for the outcome, without adding transition machinery merely to make a smaller slice.
+
+Implement the simplest complete behavior under the shared architecture and evolution rules: correct the owning model or contract, update affected callers and integration points, and preserve the required invariants.
 
 When implementation reveals facts that change an agreed tradeoff, explain their impact and real alternatives to the user before the dependent change. Apply the response to the affected design and acceptance while continuing independent authorized work.
 

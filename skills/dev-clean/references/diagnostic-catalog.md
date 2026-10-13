@@ -13,7 +13,7 @@ Size, unfamiliarity, authorship, static metrics, or passing tests alone do not j
 | Obsolete behavior | The requirement ended or the path cannot serve a current consumer | Remove the behavior and its dependent artifacts | Rare recovery, migration, or administrative duties |
 | Duplicate knowledge | The same semantics and change reasons have multiple owners | Consolidate under the existing owner | Separate trust, deployment, or transaction boundaries |
 | Misplaced responsibility | An ownership violation creates coupling or exposes internals | Move the decision to its owner and narrow callers | Composition roots and actual protocol translation |
-| Speculative abstraction | Current variation does not justify the indirection | Inline, narrow, or reuse a project primitive | Required contracts or independent implementations |
+| Speculative abstraction | Whether removing it eliminates unnecessary complexity or pushes required knowledge and obligations back to callers | Inline, narrow, or reuse a project primitive when the indirection serves no current obligation | Protocol translation, isolation, recovery duties, required contracts, or real variation, even with one external implementation |
 | Compatibility residue | In-scope callers can migrate and no explicit requirement retains the old contract | Update callers and retire old code, tests, configuration, and documentation | Durable data, out-of-scope consumers, or an explicit compatibility requirement |
 | Inflated state model | States duplicate semantics or permit unsupported transitions | Consolidate around the actual lifecycle | Persisted historical states and failure-only transitions |
 | Dependency or configuration excess | Supported requirements do not need the extra surface | Remove it or use an existing capability | Deployment variation and platform constraints |
@@ -39,6 +39,8 @@ Prefer existing declarative configuration over executable configuration when it 
 
 Inspect loaded scopes, overrides, descriptions, prompts, bodies, references, and generated sources together. On-disk content may differ from active session instructions.
 
-Remove conflicting scope/completion rules, duplicate owners, unconditional ceremonies, and task-specific history from durable instructions. Preserve direct entrypoints and discoverable required resources. Keep optional detail in references.
+Remove conflicting scope/completion rules, duplicate owners, unconditional ceremonies, and task-specific history from durable instructions. Keep shared requirements reachable through entrypoints or explicit required references. References must name their purpose and the conditions for reading them; a resource needed on one branch remains required on that branch. Keep a concept's definition, rules, and exceptions together, with branch-specific detail loaded only when relevant.
+
+For observed mechanical errors, inspect existing lint, type, build, test, and CI commands and their actual wiring before adding steering text. Prefer repairing or extending suitable deterministic checks when the benefit justifies their upkeep. Contextual engineering judgments remain the responsibility of implementation and review; new validation or changed pass conditions follow the [verification policy](../../dev/references/verification-policy.md).
 
 Check whether the resulting guidance changes useful decisions: respects explicit goals instead of inferred intent, distinguishes observations from claims, and preserves necessary protections without speculative procedures. For consequential instruction changes, use a few representative tasks and distinguish rule reasoning from executed behavior; static consistency alone does not prove runtime improvement.
