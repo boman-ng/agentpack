@@ -1,4 +1,4 @@
-name: AgentPack validation
+name: Skills validation
 
 on:
   pull_request:
@@ -10,6 +10,7 @@ permissions:
   contents: read
 
 jobs:
+  # Keep this check name: the master and develop rulesets require it.
   agentpack-validation:
     name: agentpack-validation
     runs-on: ubuntu-24.04
@@ -41,11 +42,11 @@ jobs:
 
       - name: Select tracked Markdown
         shell: bash
-        run: git ls-files '*.md' > "$RUNNER_TEMP/agentpack-markdown-files.txt"
+        run: git ls-files '*.md' > "$RUNNER_TEMP/skills-markdown-files.txt"
 
       - name: Check local Markdown links and anchors
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
           lycheeVersion: v0.24.2
-          args: --offline --include-fragments --no-progress --files-from "$RUNNER_TEMP/agentpack-markdown-files.txt"
-          output: ${{ runner.temp }}/agentpack-lychee-report.md
+          args: --offline --include-fragments --no-progress --files-from "$RUNNER_TEMP/skills-markdown-files.txt"
+          output: ${{ runner.temp }}/skills-lychee-report.md

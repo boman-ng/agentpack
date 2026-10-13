@@ -1,74 +1,86 @@
-# AgentPack
+# Skills
 
-[English](../README.md) | [简体中文](README.zh-CN.md)
+[English](../README.md) | **简体中文**
 
-AgentPack 是一套面向 AI Agent 的可复用指令、技能、参考资料和可选工具连接。它为 Agent 提供一致的工作方式，帮助你澄清需求、开发软件、设计界面和评审结果。
+Skills 为 AI Agent 提供**通用指令**和 **Dev**、**Design** 技能套件。本仓库还整理了可选的外部技能、MCP 服务和阅读资料。
 
-## 可以做什么
+[本仓库组件](#本仓库组件) · [开始使用](#开始使用) · [外部目录](#外部技能与-mcp-服务) · [参考资料](#参考资料)
 
-| 组件 | 用途 |
-|---|---|
-| [全局指令](../instructions/AGENTS.md) | 用共同的工作原则指导工程决策、沟通和任务交付 |
-| [Dev 套件](../skills/dev/SKILL.md) | 开发功能、修复问题、清理已有内容，分离开发与测试角色，管理 Git 交付，并按用户要求整理或提交有价值的项目 Issue |
-| [Design 套件](../skills/design/SKILL.md) | 将模糊想法转化为明确需求，规划和构建界面，评审可用性与视觉质量 |
-| [上游技能](#上游技能) | 按需增加界面设计、动效、研究、图表和浏览器自动化等专业技能 |
-| [AnySearch MCP](https://github.com/anysearch-ai/anysearch-mcp-server) | 为 Agent 提供可选的网络搜索连接 |
+<a id="本仓库组件"></a>
 
-需要实现界面时，同时选择 Design 和 Dev。还可选装 **Answer me with HTML** 套件，通过交互页面澄清需求：在页面中回答，再将 Reply 复制回聊天。
+## 📦 本仓库组件
 
-## 开始使用
+| 领域 | 组件 | 用途 |
+|---|---|---|
+| 通用 | [全局指令](../instructions/AGENTS.md) | 指导工程决策、沟通和任务交付的工作原则 |
+| 软件工程 | [Dev 套件](../skills/dev/SKILL.md) | 开发功能、修复问题、维护已有内容、独立验证改动、管理 Git 交付，并按要求起草或提交项目 Issue |
+| 界面设计 | [Design 套件](../skills/design/SKILL.md) | 澄清需求、规划和构建界面、评审可用性与视觉质量 |
+
+- **界面实现：** 同时选择 Design 和 Dev。[外部技能与 MCP 服务](#外部技能与-mcp-服务)提供其他能力。
+- **可选需求澄清：** Answer me with HTML 可通过交互页面帮助澄清需求：在页面中回答，再将 Reply 复制回聊天。
+
+<a id="开始使用"></a>
+
+## 🚀 开始使用
+
+### 安装
 
 将以下请求发给具有 Git 和文件访问能力的 Agent：
 
 ```text
-从默认分支的最新内容安装 https://github.com/boman-ng/agentpack。
+从默认分支的最新内容安装 https://github.com/boman-ng/skills。
 针对我希望配置的 Agent 工具，按照 INSTALL.md 操作。
-协助我选择指令、完整技能套件和可选 MCP 连接。
+协助我选择指令、完整技能套件和可选 MCP 服务。
 列出将替换或移除的内容；在我确认范围后，
 备份、安装并验证所选组件。
 ```
 
-安装作用于用户级配置。从[安装矩阵](../INSTALL.md)中选择组件。上游套件默认使用默认分支的最新内容，也可明确指定版本。
+按照[安装说明](../INSTALL.md)，使用目标 Agent 支持的安装方式，将所选组件安装到用户级配置中。来源仓库默认使用默认分支的最新内容，也可明确指定版本。
+
+### 更新
 
 更新时，让 Agent 更新你已选择的组件。需要长期保留的定制应放在自己的仓库副本或 fork 中，以便更新时重新应用。
 
-## 引用的仓库
+<a id="外部技能与-mcp-服务"></a>
 
-### 上游技能
+## 🌐 外部技能与 MCP 服务
 
-每行是一个可选套件。按需选择能力，并根据上游当前说明安装完整套件。
+以下项目需另行安装。按领域选择，并遵循各项目当前的安装说明。安装技能套件时，保留完整套件及其必需的资源、许可和声明。
 
-| 仓库 | 用途 | License |
-|---|---|---|
-| [ARS — Imbad0202/academic-research-skills-codex](https://github.com/Imbad0202/academic-research-skills-codex) | 调研、文献综述、实验规划、学术写作与稿件评审 | CC BY-NC 4.0 |
-| [Archify — tt-a1i/archify](https://github.com/tt-a1i/archify) | 生成独立 HTML 架构图、流程图和数据流图，支持交互浏览 | MIT |
-| [Lieflat Charts — larashero3-dotcom/lieflat-charts](https://github.com/larashero3-dotcom/lieflat-charts) | 基于模板生成 HTML 数据图表和报告 | [PolyForm Noncommercial 1.0.0](https://github.com/larashero3-dotcom/lieflat-charts/blob/main/LICENSE) |
-| [Answer me with HTML — QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html) | 生成交互式解释与澄清页面，将页面中的回复复制回聊天 | MIT |
-| [Impeccable — pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 界面设计、实现、无障碍与细节优化 | Apache-2.0 |
-| [Browser — vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | 浏览器交互、内容提取、测试，以及受支持的 Electron 应用自动化 | Apache-2.0 |
-| [Emil — emilkowalski/skills](https://github.com/emilkowalski/skills) | Web 与原生界面的设计工程和动画 | MIT |
-| [GSAP — greensock/gsap-skills](https://github.com/greensock/gsap-skills) | 动画、时间线、滚动交互、框架集成与性能优化 | 技能采用 MIT；运行库条款独立 |
-| [Motion — motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | Motion 与 CSS 动画指导，以及免费 Motion MCP | 上游声明为 MIT |
-| [LottieFiles — LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill) | 跨动画系统的动效方向、时序、缓动与编排 | MIT |
+| 领域 | 仓库 | 类型 | 用途 | 许可 |
+|---|---|---|---|---|
+| 界面设计 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | 技能套件 | 界面设计、实现、无障碍与细节优化 | Apache-2.0 |
+| 界面设计 | [emilkowalski/skills](https://github.com/emilkowalski/skills) | 技能套件 | Web 与原生界面的设计工程和动画 | MIT |
+| 动画 | [greensock/gsap-skills](https://github.com/greensock/gsap-skills) | 技能套件 | GSAP 动画、时间线、滚动交互、框架集成与性能优化 | 技能采用 MIT；运行库条款独立 |
+| 动画 | [motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | 技能与 MCP | Motion 与 CSS 动画指导，以及免费 Motion MCP；不含 `motion-plus` | MIT（项目声明） |
+| 动画 | [LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill) | 技能 | 跨动画系统的动效方向、时序、缓动与编排 | MIT |
+| 学术研究 | [Imbad0202/academic-research-skills](https://github.com/Imbad0202/academic-research-skills) | 技能套件 | Academic Research Skills（ARS）：文献检索与综述、研究规划、学术写作和稿件评审 | [CC BY-NC 4.0](https://github.com/Imbad0202/academic-research-skills/blob/main/LICENSE) |
+| 图表与可视化 | [tt-a1i/archify](https://github.com/tt-a1i/archify) | 技能 | 生成独立 HTML 架构图、流程图和数据流图，支持交互浏览 | MIT |
+| 图表与可视化 | [larashero3-dotcom/lieflat-charts](https://github.com/larashero3-dotcom/lieflat-charts) | 技能 | 基于模板生成 HTML 数据图表和报告 | [PolyForm Noncommercial 1.0.0](https://github.com/larashero3-dotcom/lieflat-charts/blob/main/LICENSE) |
+| 图表与可视化 | [QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html) | 技能套件 | 生成交互式解释与澄清页面，将页面中的回复复制回聊天 | MIT |
+| 浏览器自动化 | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | 技能 | 浏览器交互、内容提取、测试，以及受支持的 Electron 应用自动化 | Apache-2.0 |
+| 网络搜索 | [anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server) | MCP | 通过 MCP 提供网络搜索 | Apache-2.0 |
 
-### 工具连接
+<a id="参考资料"></a>
 
-| 仓库 | 用途 | License |
-|---|---|---|
-| [AnySearch — anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server) | 通过 MCP 提供可选的网络搜索，按上游说明配置 | Apache-2.0 |
-
-### 参考资料
+## 📚 参考资料
 
 这些资源用于阅读和参考，不作为技能安装。
 
-| 仓库 | 用途 | License |
+| 仓库 | 用途 | 许可 |
 |---|---|---|
-| [System Design 101 — ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | 用图解介绍系统架构、数据库、分布式系统与工程取舍 | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
+| [ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | System Design 101：用图解介绍系统架构、数据库、分布式系统与工程取舍 | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
+| [mattpocock/skills](https://github.com/mattpocock/skills/tree/49dd158d1076134a641b33efb035946536778336) | 此参考快照为 Skills 的模块设计、领域语言、增量反馈、决策依赖和指令组织提供参考 | [MIT](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/LICENSE) |
 
-## 反馈
+<a id="反馈"></a>
 
-向 AgentPack 报告问题或提出改进建议，请阅读 [ISSUE.md](../ISSUE.md)，无需安装 AgentPack。在开发其它项目时发现的问题，可要求使用 [dev-issue](../skills/dev-issue/SKILL.md)，并说明目标项目。
+## 💬 反馈
 
-## 许可
+- **Skills：** 报告问题或提出改进建议，请阅读 [ISSUE.md](../ISSUE.md)，无需安装 Skills。
+- **其他项目：** 在开发其他项目时发现的问题，可要求使用 [dev-issue](../skills/dev-issue/SKILL.md)，并说明目标项目。
 
-AgentPack 的原创内容采用 [MIT 许可](../LICENSE)。引用的仓库保留各自的许可和声明。
+<a id="许可"></a>
+
+## 📜 许可
+
+本仓库的原创内容采用 [MIT 许可](../LICENSE)。外部项目保留各自的许可和声明。

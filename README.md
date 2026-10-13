@@ -1,74 +1,86 @@
-# AgentPack
+# Skills
 
-[English](README.md) | [简体中文](docs/README.zh-CN.md)
+**English** | [简体中文](docs/README.zh-CN.md)
 
-AgentPack is a reusable collection of instructions, skills, reference material, and optional tool connections for AI agents. It gives your agent consistent workflows for clarifying requirements, developing software, designing interfaces, and reviewing results.
+Skills provides **shared instructions** and the **Dev** and **Design** skill suites for AI agents. This repository also lists optional external skills, MCP servers, and reading resources.
 
-## What you can do
+[Components](#included-components) · [Get started](#get-started) · [External catalog](#external-skills-and-mcp-servers) · [References](#reference-material)
 
-| Component | Use it to |
-|---|---|
-| [Global instructions](instructions/AGENTS.md) | Guide engineering decisions, communication, and task completion with shared working principles |
-| [Dev suite](skills/dev/SKILL.md) | Develop features, fix bugs, simplify existing work, separate development from testing, manage Git delivery, and prepare or submit valuable project issues on request |
-| [Design suite](skills/design/SKILL.md) | Turn rough ideas into clear requirements, shape and build interfaces, and review usability and visual quality |
-| [Upstream skills](#upstream-skills) | Add specialist skills for interface design, animation, research, diagrams, and browser automation |
-| [AnySearch MCP](https://github.com/anysearch-ai/anysearch-mcp-server) | Give your agent an optional connection to web search |
+<a id="included-components"></a>
 
-For interface implementation, select both Design and Dev. Add the optional **Answer me with HTML** suite for interactive clarification pages: answer on the page, then copy its Reply into chat.
+## 📦 Included components
 
-## Get started
+| Domain | Component | Description |
+|---|---|---|
+| General | [Global instructions](instructions/AGENTS.md) | Working principles for engineering decisions, communication, and task completion |
+| Software engineering | [Dev suite](skills/dev/SKILL.md) | Develop features, fix bugs, maintain existing work, verify changes independently, manage Git delivery, and draft or submit project issues on request |
+| Interface design | [Design suite](skills/design/SKILL.md) | Clarify requirements, plan and build interfaces, and review usability and visual quality |
+
+- **UI implementation:** Select both Design and Dev. The [external catalog](#external-skills-and-mcp-servers) lists additional capabilities.
+- **Optional clarification:** Answer me with HTML can help clarify requirements through interactive pages: answer on the page, then copy its Reply into chat.
+
+<a id="get-started"></a>
+
+## 🚀 Get started
+
+### Install
 
 Paste this request into an agent with Git and filesystem access:
 
 ```text
-Install https://github.com/boman-ng/agentpack from its latest default-branch content.
+Install https://github.com/boman-ng/skills from its latest default-branch content.
 Follow INSTALL.md for the agent tool I want to configure.
-Help me choose instructions, complete skill suites, and optional MCP connections.
+Help me choose instructions, complete skill suites, and optional MCP servers.
 Show what will be replaced or removed. After I confirm the scope,
 back up, install, and verify the selected components.
 ```
 
-Installation applies to your user-level setup. Choose components from the [installation matrix](INSTALL.md). Upstream suites use their latest default-branch content unless you request a specific version.
+Follow the [installation guide](INSTALL.md) to install selected components at user scope through your agent's supported installation mechanisms. Source repositories use their latest default-branch content unless you request a specific version.
+
+### Update
 
 To update, ask your agent to update your selected components. Keep lasting customizations in your checkout or fork so they can be reapplied during updates.
 
-## Referenced repositories
+<a id="external-skills-and-mcp-servers"></a>
 
-### Upstream skills
+## 🌐 External skills and MCP servers
 
-Each row is an optional suite. Select the capabilities you need and install the complete suite using its current upstream instructions.
+These projects are installed separately. Choose by domain and follow each project's current installation instructions. Install complete skill suites with their required resources, licenses, and notices.
 
-| Repository | Use it for | License |
-|---|---|---|
-| [ARS — Imbad0202/academic-research-skills-codex](https://github.com/Imbad0202/academic-research-skills-codex) | Research, literature reviews, experiments, academic writing, and manuscript review | CC BY-NC 4.0 |
-| [Archify — tt-a1i/archify](https://github.com/tt-a1i/archify) | Interactive architecture, workflow, and data-flow diagrams in standalone HTML | MIT |
-| [Lieflat Charts — larashero3-dotcom/lieflat-charts](https://github.com/larashero3-dotcom/lieflat-charts) | Template-based HTML data visualizations and reports | [PolyForm Noncommercial 1.0.0](https://github.com/larashero3-dotcom/lieflat-charts/blob/main/LICENSE) |
-| [Answer me with HTML — QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html) | Interactive explanation and clarification pages with replies copied back to chat | MIT |
-| [Impeccable — pbakaus/impeccable](https://github.com/pbakaus/impeccable) | Interface design, implementation, accessibility, and refinement | Apache-2.0 |
-| [Browser — vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | Browser interaction, extraction, testing, and supported Electron app automation | Apache-2.0 |
-| [Emil — emilkowalski/skills](https://github.com/emilkowalski/skills) | Design engineering and animation for web and native interfaces | MIT |
-| [GSAP — greensock/gsap-skills](https://github.com/greensock/gsap-skills) | Animation, timelines, scroll interactions, framework integration, and performance | MIT for skills; runtime terms are separate |
-| [Motion — motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | Motion and CSS animation guidance, with the free Motion MCP | MIT, declared by upstream |
-| [LottieFiles — LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill) | Motion direction, timing, easing, and choreography across animation systems | MIT |
+| Domain | Repository | Type | Description | License |
+|---|---|---|---|---|
+| Interface design | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | Skill suite | Interface design, implementation, accessibility, and refinement | Apache-2.0 |
+| Interface design | [emilkowalski/skills](https://github.com/emilkowalski/skills) | Skill suite | Design engineering and animation for web and native interfaces | MIT |
+| Animation | [greensock/gsap-skills](https://github.com/greensock/gsap-skills) | Skill suite | GSAP animation, timelines, scroll interactions, framework integration, and performance | MIT for skills; runtime terms are separate |
+| Animation | [motiondivision/ai-kit](https://github.com/motiondivision/ai-kit) | Skill + MCP | Motion and CSS animation guidance, with the free Motion MCP; excludes `motion-plus` | MIT (as stated by the project) |
+| Animation | [LottieFiles/motion-design-skill](https://github.com/LottieFiles/motion-design-skill) | Skill | Motion direction, timing, easing, and choreography across animation systems | MIT |
+| Academic research | [Imbad0202/academic-research-skills](https://github.com/Imbad0202/academic-research-skills) | Skill suite | Academic Research Skills (ARS): literature searches and reviews, research planning, academic writing, and manuscript review | [CC BY-NC 4.0](https://github.com/Imbad0202/academic-research-skills/blob/main/LICENSE) |
+| Diagrams and visualization | [tt-a1i/archify](https://github.com/tt-a1i/archify) | Skill | Interactive architecture, workflow, and data-flow diagrams in standalone HTML | MIT |
+| Diagrams and visualization | [larashero3-dotcom/lieflat-charts](https://github.com/larashero3-dotcom/lieflat-charts) | Skill | Template-based HTML data visualizations and reports | [PolyForm Noncommercial 1.0.0](https://github.com/larashero3-dotcom/lieflat-charts/blob/main/LICENSE) |
+| Diagrams and visualization | [QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html) | Skill suite | Interactive explanation and clarification pages with replies copied back to chat | MIT |
+| Browser automation | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | Skill | Browser interaction, content extraction, testing, and supported Electron app automation | Apache-2.0 |
+| Web search | [anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server) | MCP | Web search through MCP | Apache-2.0 |
 
-### Tool connections
+<a id="reference-material"></a>
 
-| Repository | Use it for | License |
-|---|---|---|
-| [AnySearch — anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server) | Optional web search through MCP; follow upstream setup | Apache-2.0 |
-
-### Reference material
+## 📚 Reference material
 
 These resources are for reading and reference; they are not installed as skills.
 
-| Repository | Use it for | License |
+| Repository | Description | License |
 |---|---|---|
-| [System Design 101 — ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | Visual explanations of system architecture, databases, distributed systems, and engineering tradeoffs | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
+| [ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | System Design 101: visual explanations of system architecture, databases, distributed systems, and engineering tradeoffs | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
+| [mattpocock/skills](https://github.com/mattpocock/skills/tree/49dd158d1076134a641b33efb035946536778336) | This reference snapshot informed Skills' guidance on module design, domain language, incremental feedback, decision dependencies, and instruction organization | [MIT](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/LICENSE) |
 
-## Feedback
+<a id="feedback"></a>
 
-To report a problem or suggest an improvement to AgentPack, follow [ISSUE.md](ISSUE.md). It works without installing AgentPack. For issues found while developing another project, ask for [dev-issue](skills/dev-issue/SKILL.md) and identify the target project.
+## 💬 Feedback
 
-## License
+- **Skills:** To report a problem or suggest an improvement, follow [ISSUE.md](ISSUE.md). It works without installing Skills.
+- **Other projects:** For issues found while developing another project, ask for [dev-issue](skills/dev-issue/SKILL.md) and identify the target project.
 
-AgentPack's original material is licensed under [MIT](LICENSE). Referenced repositories retain their own licenses and notices.
+<a id="license"></a>
+
+## 📜 License
+
+Original material in this repository is licensed under [MIT](LICENSE). External projects retain their own licenses and notices.

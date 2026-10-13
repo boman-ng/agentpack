@@ -19,7 +19,7 @@ Keep required in-scope repairs in the development task. Filing an issue does not
 
 ## Establish The Destination
 
-Use the user's specified project or a destination already established in the task. Inspect repository instructions, contribution guidance, and applicable issue templates to find its actual tracker and reporting channel. A checkout's `origin` may be a fork, and a project may use a central tracker elsewhere. Ask only when the destination remains ambiguous; never default to AgentPack.
+Use the user's specified project or a destination already established in the task. Inspect repository instructions, contribution guidance, and applicable issue templates to find its actual tracker and reporting channel. A checkout's `origin` may be a fork, and a project may use a central tracker elsewhere. Ask only when the destination remains ambiguous; never default to `boman-ng/skills`.
 
 Search relevant open and closed issues, reading likely matches and their resolution; inspect related pull requests where useful. For the same unresolved concern, return its link and identify any new information. Similar symptoms alone do not establish duplication. A closed issue may be declined or superseded rather than fixed; explain new facts or a recurrence instead of reopening a rejected proposal under different wording. If search is unavailable, disclose that limitation without discarding the draft.
 
