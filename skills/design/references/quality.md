@@ -10,7 +10,7 @@ For small tasks, reuse the established direction and relevant checks. For a new 
 - [Webby criteria](https://www.webbyawards.com/judging-criteria/): category-appropriate content, visual design, structure, functionality, interaction, innovation, and overall experience.
 - [FWA's account](https://thefwa.com/FWA25/25.html): creativity, originality, and technical excellence.
 
-Apply relevant qualities, not a fabricated score. Use the [two-book principles](design-principles.md) for concrete decisions about hierarchy, typography, grouping, alignment, color, and understandable interactions. Inspect affected content, assets, states, accessibility, responsiveness, and performance against project/platform requirements. Decoration must not impair the task.
+Apply relevant qualities, not a fabricated score. Use the [design principles](design-principles.md) for concrete decisions about hierarchy, typography, grouping, alignment, color, and understandable interactions. Inspect affected content, assets, states, accessibility, responsiveness, and performance against project/platform requirements. Decoration must not impair the task.
 
 Match checks to claims: screenshots show composition; runtime interaction checks behavior; real-user observation can reveal comprehension problems. Seek early user observation when useful and available within scope. Partial reference access or unavailable runtime checks limit what can be concluded.
 
