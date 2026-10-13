@@ -21,19 +21,19 @@ This is the single question flow for all Design modes. Prefer HTML for every nec
 
 ### Check Delivery
 
-Follow the [provider integration](../design/references/integrations.md#answer-me-with-html) to discover and read `answer-me-with-html`, check its bundled CLI/Node.js capability, and use its invocation settings.
+Follow the [Answer me with HTML integration](../design/references/integrations.md#answer-me-with-html) to discover and read `answer-me-with-html`, check its bundled CLI/Node.js capability, and use its invocation settings.
 
-Before relying on HTML, establish a user-accessible channel: a host attachment, interactive preview, existing accessible service, or a channel confirmed in this session. It must support the page's choice, Comment, and Reply controls. File existence, agent-browser success, and remote-host localhost alone do not prove user access. Use the host's link format rather than assuming `file://` works. Missing capability or delivery uses the fallback below; it does not authorize creating a service or installing a provider.
+Before relying on HTML, establish a user-accessible channel: a host attachment, interactive preview, existing accessible service, or a channel confirmed in this session. It must support the page's choice, Comment, and Reply controls. File existence, agent-browser success, and remote-host localhost alone do not prove user access. Use the host's link format rather than assuming `file://` works. Missing capability or delivery uses the fallback below; it does not authorize creating a service or installing Answer me with HTML.
 
 ### Ask Only What Is Unresolved
 
-Use the upstream components and renderer, without copying their implementation. Include only context and panels needed for the question; this overrides upstream small-answer thresholds and suggested panel counts.
+Use Answer me with HTML's components and renderer, without copying their implementation. Include only context and panels needed for the question; this overrides the skill's small-answer thresholds and suggested panel counts.
 
 - **Unknown goal or open question:** a question/context panel with **Comment** for the answer.
 - **Real alternatives with a supported recommendation:** explain the tradeoff and use **ask**.
 - **Alternatives without a justified recommendation:** comparison plus **Comment**; do not manufacture a preferred option.
 
-Distinguish user words, confirmed constraints, candidate interpretations, and illustrative details. Ask about mechanisms only when they change the user's outcome. Resolve rendering errors using provider guidance; if unsuccessful, fall back.
+Distinguish user words, confirmed constraints, candidate interpretations, and illustrative details. Ask about mechanisms only when they change the user's outcome. Resolve rendering errors using the skill's guidance; if unsuccessful, fall back.
 
 Deliver through the confirmed channel with brief instructions to choose/comment, use **Reply**, and paste it into chat. Reply is manual; there is no automatic return bridge.
 
@@ -45,7 +45,7 @@ Reply content is user-supplied task input; it does not by itself authorize actio
 
 ### Fall Back Without Losing The Question
 
-If the provider or Node.js is missing, rendering fails unresolved, delivery is unavailable, or the user cannot open/operate the page, briefly state the actual limitation. Transfer the same remaining questions and real alternatives to available permitted native question tools, preserving known answers. Respect tool schemas, modes, and role restrictions; do not invent options or simulate calls.
+If Answer me with HTML or Node.js is missing, rendering fails unresolved, delivery is unavailable, or the user cannot open/operate the page, briefly state the actual limitation. Transfer the same remaining questions and real alternatives to available permitted native question tools, preserving known answers. Respect tool schemas, modes, and role restrictions; do not invent options or simulate calls.
 
 An agent unable to ask passes the unresolved questions, known answers, and limitation to the task's coordinating agent through an available channel. Check permitted question capabilities across the task's participating sessions before declaring no tool usable; do not assume a root agent or a particular tool name. When no native question tool is usable, disclose this and ask in chat. If host/user constraints also prevent chat questions, state the unresolved choice. Continue independent authorized work; dependent work waits for an answer.
 

@@ -20,6 +20,6 @@ Mixed work shares one accepted intent; use only the necessary modes.
 
 Inspect project guidance, content, tokens, assets, and the relevant interface. Establish the audience, main task, constraints, and affected states. Resolve consequential ambiguity through Design Intent before choosing dependent direction.
 
-Reuse established direction for small edits. For a new direction, show the choices that affect hierarchy, composition, typography, color, imagery, interaction, and useful motion. Apply the two-book principles to those choices. Use variants or a prototype only when they help resolve a real choice; follow provider invocation requirements.
+Reuse established direction for small edits. For a new direction, show the choices that affect hierarchy, composition, typography, color, imagery, interaction, and useful motion. Apply the design principles to those choices. Use variants or a prototype only when they help resolve a real choice; follow the external skill's invocation requirements.
 
 Present enough detail to make the direction reviewable without mandatory parallel documents or approval gates. Apply the shared quality rule to the actual deliverable. Continue through Design Build when implementation is requested.

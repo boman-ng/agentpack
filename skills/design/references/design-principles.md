@@ -1,8 +1,8 @@
-# Two-Book Decision Matrix
+# Design Principles
 
-Apply the relevant lenses to concrete design choices. These frontend applications draw on the linked excerpts and previews of Steve Krug's *Don't Make Me Think, Revisited* and Robin Williams's *The Non-Designer's Design Book*.
+Apply the relevant principles to concrete design choices. These frontend applications draw on the linked excerpts and previews of Steve Krug's *Don't Make Me Think, Revisited* and Robin Williams's *The Non-Designer's Design Book*.
 
-| Lens and source | Decision it can change | Evidence to inspect |
+| Principle and source | Design decision | Evidence to inspect |
 |---|---|---|
 | Krug: remove avoidable ambiguity ([excerpt](https://www.peachpit.com/articles/article.aspx?p=2209309)) | Replace an obscure label or uncertain affordance with language and cues suited to the audience. Preserve deliberate play where the user's goal calls for it. | At the actual entry state, can a user locate the main action and distinguish an action from decoration? Identify the exact label or cue creating doubt. |
 | Krug: make choices understandable ([excerpt](https://www.peachpit.com/articles/article.aspx?p=2170656)) | Explain real alternatives at the decision point; remove needless categorization. Do not optimize click count by combining distinct confusing choices. | Follow a realistic task through the choice. Check that labels predict the destination or result, and guidance is available when needed. |

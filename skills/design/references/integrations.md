@@ -12,11 +12,11 @@ If these engineering resources are incomplete, pause production edits and new va
 
 Use [Design Intent's clarification flow](../../design-intent/SKILL.md#clarification-flow) for all interaction decisions. Discover `answer-me-with-html` and read its complete skill; reuse its components and bundled renderer. It is an optional selection, recommended alongside Design.
 
-Invoke `node "<discovered-directory>/scripts/am.mjs"` using the actual skill directory in place of upstream's `${CLAUDE_SKILL_DIR}`. The bundle needs Node.js >=20, without `npm install`, a global CLI, or rebuilding.
+Invoke `node "<discovered-directory>/scripts/am.mjs"` using the actual skill directory in place of the skill's `${CLAUDE_SKILL_DIR}`. The bundle needs Node.js >=20, without `npm install`, a global CLI, or rebuilding.
 
 For ordinary clarification, use per-invocation `AM_NO_UPDATE_CHECK=1`, task-owned `AM_HOME`, and `render - -o "<task-output>/clarification.html" --no-open` with the draft on standard input. Preserve explicit user settings and host attachment/link formats. Keep output and state in writable task-owned directories.
 
-Do not automatically install dependencies, change global settings, publish, start `am serve`, or create a server/tunnel. Use an existing service only through a confirmed authorized delivery channel. Provider settings, cleanup, updates, video, and external-service workflows need their own requested scope.
+Do not automatically install dependencies, change global settings, publish, start `am serve`, or create a server/tunnel. Use an existing service only through a confirmed authorized delivery channel. Answer me with HTML settings, cleanup, updates, video, and external-service workflows need their own requested scope.
 
 ## Reuse Relevant Guidance
 
@@ -29,6 +29,6 @@ Do not automatically install dependencies, change global settings, publish, star
 | Data visualization and explicitly requested reports | `lieflat-charts` |
 | Inspect rendered states and interactions | Available browser tools; `agent-browser` when its CLI applies |
 
-Read only relevant guidance; invoking a full upstream workflow also requires its setup and side-effect boundaries. `prototype` and `pick-ui-library` require explicit user invocation. Reuse project capabilities first; skill text, runnable tools, accounts, and publication authority are separate resources, and missing tools do not authorize setup.
+Read only relevant guidance; invoking an external skill's full workflow also requires its setup and side-effect boundaries. `prototype` and `pick-ui-library` require explicit user invocation. Reuse project capabilities first; skill text, runnable tools, accounts, and publication authority are separate resources, and missing tools do not authorize setup.
 
-Keep reviews read-only even when upstream critique would write project state. A fixed upstream polish cap does not replace the requested quality loop.
+Keep reviews read-only even when an external skill's critique would write project state. A fixed iteration limit in that skill does not replace the requested quality loop.
