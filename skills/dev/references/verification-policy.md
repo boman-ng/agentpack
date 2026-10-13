@@ -8,7 +8,9 @@ Prioritize integration checks and critical business journeys from production ent
 
 Reject redundant unit tests, implementation mirrors, private-structure assertions, and speculative defensive cases without a credible failure or contract. No coverage quota, per-method test requirement, or test-first sequence applies. Changed code alone does not require new tests. Preserve unique checks for active rules, realistic failures, incidents, security, concurrency, and recovery.
 
-Reuse relevant existing checks. Add a temporary experiment to resolve current uncertainty; retain a regression test only when it protects stable behavior against a plausible recurring fault at reasonable cost. A temporary check need not become infrastructure.
+Reuse relevant existing checks. For consequential uncertainty, identify the observation that would distinguish plausible explanations. Prefer quick, repeatable probes sensitive to the actual symptom; narrow inputs or setup only while preserving the relevant fault conditions. A missing reproduction does not block source investigation or observation-only diagnostics. New validation follows the ownership rules below.
+
+Use authorized, isolated environments for temporary mutations or fault injection. Confirm that the intended experimental change took effect before interpreting its outcome, and restore experiment-owned changes afterward. Retain a regression test only when it protects stable behavior against a plausible recurring fault at reasonable cost; a temporary check need not become infrastructure.
 
 Run the affected checks and required project checks. Confirm failures come from the behavior rather than invalid fixtures or missing prerequisites. Do not hide failures, weaken assertions, or retry without a supported cause. Reuse results while their code, dependencies, configuration, and environment assumptions remain valid.
 
