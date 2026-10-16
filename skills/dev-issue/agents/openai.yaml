@@ -1,5 +1,0 @@
-interface:
-  display_name: "Dev Issue"
-  short_description: "Draft and submit worthwhile project issues"
-policy:
-  allow_implicit_invocation: false

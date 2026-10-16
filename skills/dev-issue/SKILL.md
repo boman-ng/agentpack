@@ -5,6 +5,8 @@ description: Assess, draft, or submit bugs and improvements with lasting value t
 
 # Dev Issue
 
+Read the [engineering contract](../dev/references/engineering-contract.md), [collaboration rules](../dev/references/collaboration.md), and [verification policy](../dev/references/verification-policy.md) for applicable scope, evidence, and role rules. This direct or delegated role keeps its issue assignment; it does not start a production workflow.
+
 Use this skill only when the user asks to assess, draft, or submit issues. Work from development findings and the requested scope; do not start a broader audit or build a backlog merely because an improvement is conceivable. This workflow can run independently of development, testing, or Git delivery.
 
 ## Select Useful Findings

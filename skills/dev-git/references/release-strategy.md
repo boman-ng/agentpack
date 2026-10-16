@@ -1,43 +1,29 @@
 # Release Strategy
 
-Read this when a task includes versioning, release preparation, publication, deployment, or maintenance of published versions. [Git Flow](git-flow.md) owns branch roles and integration; [Dev Git](../SKILL.md#human-authorization-for-remote-writes) owns authorization.
+Read for authorized versioning, release preparation, publication, deployment, or maintenance of published versions. [Branches and PR delivery](delivery.md) governs integration; [Dev Git](../SKILL.md#human-authorization-for-remote-writes) governs authorization.
 
-## Release Intent
+## Release Intent And Source
 
-Code integration, candidate builds, publication, and deployment are distinct outcomes. A merge into `develop` integrates work; it does not request a formal release. A merge into `master` delivers stable code and publishes only when the authorized task or established, authorized automation calls for it.
+Integration, candidate builds, publication, and deployment are distinct outcomes. A merge does not itself authorize version changes, tags, releases, or deployment. Use the project's version policy, channels, supported lines, and triggers. Conventional Commits can inform existing version tooling but do not grant release authority.
 
-Use the project's versioning policy, channels, and release triggers. Conventional Commits can inform an authorized versioning tool but do not themselves authorize a version bump. Do not require SemVer, release candidates, or a publishing tool when the project has no such requirement. Without a release request, follow Git Flow's stable-delivery path without release metadata or a release branch.
-
-## Stabilize And Integrate
-
-For a planned release from the development line, create `release/<release-id>` from the selected `develop` commit. Production hotfixes and older supported versions use their respective correction paths instead. Determine the release identifier from the authorized task and project versioning policy; ask only if those leave a consequential choice unresolved. New features continue on `develop`; the release branch accepts only corrections needed for its selected scope. Keep release-specific metadata separate from corrections that must return to development.
-
-Integrate the stabilized release using [Git Flow's delivery and synchronization rules](git-flow.md#stable-delivery-and-long-lived-synchronization), preserving applicable fixes and each branch's version policy. Its hotfix rules handle production fixes arriving during stabilization.
+Identify the selected source, release identifier, channel, artifacts, intended destinations, and required propagation of fixes. Use a release branch only when the established stabilization workflow needs one; do not impose long-lived development or release branches. Keep stabilization corrections separate from unrelated next-release features and branch-specific metadata.
 
 ## Publish The Intended Version
 
-Identify the final source commit, release identifier, channel, and intended artifacts in the existing release workflow or task context. The current production line releases from the final integration commit on `master`; an explicitly supported older line releases from its own final maintenance commit. Place the release tag on that source, not on the pre-merge task or release head.
+Integrate using the project's required destinations and history-preserving rules. Identify the final source commit after integration; put an authorized release tag on the source that actually produces the artifacts. Preserve each branch's version policy and propagate applicable fixes to other supported destinations.
 
-Follow the project's build, validation, tagging, and publication trigger order. Checks on a pre-merge commit alone do not establish that the final source and delivered artifacts were verified. Reuse applicable validation and promote verified artifacts where the workflow supports it. If integration, rebuilding, signing, or version changes alter the verified inputs or output, establish which checks still apply and run those needed for the actual release. Do not claim identical artifacts merely because their version names match.
+Follow the existing build, validation, signing, tagging, and publication order. Pre-merge checks alone do not prove the final source or delivered artifacts. Reuse evidence while inputs and outputs remain applicable; rerun affected checks when integration, rebuilding, signing, or version changes alter them. A matching version name does not establish identical artifacts.
 
-After publication, confirm the intended version, channel, source, and artifacts at the actual destination. Verify deployment separately when it is in scope. An uploaded artifact or successful workflow step alone does not establish that the release is available to its consumers.
+Confirm version, channel, source, and artifacts at the real destination. Verify deployment separately when requested. A successful upload step does not prove consumer availability or runtime behavior.
 
 ## Maintenance And Backports
 
-Create or retain a maintenance branch only for an explicitly supported published version line. Reuse an existing suitable release branch or create the project's maintenance branch from the affected release tag; ongoing development does not require a permanent branch for every version. Retire a line when its support ends and Dev Git's cleanup conditions are satisfied.
+Retain maintenance branches only for explicitly supported published lines. Start from the affected version and keep production repairs separate from unrelated development. Propagate applicable fixes to every required line, adapting and checking each destination. Use `cherry-pick -x` for selected backports; do not merge an old maintenance line wholesale into current production or import current features into older releases.
 
-For a defect shared across versions, fix the current applicable development or production line first, then selectively backport to affected supported lines. An urgent production repair follows the hotfix path rather than waiting for unrelated development. Use `cherry-pick -x` for selected commits, adapting and validating the correction on each destination.
-
-For a defect unique to an older line, fix that line and assess whether any others are affected; do not add an unnecessary current-line change. Keep release metadata and unrelated features out of backports. Do not merge entire maintenance histories merely to propagate selected fixes, and do not move current features into older versions.
+For an older-line-only defect, fix that line and determine whether others are affected rather than inventing an unnecessary current-line change. Retire unsupported lines only within cleanup scope and preservation conditions.
 
 ## Interrupted Publication
 
-When a step fails or its outcome is unknown, inspect the actual state of the tag, hosted release, package registry, artifact destination, or deployment affected by that step. Continue only the missing actions within the existing authorization and supported retry behavior; do not blindly rerun the whole publisher.
+Inspect actual tag, release, registry, artifact, and deployment state after a failure or unknown outcome. Continue missing actions only within applicable authority and supported retry semantics; do not blindly rerun the whole publisher.
 
-Do not move a published version's tag or overwrite its artifacts to conceal a failed release. A correction follows the project's new-version or recovery policy and authorization. State which destinations succeeded and what remains.
-
-## Primary References
-
-- [uv release workflow](https://github.com/astral-sh/uv/blob/main/.github/workflows/release.yml): explicit release invocation and artifact-based publication.
-- [Node.js backports](https://github.com/nodejs/node/blob/main/doc/contributing/backporting-to-release-lines.md): selective fixes for supported version lines.
-- [semantic-release](https://semantic-release.org/intro/): commit-driven versioning and publication when that automation is deliberately adopted.
+Do not move a published tag or overwrite artifacts to conceal failure. Corrections follow the project's authorized new-version or recovery policy. Report destinations that succeeded, missing steps, and unresolved outcomes.
