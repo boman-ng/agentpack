@@ -9,8 +9,10 @@ Install selected components at user scope through the target agent's supported p
 | Domain | Component | Files | Installation |
 |---|---|---|---|
 | General | Global instructions | [AGENTS.md](instructions/AGENTS.md) | The user-level instruction file supported by the target agent |
-| Software engineering | Dev | [Dev suite](skills/dev/SKILL.md) | `dev`, `dev-build`, `dev-clean`, `dev-test`, `dev-git`, `dev-issue` as sibling directories; issue work is user-requested |
+| Software engineering | Dev | [Dev suite](skills/dev/SKILL.md) | All 15 sibling directories: `dev`, `dev-how`, `dev-why`, `dev-architect`, `dev-arena`, `dev-build`, `dev-clean`, `dev-diagnose`, `dev-perf`, `dev-test`, `dev-review`, `dev-git`, `dev-issue`, `dev-reflect`, `dev-eval` |
 | Interface design | Design | [Design suite](skills/design/SKILL.md) | `design`, `design-intent`, `design-build`, `design-review` as sibling directories; add Dev for implementation |
+
+Install Dev with all referenced resources and [third-party notices](skills/dev/THIRD-PARTY-NOTICES.md). Its router selects the needed responsibilities; direct role invocation inherits the same applicable contracts. Issue work, task reflection, behavior evaluation, and sustained optimization are explicitly requested. Core instructions use the target host's available capabilities without model names or host adapters. Missing independent agent capability is reported as an unmet gate for nontrivial changes, rather than simulated.
 
 ## External skills and MCP servers
 
