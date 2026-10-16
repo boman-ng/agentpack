@@ -13,8 +13,10 @@ Skills provides **shared instructions** and the **Dev** and **Design** skill sui
 | Domain | Component | Description |
 |---|---|---|
 | General | [Global instructions](instructions/AGENTS.md) | Working principles for engineering decisions, communication, and task completion |
-| Software engineering | [Dev suite](skills/dev/SKILL.md) | Develop features, fix bugs, maintain existing work, verify changes independently, manage Git delivery, and draft or submit project issues on request |
+| Software engineering | [Dev suite](skills/dev/SKILL.md) | Route engineering work through 15 responsibilities: investigation, independent candidate exploration, implementation, objective testing, engineering review, and PR delivery |
 | Interface design | [Design suite](skills/design/SKILL.md) | Clarify requirements, plan and build interfaces, and review usability and visual quality |
+
+Dev uses one router with focused, independently callable skills. Nontrivial changes separate implementation, objective testing, and engineering review; design and implementation alternatives receive independent comparison when triggered. Existing project governance comes first, and the default delivery workflow uses task branches, PRs, and preserved atomic commits. Explicit requests enable issue work, task reflection, behavior evaluation, and sustained performance optimization. Process records default to task-owned temporary folders; useful project tests and tools remain with the project.
 
 - **UI implementation:** Select both Design and Dev. The [external catalog](#external-skills-and-mcp-servers) lists additional capabilities.
 - **Optional clarification:** Answer me with HTML can help clarify requirements through interactive pages: answer on the page, then copy its Reply into chat.
@@ -70,6 +72,7 @@ These resources are for reading and reference; they are not installed as skills.
 | Repository | Description | License |
 |---|---|---|
 | [ByteByteGoHq/system-design-101](https://github.com/ByteByteGoHq/system-design-101) | System Design 101: visual explanations of system architecture, databases, distributed systems, and engineering tradeoffs | [CC BY-NC-ND 4.0](https://github.com/ByteByteGoHq/system-design-101/blob/main/LICENSE.md) |
+| [cursor/plugins — pstack](https://github.com/cursor/plugins/tree/e5136d82418d2db3165ea1050d17577cd618cc05/pstack) | Source methods for Dev candidate exploration, delegated implementation, verification, PR delivery, performance, reflection, and evaluation; adapted with host-independent responsibilities | [MIT notice](skills/dev/THIRD-PARTY-NOTICES.md) |
 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/49dd158d1076134a641b33efb035946536778336) | This reference snapshot informed Skills' guidance on module design, domain language, incremental feedback, decision dependencies, and instruction organization | [MIT](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/LICENSE) |
 
 <a id="feedback"></a>
@@ -83,4 +86,4 @@ These resources are for reading and reference; they are not installed as skills.
 
 ## 📜 License
 
-Original material in this repository is licensed under [MIT](LICENSE). External projects retain their own licenses and notices.
+Original material in this repository is licensed under [MIT](LICENSE). Adapted Dev material retains its [third-party notices](skills/dev/THIRD-PARTY-NOTICES.md). External projects retain their own licenses and notices.

@@ -18,7 +18,7 @@ Size, unfamiliarity, authorship, static metrics, or passing tests alone do not j
 | Inflated state model | States duplicate semantics or permit unsupported transitions | Consolidate around the actual lifecycle | Persisted historical states and failure-only transitions |
 | Dependency or configuration excess | Supported requirements do not need the extra surface | Remove it or use an existing capability | Deployment variation and platform constraints |
 | Weak or redundant tests | Assertions miss relevant faults or repeat the same risk | Apply the [test asset maintenance rules](../SKILL.md#test-asset-maintenance) | Unique incident, protocol, concurrency, or security coverage |
-| Stale documentation | Current authoritative behavior contradicts the artifact | Update or delete at its source | Records intentionally explaining past decisions |
+| Unnecessary comments or documentation | The text narrates recoverable implementation, duplicates an owner, or describes retired behavior | Delete or encode the rule in its proper structure/tool | Public contracts, external limits, licenses, and important rationale unavailable elsewhere |
 | Defensive layering | Layers repeat one duty or address hypothetical failures | Consolidate enforcement at its actual boundary | Distinct threats, trust boundaries, and recovery obligations |
 | Change amplification | Small changes repeatedly cross unrelated owners | Correct the boundary causing extra touch points | A real cross-cutting requirement |
 

@@ -1,30 +1,28 @@
 ---
 name: dev-build
-description: Implement or fix production behavior through verified delivery. Use for development across business, storage, service, or runtime boundaries and settled local changes; use dev-clean for maintenance and dev-test for independent validation authorship.
+description: Implement features, fixes, and migrations across affected production boundaries. Use for production behavior changes; direct invocation keeps Dev exploration, independent testing, and review gates, while delegated workers implement their assigned scope.
 ---
 
 # Dev Build
 
-Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md), including when invoked directly.
+Read the [engineering contract](../dev/references/engineering-contract.md), [collaboration rules](../dev/references/collaboration.md), and [verification policy](../dev/references/verification-policy.md). Direct invocation arranges the applicable Dev workflow; a delegated implementer fulfills its assignment without restarting the router.
 
-## Understand The Change
+## Establish The Model
 
-Establish acceptance from the task and project contracts. Trace the affected use cases, rule owners, callers, invariants, and production path. Read relevant current decisions and unfinished migration obligations before choosing the implementation.
+Start from the required outcome, actual production path, data shape, rule owners, callers, invariants, and unfinished migration obligations. Use [dev-how](../dev-how/SKILL.md) for unknown mechanisms and [dev-why](../dev-why/SKILL.md) when changing boundaries or protections with unclear rationale.
 
-Use the shared [engineering dimensions and user alignment](../dev/references/engineering-contract.md#engineering-dimensions-and-user-alignment) to identify affected concerns and important unknowns. Investigate project facts, then align unresolved consequential design choices with the user; reuse settled decisions without turning the dimensions into a questionnaire.
+Apply the shared design-exploration trigger before implementation. A settled design needs an implementation arena when important alternatives remain, such as competing algorithms, concurrency, or error handling. A worker discovering such a choice returns it to the main agent with evidence rather than silently inventing another architecture or recursively coordinating candidates.
 
 ## Implement A Complete Increment
 
-Choose a coherent business capability or migration step whose contracts, dependencies, and verification can be understood together. Split larger work at independently verifiable boundaries to obtain useful feedback before dependent work accumulates; use findings to shape subsequent increments. Cross only the layers needed for the outcome, without adding transition machinery merely to make a smaller slice.
+The main agent delegates nontrivial production work with explicit scope and ownership. Implement the chosen model, including necessary callers, wiring, configuration, packaging, and retirement of superseded paths. Keep each increment a coherent capability or verifiable migration step. Correct the owner of a rule instead of scattering special cases through callers.
 
-Implement the simplest complete behavior under the shared architecture and evolution rules: correct the owning model or contract, update affected callers and integration points, and preserve the required invariants.
+Use [dev-clean](../dev-clean/SKILL.md) for removal decisions. Preserve migration, data, and out-of-scope consumer obligations; temporary paths need an exit condition and owner. Planned reversible work-in-progress breakage is acceptable, but final atomic commits must be complete and verifiable.
 
-When implementation reveals facts that change an agreed tradeoff, explain their impact and real alternatives to the user before the dependent change. Apply the response to the affected design and acceptance while continuing independent authorized work.
+When implementation exposes a systematic mismatch with the design, send the evidence and affected assumptions to the main agent. Reconsider the model before accumulating patches. Routine recoverable details within the agreed design remain autonomous; unresolved consequential user choices hold only their dependent work.
 
-Include retirement of superseded in-scope paths in the change. Use [dev-clean](../dev-clean/SKILL.md) for removal decisions and associated artifacts, and for other maintenance included in the requested scope. When a transition must continue across increments, establish its exit conditions and remaining ownership under the shared contract.
+## Return An Inspectable Result
 
-## Verify And Deliver
+Run relevant existing checks and gather observation-only diagnostics. For nontrivial work, the separate Tester owns formal tests, assertions, fixtures, and pass conditions, including temporary correctness checks. Supply the changed production path and reproducible observations without prescribing the Tester's expected answers.
 
-Run relevant existing checks and observe the affected path. When new or semantically changed validation is needed, read [dev-test](../dev-test/SKILL.md) and arrange its independent Tester under the shared policy.
-
-Resolve production defects in the Developer role and complete authorized packaging, migration, recovery, and delivery work. Feed back the actual outcome, material tradeoffs, and remaining implications for the affected dimensions. Apply the shared completion rule.
+Keep production fixes in this role; return test problems to the Tester and engineering choices to the main agent and Reviewer. Return actual changes, source/worktree identity, observed checks, remaining obligations, and material limits. The main agent completes independent testing, review, and authorized Git delivery; an implementation result alone does not establish acceptance.

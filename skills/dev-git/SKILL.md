@@ -1,58 +1,43 @@
 ---
 name: dev-git
-description: Manage Git Flow branches, classify atomic Conventional Commits, and coordinate releases, synchronization, protection, and cleanup. Use for repository development or Git-only delivery; remote writes require human authorization and audits remain read-only.
+description: Manage task branches, classified atomic commits, PR progression, dependency stacks, and authorized Shipping. Use for repository development or Git delivery; preserve project workflows and meaningful history, and require scoped authorization for remote writes.
 ---
 
 # Dev Git
 
-Read the shared [engineering contract](../dev/references/engineering-contract.md) and [verification policy](../dev/references/verification-policy.md). Use native Git and the hosting platform's supported capabilities; no Git Flow extension or global configuration is needed.
+Read the [engineering contract](../dev/references/engineering-contract.md), [collaboration rules](../dev/references/collaboration.md), and [verification policy](../dev/references/verification-policy.md). Read [branches and PR delivery](references/delivery.md) for branch selection, integration, stacks, or cleanup; read [release strategy](references/release-strategy.md) only for requested release or supported-version work.
 
-- Before branch selection, integration, cleanup, or protection setup, read [Git Flow and shared history](references/git-flow.md). The default is `master` for stable delivery and `develop` for ongoing integration.
-- For versioning, publication, deployment, or supported release lines, also read [Release strategy](references/release-strategy.md). Integrating code does not by itself request a release.
+Use native Git and the hosting platform's supported capabilities. Honor existing project governance. Without an established workflow, use trunk, short task branches, and PRs; create dependency stacks only for actual dependencies. Invoking this skill does not migrate an existing repository's governance, require a new tool, or change global settings.
 
 ## Ownership And Local Work
 
-Inspect project instructions, branch/HEAD, worktrees, staged and unstaged changes, and any operation in progress. Establish the task's base, destination, changes, and coordinating agent in task context. Resolve ownership or project workflow conflicts before the affected operation.
+Inspect instructions, branch/HEAD, worktrees, staged and unstaged changes, and operations in progress. Establish the task's base, destinations, owned changes, and Git coordinator. Preserve unrelated work without automatically stashing, discarding, or committing it. Resolve blocking ownership conflicts while continuing independent work.
 
-Local branch creation, switching, commits, private-history organization, integration, and cleanup are autonomous within an implementation or Git task. Audits, plans, and explanations remain read-only. Reuse the task's active branch; preserve unrelated work without automatically stashing, discarding, or committing it. Resolve blocking conflicts while continuing independent work.
+Local task branches, commits, private-history organization, and eligible task cleanup are within implementation or Git scope. Audits, plans, and explanations stay read-only. One coordinator owns shared index, branch switches, rebases, commits, and integration; collaborators own assigned files or isolated candidate workspaces without independently changing shared Git state.
 
-With a shared remote, keep ordinary task commits on short-lived branches and integrate through the project's PR process. Refresh local long-lived branches from their matching remote branches by fast-forward. Inspect existing local-only work before synchronization; a clean worktree or an ahead/behind count does not authorize dropping commits.
+Reuse the task checkout when work can be coordinated safely. Use separate temporary workspaces or worktrees for concurrently executable candidates or independent tasks that would otherwise collide. Inspect `git worktree list`, confirm unused paths/branches, and use task-owned temporary or ignored paths. A worktree lock protects against removal, not simultaneous writers. Do not switch another agent's active checkout.
 
-One coordinating agent owns the task's shared index, commits, branch switches, rebases, and integration. Developer/Tester collaborators, whether subagents or separate sessions, work on assigned files or in sequence; they do not independently change shared Git state. This is a task responsibility, not a required host-specific agent role.
+## Classify Atomic Conventional Commits
 
-## Worktrees Only For Concurrent Independent Tasks
+1. Classify by intent, inspecting the complete staged and unstaged diff. Separate unrelated outcomes using `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `build`, `ci`, or `chore`, with a useful optional scope. File extension and author do not define intent.
+2. Include implementation, required callers, relevant tests, and necessary documentation for one coherent outcome. Final retained commits must be complete and verifiable. A red-before reproduction can live in temporary evidence; retain fix and necessary regression protection together.
+3. After relevant checks, stage owned paths or hunks, inspect the staged diff, and commit locally. Organize private exploratory history before delivery where necessary; preserve meaningful classified atomic commits. Do not squash the task or PR by default.
+4. Follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/): English `type(scope): description`, optional scope and useful body. Mark a breaking contract with `!` and a `BREAKING CHANGE:` footer describing impact and migration. Commit syntax does not authorize a version bump.
 
-A single coordinated task uses the ordinary checkout. Developer/Tester collaboration, a separate Tester session, or a dirty checkout alone does not warrant worktrees.
-
-Use separate branches and worktrees when different agents coordinate independent features or fixes concurrently. Locate the main working directory with `git worktree list`, then use its `.worktree/<task-slug>/`, never a nested linked worktree. Confirm the path and branch are unused. If not ignored, add `/.worktree/` to the local exclude file located by `git rev-parse --git-path info/exclude`.
-
-Each task owns its workspace and branch. Assign one coordinating agent to serialize integration into a shared destination; do not switch branches in another agent's active checkout. Coordinate through available task communication. `git worktree lock` protects against removal, not concurrent integration.
-
-## Classify Atomic Conventional Commit
-
-1. **Classify by intent.** Inspect the task diff, including staged changes. Separate unrelated features, fixes, and maintenance; choose the actual type (`feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `build`, `ci`, or `chore`) and an optional useful scope. File extension and author do not determine the type.
-2. **Keep commits atomic.** Include implementation, required callers, relevant validation, and necessary docs for one coherent intent. Split unrelated outcomes, not each file or layer. Each commit should be understandable and reversible with its required pieces.
-3. **Commit verified increments autonomously.** After relevant checks pass, stage owned paths or hunks, inspect the staged diff, and commit locally. Broad staging is appropriate only after confirming all staged content belongs to the task. No new test or full-suite rerun is required merely to commit.
-4. **Use [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/).** Default to English `type(scope): description`, with optional scope and a body for useful reasons or consequences. Mark breaking changes with `!` and a `BREAKING CHANGE:` footer explaining impact and migration. Preserve meaningful atomic history; do not squash the whole task by default. Commit syntax does not authorize a version change or release.
-
-For example, `fix(checkout): prevent duplicate payment capture` can include its regression test and contract docs; unrelated setup documentation belongs in a separate commit.
-
-Integration commits use a Conventional Commit title describing the merge's purpose while retaining the underlying atomic commits. Rebase is for organizing independent task history; releases and long-lived synchronization preserve ancestry with merge commits as defined in the Git Flow reference.
+For example, a duplicate-capture fix, its regression test, and necessary contract correction belong together; unrelated installation documentation can be a separate commit. Use merge methods that retain atomic history, respecting ancestry and project rules as described in the delivery reference.
 
 ## Human Authorization For Remote Writes
 
-Push, force-push, remote ref deletion, PR creation/update/merge/closure, hosting protection changes, release metadata changes, publication, and deployment require human authorization covering the target and action. Local implementation authority, passing checks, and automatic tool approval do not supply it. Ordinary push or merge permission does not cover force-push or deletion.
+Push, force-push, remote ref deletion, PR creation/update/merge/closure, protection changes, release metadata, publication, and deployment need human authorization covering the target and action. Implementation scope and passing checks do not supply it. Ordinary push or merge permission does not cover force-push or deletion.
 
-A user may grant standing remote-cleanup authorization for a named repository, branch scope, and cleanup conditions. Reuse that grant from existing project instructions or conversation context until revoked or changed; do not ask again for covered branches or create a separate authorization file. The skill itself grants no repository permission, and the grant does not extend to other branches, force-pushes, or hosting settings.
+Carry forward applicable authorization; do not ask again for covered actions. A standing cleanup grant applies only to its named repository, branches, and conditions. Inspect automation before authorized push or merge: authorization must also cover resulting publication, deployment, or deletion. An enabled setting alone is not authorization, while a previous grant covering that consequence remains valid.
 
-Inspect relevant automation before an authorized push or merge. If it will delete a branch, publish a release, or deploy, authorization must cover that result; an enabled setting alone does not supply permission. Explicit authorization to enable automatic branch deletion covers its agreed scope. Carry forward authorization that already covers those consequences without asking again.
+Prepare concrete local commits and PR text before requesting missing authority. Pause only the uncovered operation; preserve ready work and finish other authorized actions. Read-only hosting inspection and fetch need no remote-write authority, subject to task and host constraints. Do not weaken protections or bypass required checks to finish delivery.
 
-Prepare local commits and proposed PR text before asking for missing authorization through a supported human interaction channel. Pause only the unauthorized action. Existing authorization carries forward within scope; a changed target or expanded action needs new authorization. Read-only inspection and fetch do not require remote-write authorization, but remain subject to task and host constraints.
+## Endpoint And Completion
 
-Include required development-line synchronization in the delivery scope. If existing authorization does not cover a destination, preserve its pending work and report the outstanding step; do not reset a local branch to make delivery appear complete. Apply protection settings only when requested; never weaken checks or use an administrative bypass to finish a merge.
+When remote writes are authorized, ordinary development advances to `merge-ready`: current PR contents, target, required checks, independent evidence, and review are reconciled, with no unresolved material in-scope finding. Explicit merge, delivery, or applicable standing authorization enables Shipping. Queue acceptance and auto-merge activation are pending states, not evidence of a completed merge.
 
-## Finish And Clean Up
+Use [delivery progression](references/delivery.md#pr-progression-and-shipping) for dependencies and evidence freshness. Confirm every required destination and the actual remote result after authorized integration. Refresh local branches without discarding independent work. Report actual commits, pending destinations, and limits; local preparation, merge-ready, merged, published, and deployed are distinct.
 
-Confirm every required destination independently, including the actual remote result when delivery was authorized. Refresh the matching local branches without discarding independent work. A successful production merge does not establish development-line synchronization. Include eligible branch cleanup in the same delivery.
-
-Apply [branch lifecycle and cleanup](references/git-flow.md#branch-lifecycle-and-cleanup) to owned temporary branches/worktrees and legacy branches explicitly included in the cleanup scope. Remote cleanup must fall within the authorization above. Report actual destination commits and any retained branches with unfinished work, dependencies, or missing authorization; local completion and remote delivery are distinct.
+Apply [branch cleanup](references/delivery.md#branch-lifecycle-and-cleanup) only to eligible owned branches/workspaces or explicitly scoped legacy branches. Cleanup must preserve unique work and active dependencies; remote cleanup requires its own applicable authorization.
